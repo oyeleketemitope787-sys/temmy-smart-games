@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temmy Smart Games • Grade 6</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#f7f5ff,#e9fbf8);color:#26334d}
+.wrap{max-width:980px;margin:auto;padding:18px}.card{background:#fff;border-radius:28px;padding:28px;box-shadow:0 12px 35px #0002}
+.center{text-align:center}.badge,.pill{display:inline-block;padding:9px 14px;border-radius:22px;background:#eee9ff;color:#5b3cc4;font-weight:800}
+.icon{font-size:72px}.title{font-size:clamp(30px,6vw,52px);color:#5b3cc4;margin:6px}.sub{font-size:22px}
+input{width:min(500px,90%);padding:15px;border:2px solid #ddd8f7;border-radius:14px;font-size:19px}
+.modes{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:820px;margin:18px auto}
+button{border:0;border-radius:16px;padding:15px 20px;font-size:18px;font-weight:800;cursor:pointer}
+.mode{background:#f7f5ff;border:3px solid transparent;text-align:left}.mode.selected{border-color:#5b3cc4;background:#eee9ff}
+.mode b{display:block;color:#5b3cc4;margin-bottom:5px}.primary{background:#5b3cc4;color:#fff}.teal{background:#13a89e;color:#fff}
+.hidden{display:none}.top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.bar{height:10px;background:#e8e8ef;border-radius:10px;margin:15px 0;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#5b3cc4,#13a89e);width:0;transition:.35s}
+.q{text-align:center;font-size:clamp(24px,4vw,34px);font-weight:900;margin:24px 0}.hint{text-align:center;color:#68758a}
+.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin-top:15px}.answers button{background:#f0edff;color:#5b3cc4;min-height:65px}
+.correct{background:#c9f7e5!important;color:#08734f!important}.wrong{background:#ffd9dd!important;color:#a41d2e!important}
+.feedback{text-align:center;font-size:20px;font-weight:800;min-height:30px;margin:16px}.next{display:block;margin:auto}
+.visual{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}.pv{padding:14px;background:#faf9ff;border-radius:16px;font-weight:800}
+.topic{font-size:14px;color:#13a89e;letter-spacing:.5px}.stars{font-size:42px;color:#f4b52d}
+.toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-120px);background:#26334d;color:#fff;padding:14px 22px;border-radius:18px;font-weight:900;box-shadow:0 10px 30px #0003;transition:.35s;z-index:20}.toast.show{transform:translate(-50%,0)}
+
+.venn-board{position:relative;width:min(760px,96vw);height:430px;margin:18px auto;border:3px solid #26334d;border-radius:20px;background:#fbfbff;overflow:hidden}
+.venn-circle{position:absolute;width:260px;height:260px;border:4px solid #5b3cc4;border-radius:50%;display:flex;align-items:flex-start;justify-content:center;padding-top:18px;font-weight:900;font-size:18px}
+.v2{left:105px;top:55px}.v3{right:105px;top:55px}.v5{left:250px;top:170px}
+.v2{background:#eee9ff99}.v3{background:#dff8f499}.v5{background:#fff3cf99}
+.venn-zone{position:absolute;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;border-radius:16px;padding:6px;cursor:pointer;user-select:none;min-width:72px;min-height:42px}
+.z2{left:105px;top:170px}.z3{right:105px;top:170px}.z5{left:338px;top:305px}
+.z23{left:285px;top:145px}.z25{left:270px;top:245px}.z35{right:270px;top:245px}.z235{left:337px;top:218px}
+.zout{right:15px;bottom:12px;background:#f0f0f5;border:2px dashed #8a91a3}
+.venn-zone:hover{transform:scale(1.04)}.venn-zone.selected-zone{outline:4px solid #13a89e}
+.venn-number{min-width:62px!important;min-height:52px!important}
+.explain{max-width:720px;margin:10px auto;padding:14px;border-radius:16px;background:#f7f5ff;color:#3f4b63;font-weight:700}
+.story{max-width:780px;margin:16px auto;padding:20px;border-radius:20px;background:#fffaf0;border:2px solid #f0d98b;text-align:left}
+@media(max-width:650px){.modes,.answers{grid-template-columns:1fr}.card{padding:18px}.venn-board{height:390px;transform:scale(.92);transform-origin:top center;margin-bottom:-25px}.venn-circle{width:210px;height:210px}.v2{left:25px}.v3{right:25px}.v5{left:170px;top:165px}.z2{left:30px;top:150px}.z3{right:30px;top:150px}.z5{left:240px;top:305px}.z23{left:170px;top:130px}.z25{left:155px;top:225px}.z35{right:155px;top:225px}.z235{left:225px;top:195px}}
+
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+
+<section id="home" class="center">
+<div class="badge">TEMMY SMART CLASSROOM • GRADE 6</div>
+<div class="icon">🧮</div>
+<div class="title">MULTIPLES & FACTORS CHALLENGE</div>
+<div class="sub">Multiples • Common Multiples • Factors • Common Factors</div>
+<p><b>Interactive Mathematics</b></p>
+<h3>👤 Enter your name</h3>
+<input id="player" maxlength="24" placeholder="Type your name here">
+<h3>🎮 Choose your learning mode</h3>
+<div class="modes">
+<button id="practice" class="mode selected" onclick="setMode('practice')"><b>🟢 Practice</b>Untimed • Learn from mistakes</button>
+<button id="challenge" class="mode" onclick="setMode('challenge')"><b>🟣 Challenge</b>Lives • Points • Streaks</button>
+<button id="classmode" class="mode" onclick="setMode('class')"><b>🟡 Class Mode</b>Discuss • Explain • Learn</button>
+<button id="mixed" class="mode" onclick="setMode('mixed')"><b>🔵 Mixed Master</b>All four skills together</button><button id="vennmode" class="mode" onclick="setMode('venn')"><b>🔷 Venn Detective</b>Interactive multiples Venn diagram</button>
+</div>
+<button class="primary" onclick="startGame()">START MY CHALLENGE 🚀</button>
+</section>
+
+
+
+<section id="venn" class="hidden">
+<div class="top">
+<span class="pill">🔷 VENN DIAGRAM DETECTIVE</span>
+<span class="pill">ROUND <span id="vennRound">1</span>/3</span>
+<span class="pill">⭐ <span id="vennScore">0</span></span>
+</div>
+<div class="q">Place each number in the correct part of the Venn diagram.</div>
+<p class="center hint">Select a number below, then click the correct region of the diagram.</p>
+
+<div id="vennNumbers" class="visual"></div>
+
+<div class="venn-board" id="vennBoard">
+<div class="venn-circle v2">MULTIPLES<br>OF 2</div>
+<div class="venn-circle v3">MULTIPLES<br>OF 3</div>
+<div class="venn-circle v5">MULTIPLES<br>OF 5</div>
+
+<div class="venn-zone z2" onclick="vennPlace('A')">2 only</div>
+<div class="venn-zone z23" onclick="vennPlace('AB')">2 & 3</div>
+<div class="venn-zone z3" onclick="vennPlace('B')">3 only</div>
+<div class="venn-zone z25" onclick="vennPlace('AC')">2 & 5</div>
+<div class="venn-zone z235" onclick="vennPlace('ABC')">2, 3 & 5</div>
+<div class="venn-zone z35" onclick="vennPlace('BC')">3 & 5</div>
+<div class="venn-zone z5" onclick="vennPlace('C')">5 only</div>
+<div class="venn-zone zout" onclick="vennPlace('OUT')">OUTSIDE<br>none</div>
+</div>
+
+<div id="vennFeedback" class="feedback"></div>
+<div id="vennExplain" class="explain hidden"></div>
+<button class="next teal hidden" id="vennCheck" onclick="checkVenn()">CHECK MY VENN 🔍</button>
+<button class="next teal hidden" id="vennNext" onclick="nextVenn()">NEXT VENN ROUND ➜</button>
+</section>
+
+
+<section id="game" class="hidden" style="position:relative">
+<div class="top">
+<span class="pill">👤 <span id="name"></span></span>
+<span class="pill">LEVEL <span id="level"></span></span>
+<span class="pill">⭐ <span id="score">0</span></span>
+<span id="lifePill" class="pill">❤️ <span id="lives">3</span></span>
+<span class="pill">🔥 <span id="streak">0</span></span>
+</div>
+<div class="bar"><div id="fill" class="fill"></div></div>
+<div id="question" class="q"></div>
+<div id="visual" class="visual"></div>
+<div id="hint" class="hint"></div>
+<div id="answers" class="answers"></div>
+<div id="feedback" class="feedback"></div>
+<div id="progressText" class="hint"></div>
+<button id="next" class="next teal hidden" onclick="nextQ()">NEXT ➜</button>
+</section>
+
+<section id="done" class="center hidden">
+<div id="stars" class="stars"></div>
+<div class="title">CHALLENGE COMPLETE!</div>
+<div id="achievement" class="badge"></div>
+<h2 id="rank"></h2>
+<div class="q"><span id="final"></span> points</div>
+<p id="message" style="font-size:20px"></p>
+<p><b>Remember:</b> Multiples are found by multiplying; factors divide a number exactly. Common multiples/factors belong to both numbers.</p>
+<button class="primary" onclick="location.reload()">PLAY AGAIN 🔄</button>
+</section>
+
+</div>
+<p class="center" style="color:#68758a">Temmy Smart Classroom • Interactive Mathematics • Think like a mathematician!</p>
+</div>
+
+<script>
+const BANK=[
+["MULTIPLES","Which number is a multiple of 6?",["18","20","25","31"],"18","6 × 3 = 18."],
+["MULTIPLES","Complete: 7, 14, 21, ___, 35",["24","27","28","32"],"28","Add 7 each time."],
+["MULTIPLES","Which number is NOT a multiple of 5?",["15","25","35","42"],"42","Multiples of 5 end in 0 or 5."],
+["MULTIPLES","Which list shows the first five positive multiples of 4?",["4, 8, 12, 16, 20","1, 4, 8, 12, 16","4, 8, 14, 18, 20","0, 4, 8, 12, 15"],"4, 8, 12, 16, 20","Multiply 4 by 1, 2, 3, 4 and 5."],
+
+["COMMON MULTIPLES","Which is a common multiple of 3 and 5?",["12","15","18","21"],"15","15 appears in both the multiples of 3 and 5."],
+["COMMON MULTIPLES","Which is a common multiple of 4 and 6?",["16","20","24","28"],"24","24 ÷ 4 = 6 and 24 ÷ 6 = 4."],
+["COMMON MULTIPLES","Find all common multiples of 3 and 8 below 50.",["6, 12, 18, 24","24","24, 48","8, 16, 24, 32, 40, 48"],"24, 48","The multiples must appear in both lists."],
+["COMMON MULTIPLES","A bell rings every 4 minutes and a light flashes every 5 minutes. When will they happen together again?",["10 minutes","15 minutes","20 minutes","25 minutes"],"20 minutes","Find the first common multiple of 4 and 5."],
+
+["FACTORS","Which number is a factor of 24?",["5","6","7","10"],"6","24 ÷ 6 = 4 exactly."],
+["FACTORS","Which list contains all the positive factors of 18?",["1, 2, 3, 6, 9, 18","1, 2, 4, 9, 18","2, 3, 6, 9","1, 3, 5, 6, 18"],"1, 2, 3, 6, 9, 18","Each listed number divides 18 exactly."],
+["FACTORS","Which number is NOT a factor of 30?",["2","3","5","8"],"8","30 ÷ 8 is not a whole number."],
+["FACTORS","A number can be shared equally among 6 people with no remainder. Which could be the number?",["25","31","36","41"],"36","36 ÷ 6 = 6 exactly."],
+
+["COMMON FACTORS","Which is a common factor of 20 and 24?",["3","4","6","8"],"4","20 ÷ 4 and 24 ÷ 4 are both exact."],
+["COMMON FACTORS","Which list gives the common factors of 18 and 24?",["1, 2, 3, 6","1, 2, 4, 6","2, 3, 6, 12","1, 3, 6, 9"],"1, 2, 3, 6","These numbers divide both 18 and 24 exactly."],
+["COMMON FACTORS","Which number belongs in the overlap of 'factors of 20' and 'factors of 24'?",["5","7","4","9"],"4","4 divides both 20 and 24 exactly."],
+["COMMON FACTORS","Which is the greatest common factor of 30 and 20?",["5","10","15","20"],"10","10 is the greatest number that divides both exactly."],
+
+["THINK LIKE A MATHEMATICIAN","A pupil says 24 is a common multiple of 3 and 8. Is the pupil correct?",["Yes","No","Only sometimes","Cannot tell"],"Yes","24 ÷ 3 = 8 and 24 ÷ 8 = 3."],
+["THINK LIKE A MATHEMATICIAN","A pupil says 5 is a common factor of 20 and 24. Is the pupil correct?",["Yes","No","Only sometimes","Cannot tell"],"No","5 divides 20 exactly, but not 24."],
+["THINK LIKE A MATHEMATICIAN","Which statement is true?",["Every multiple is a factor.","Every factor divides the number exactly.","A common factor belongs to only one number.","A common multiple is always smaller than both numbers."],"Every factor divides the number exactly.","That is the definition of a factor."],
+["FINAL BOSS 👑","Which number is both a multiple of 2, 3 and 5 and less than 40?",["20","25","30","35"],"30","30 is divisible by 2, 3 and 5."]
+];
+
+let Q=[],i=0,score=0,lives=3,streak=0,bestStreak=0,correct=0,mode='practice',locked=false;
+const $=id=>document.getElementById(id);
+
+function setMode(m){
+ mode=m;
+ ['practice','challenge','classmode','mixed','vennmode'].forEach(x=>$(x).classList.remove('selected'));
+ $(m==='class'?'classmode':m==='venn'?'vennmode':m).classList.add('selected');
+}
+
+function startGame(){
+ const n=$('player').value.trim();
+ if(!n){alert('Please enter your name first.');return}
+ Q=mode==='mixed' ? shuffle([...BANK]).slice(0,20) : modeQuestions(mode);
+ i=0;score=0;lives=3;streak=0;bestStreak=0;correct=0;
+ $('home').classList.add('hidden');
+ if(mode==='venn'){startVenn(n);return}
+ $('game').classList.remove('hidden');
+ $('name').textContent=n;$('lifePill').style.display=mode==='challenge'?'inline-block':'none';
+ showQ();
+}
+function modeQuestions(m){
+ if(m==='practice')return BANK.slice(0,16);
+ if(m==='challenge')return BANK.slice(0,16).concat(BANK.slice(16));
+ if(m==='class')return BANK.filter(x=>x[0]!=='FINAL BOSS 👑').slice(0,16);
+ return BANK;
+}
+function shuffle(a){for(let j=a.length-1;j>0;j--){let k=Math.floor(Math.random()*(j+1));[a[j],a[k]]=[a[k],a[j]]}return a}
+
+
+const VENN_ROUNDS=[
+ {nums:[5,14,15,18,20,21,24,29,30,60]},
+ {nums:[6,8,10,12,15,18,20,24,30,36]},
+ {nums:[4,9,10,12,15,16,18,25,30,45]}
+];
+let vennIndex=0,vennSelected=null,vennScore=0,vennPlaced={A:[],AB:[],B:[],AC:[],ABC:[],BC:[],C:[],OUT:[]};
+
+function startVenn(name){
+ $('venn').classList.remove('hidden');
+ $('vennRound').textContent=1;$('vennScore').textContent=0;
+ vennIndex=0;vennScore=0;vennSelected=null;loadVenn();
+}
+function vennRegion(n){
+ let a=n%2===0,b=n%3===0,c=n%5===0;
+ if(a&&b&&c)return 'ABC';
+ if(a&&b)return 'AB';
+ if(a&&c)return 'AC';
+ if(b&&c)return 'BC';
+ if(a)return 'A';
+ if(b)return 'B';
+ if(c)return 'C';
+ return 'OUT';
+}
+function loadVenn(){
+ vennSelected=null;vennPlaced={A:[],AB:[],B:[],AC:[],ABC:[],BC:[],C:[],OUT:[]};
+ $('vennRound').textContent=vennIndex+1;
+ $('vennScore').textContent=vennScore;
+ $('vennFeedback').textContent='';
+ $('vennExplain').classList.add('hidden');
+ $('vennExplain').textContent='';
+ $('vennCheck').classList.add('hidden');
+ $('vennNext').classList.add('hidden');
+ document.querySelectorAll('.venn-zone').forEach(z=>z.classList.remove('selected-zone'));
+ $('vennNumbers').innerHTML='';
+ VENN_ROUNDS[vennIndex].nums.forEach(n=>{
+   let b=document.createElement('button');
+   b.className='mode venn-number';
+   b.textContent=n;b.dataset.number=n;
+   b.onclick=()=>selectVennNumber(b,n);
+   $('vennNumbers').appendChild(b);
+ });
+}
+function selectVennNumber(btn,n){
+ document.querySelectorAll('#vennNumbers button').forEach(x=>x.classList.remove('selected'));
+ btn.classList.add('selected');vennSelected=n;
+ document.querySelectorAll('.venn-zone').forEach(z=>z.classList.remove('selected-zone'));
+ $('vennFeedback').textContent='Now click the correct region for '+n+'.';
+}
+function vennPlace(region){
+ if(vennSelected===null){$('vennFeedback').textContent='Choose a number first.';return}
+ let expected=vennRegion(vennSelected);
+ document.querySelectorAll('.venn-zone').forEach(z=>z.classList.remove('selected-zone'));
+ event.currentTarget.classList.add('selected-zone');
+
+ if(expected===region){
+   vennPlaced[region].push(vennSelected);
+   vennScore++;
+   $('vennScore').textContent=vennScore;
+   $('vennFeedback').textContent='✅ Correct placement!';
+   let btn=[...$('vennNumbers').children].find(x=>Number(x.dataset.number)===vennSelected);
+   if(btn){btn.disabled=true;btn.classList.add('correct')}
+   $('vennExplain').classList.remove('hidden');
+   let reason=region==='OUT'
+      ? vennSelected+' is not divisible by 2, 3 or 5.'
+      : vennSelected+' is a multiple of '+({A:'2',AB:'2 and 3',B:'3',AC:'2 and 5',ABC:'2, 3 and 5',BC:'3 and 5',C:'5'})[region]+'.';
+   $('vennExplain').textContent='🧠 '+reason;
+   vennSelected=null;
+   if([...$('vennNumbers').children].every(x=>x.disabled)){
+      $('vennCheck').classList.remove('hidden');
+      $('vennFeedback').textContent='🎉 All numbers have been placed. Now check your Venn!';
+   }
+ }else{
+   $('vennFeedback').textContent='❌ Not quite. Check which numbers divide '+vennSelected+' exactly.';
+ }
+}
+function checkVenn(){
+ $('vennCheck').classList.add('hidden');
+ $('vennNext').classList.remove('hidden');
+ $('vennFeedback').textContent='🏆 Venn round checked! Excellent mathematical thinking.';
+}
+function nextVenn(){
+ vennIndex++;
+ if(vennIndex>=VENN_ROUNDS.length){
+   $('venn').classList.add('hidden');$('done').classList.remove('hidden');
+   let s=vennScore>=27?5:vennScore>=21?4:vennScore>=15?3:vennScore>=9?2:1;
+   $('stars').textContent='★'.repeat(s)+'☆'.repeat(5-s);
+   $('final').textContent=vennScore;
+   $('achievement').textContent=s===5?'🏆 VENN DIAGRAM MASTER':s>=4?'🥇 VENN DETECTIVE':s>=3?'🥉 VENN EXPLORER':'🌱 VENN STARTER';
+   $('rank').textContent='🔷 MULTIPLES VENN CHALLENGE COMPLETE!';
+   $('message').textContent='Excellent work sorting numbers by divisibility by 2, 3 and 5.';
+ }else loadVenn();
+}
+function showQ(){
+ locked=false;let d=Q[i];
+ $('level').textContent=i<4?1:i<8?2:i<12?3:4;
+ $('score').textContent=score;$('lives').textContent=lives;$('streak').textContent=streak;
+ $('fill').style.width=(i/Q.length*100)+'%';
+ $('progressText').textContent='Question '+(i+1)+' of '+Q.length+' • '+mode.toUpperCase();
+ $('question').innerHTML='<small class="topic">'+d[0]+'</small><br>'+d[1];
+ $('hint').textContent='💡 Think first, then choose.';
+ $('feedback').textContent='';$('next').classList.add('hidden');$('visual').innerHTML='';
+ $('answers').innerHTML='';
+ d[2].forEach(a=>{let b=document.createElement('button');b.textContent=a;b.onclick=()=>answer(b,a);$('answers').appendChild(b)});
+}
+function toast(text){
+ let t=document.createElement('div');t.className='toast';t.textContent=text;document.body.appendChild(t);
+ requestAnimationFrame(()=>t.classList.add('show'));
+ setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),350)},1300);
+}
+function answer(btn,a){
+ if(locked)return;locked=true;
+ let d=Q[i],ok=a===d[3];
+ if(ok){
+  correct++;streak++;bestStreak=Math.max(bestStreak,streak);
+  let points=1;if(streak>=3)points++;if(streak>=5)points++;if(i===Q.length-1)points+=2;
+  score+=points;btn.classList.add('correct');
+  $('feedback').textContent='✅ Correct! +'+points+' point'+(points===1?'':'s')+' 🎉';
+  if(streak===3)toast('🔥 3-answer streak! Bonus point!');
+  if(streak===5)toast('🔥🔥 5-answer streak! Extra bonus!');
+  if(i===Q.length-1)toast('👑 Final Boss bonus!');
+ }else{
+  streak=0;if(mode==='challenge')lives--;
+  btn.classList.add('wrong');
+  $('feedback').textContent='❌ Let’s learn from it. Correct answer: '+d[3];
+  [...$('answers').children].forEach(b=>{if(b.textContent===d[3])b.classList.add('correct')});
+ }
+ $('score').textContent=score;$('lives').textContent=lives;$('streak').textContent=streak;
+ $('hint').textContent='💡 '+d[4];$('next').classList.remove('hidden');
+ if(mode==='challenge'&&lives<=0){$('next').classList.add('hidden');setTimeout(endGame,800)}
+}
+function nextQ(){i++;if(i>=Q.length||(mode==='challenge'&&lives<=0))endGame();else showQ()}
+function endGame(){
+ $('game').classList.add('hidden');$('done').classList.remove('hidden');$('final').textContent=score;
+ let acc=Math.round(correct/Q.length*100);
+ let s=acc>=90?5:acc>=75?4:acc>=60?3:acc>=40?2:1;
+ $('stars').textContent='★'.repeat(s)+'☆'.repeat(5-s);
+ $('achievement').textContent=s===5?'🏆 GOLD MATHEMATICIAN':s>=4?'🥇 SILVER MATHEMATICIAN':s>=3?'🥉 BRONZE MATHEMATICIAN':'🌱 MATHEMATICS STARTER';
+ $('rank').textContent=s===5?'🌟 MULTIPLES & FACTORS MASTER!':s>=4?'🏆 MATHEMATICS CHALLENGER!':s>=3?'👏 MATHEMATICS EXPLORER!':'💪 KEEP PRACTISING!';
+ $('message').innerHTML='<b>'+acc+'% accuracy</b> • '+correct+'/'+Q.length+' correct • Best streak: '+bestStreak+' 🔥<br>'+
+ (acc>=75?'Excellent mathematical thinking! ':'Great effort! ')+$('name').textContent+' Keep practising multiples and factors.';
+}
+</script>
+</body></html>
