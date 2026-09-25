@@ -74,7 +74,10 @@ const Q=[
 
 let i=0,score=0,lives=3,streak=0,bestStreak=0,mode='practice',locked=false,correctCount=0;
 const $=x=>document.getElementById(x);
-
+let classroomGameSession={
+  token:new URLSearchParams(location.search).get('session'),
+  gameId:'grade3-temmy-number-challenge'
+};
 function setMode(m){
   mode=m;
   ['practice','challenge','classmode'].forEach(x=>$(x).classList.remove('selected'));
