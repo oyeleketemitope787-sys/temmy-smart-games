@@ -26,7 +26,7 @@ button{border:0;border-radius:16px;padding:15px 20px;font-size:18px;font-weight:
 @keyframes shake{25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
 @keyframes pulse{50%{transform:scale(1.04)}}
 @media(max-width:650px){.modes,.answers{grid-template-columns:1fr}.card{padding:18px}}
-</style></head><body><div class="wrap"><div class="card">
+</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><div class="wrap">
 
 <section id="home" class="center">
 <div class="badge">TEMMY SMART GAMES • GRADE 3</div><div class="icon">🏆</div>
@@ -225,5 +225,40 @@ function endGame(){
     '<b>'+accuracy+'% accuracy</b> • '+correctCount+'/'+Q.length+' correct • Best streak: '+bestStreak+' 🔥<br>'+
     (score>=12?'Excellent mathematical thinking, ':'Great effort, ')+
     $('name').textContent+'! Keep practising place value and ordering.';
+recordGameResultToClassroom(score,Q.length);
 }
-</script></body></html>
+</script>
+
+<script>
+const CLASSROOM_SUPABASE_URL='https://askhdgmjqezvwavfhqzj.supabase.co';
+const CLASSROOM_SUPABASE_KEY='sb_publishable_8qEBd9ItCq8GC71LSbL2Tw_nW1R5DDA';
+
+const classroomSupabase=window.supabase.createClient(
+  CLASSROOM_SUPABASE_URL,
+  CLASSROOM_SUPABASE_KEY
+);
+
+async function recordGameResultToClassroom(score,maxScore){
+  if(!classroomGameSession?.token)return null;
+
+  const {data,error}=await classroomSupabase.rpc(
+    'record_student_game_result',
+    {
+      p_session_token:classroomGameSession.token,
+      p_game_id:classroomGameSession.gameId,
+      p_game_name:'Temmy Number Challenge',
+      p_score:score,
+      p_max_score:maxScore
+    }
+  );
+
+  if(error){
+    console.error('Classroom game result error:',error);
+    return null;
+  }
+
+  return data?.[0]||null;
+}
+</script>
+
+</body></html>
