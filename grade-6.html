@@ -1,25 +1,291 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Temmy Smart Games | Grade 6 Mathematics</title><style>
-:root{--blue:#153B7A;--purple:#6B46A8;--gold:#C99700;--ink:#172033;--muted:#687386;--soft:#F4F7FB}
-*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--soft);color:var(--ink)}
-.hero{background:linear-gradient(135deg,var(--blue),#2454A5,var(--purple));color:#fff;text-align:center;padding:42px 18px 70px}
-.brand{display:inline-block;border:1px solid #ffffff66;border-radius:999px;padding:7px 14px;font-size:.75rem;font-weight:800;letter-spacing:.12em}
-h1{font-size:clamp(2.2rem,6vw,4rem);margin:18px 0 8px}.hero p{margin:0;font-size:1.08rem}
-.container{max-width:900px;margin:-34px auto 0;padding:0 18px 55px;position:relative}.card{background:#fff;border-radius:24px;padding:28px;box-shadow:0 16px 45px #153b7a1f}
-.back{display:inline-block;text-decoration:none;color:var(--blue);font-weight:800;margin-bottom:18px}
-.topic{border:1px solid #e3e8f0;border-radius:18px;padding:20px;margin-top:15px;background:#fff}
-.topic h2{margin:0;color:var(--purple)}.topic p{color:var(--muted);line-height:1.5}
-.play{display:inline-block;background:var(--purple);color:#fff;text-decoration:none;padding:13px 18px;border-radius:13px;font-weight:800}
-.soon{display:inline-block;background:#f1f3f6;color:#737b89;padding:10px 14px;border-radius:12px;font-weight:700}
-footer{text-align:center;color:#7a8495;padding:0 18px 28px;font-size:.85rem}
-</style></head>
-<body><header class="hero"><span class="brand">TEMMY SMART GAMES</span>
-<h1>Grade 6 Mathematics</h1><p>Multiples & Factors</p></header>
-<main class="container"><section class="card">
-<a class="back" href="index.html">← Back to Mathematics</a><h2>Interactive Games</h2><div class="topic">
-<h2>Multiples & Factors</h2>
-<p><strong>Multiples & Factors Challenge</strong> — an interactive mathematics game for Grade 6 learners.</p>
-<a class="play" href="games/multiples-factors-challenge.html">🎮 Play Game</a>
+<title>Temmy Smart Games | Grade 6 Mathematics</title>
+
+<style>
+:root{
+--blue:#153B7A;
+--purple:#6B46A8;
+--gold:#C99700;
+--ink:#172033;
+--muted:#687386;
+--soft:#F4F7FB
+}
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Segoe UI,Arial,sans-serif;
+background:var(--soft);
+color:var(--ink)
+}
+
+.hero{
+background:linear-gradient(135deg,var(--blue),#2454A5,var(--purple));
+color:#fff;
+text-align:center;
+padding:42px 18px 70px
+}
+
+.brand{
+display:inline-block;
+border:1px solid #ffffff66;
+border-radius:999px;
+padding:7px 14px;
+font-size:.75rem;
+font-weight:800;
+letter-spacing:.12em
+}
+
+h1{
+font-size:clamp(2.2rem,6vw,4rem);
+margin:18px 0 8px
+}
+
+.hero p{
+margin:0;
+font-size:1.08rem
+}
+
+.container{
+max-width:950px;
+margin:-34px auto 0;
+padding:0 18px 55px;
+position:relative
+}
+
+.card{
+background:#fff;
+border-radius:24px;
+padding:28px;
+box-shadow:0 16px 45px #153b7a1f
+}
+
+.back{
+display:inline-block;
+text-decoration:none;
+color:var(--blue);
+font-weight:800;
+margin-bottom:18px
+}
+
+.intro{
+text-align:center;
+color:var(--muted);
+margin:0 0 25px
+}
+
+.topic{
+border:1px solid #e3e8f0;
+border-radius:18px;
+padding:20px;
+margin-top:18px;
+background:#fff
+}
+
+.topic h2{
+margin:0;
+color:var(--purple);
+font-size:1.35rem
+}
+
+.topic p{
+color:var(--muted);
+line-height:1.5
+}
+
+.games{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+margin-top:15px
+}
+
+.game{
+border:1px solid #e2e6ef;
+border-radius:15px;
+padding:16px;
+background:#fafbfe
+}
+
+.game h3{
+margin:0 0 7px;
+color:var(--blue);
+font-size:1.05rem
+}
+
+.game p{
+margin:0 0 12px;
+font-size:.9rem
+}
+
+.play{
+display:inline-block;
+background:var(--purple);
+color:#fff;
+text-decoration:none;
+padding:10px 14px;
+border-radius:11px;
+font-weight:800;
+font-size:.9rem
+}
+
+.count{
+display:inline-block;
+background:#e7f8f1;
+color:#08734f;
+padding:7px 11px;
+border-radius:999px;
+font-size:.78rem;
+font-weight:800;
+margin-left:8px
+}
+
+footer{
+text-align:center;
+color:#7a8495;
+padding:0 18px 28px;
+font-size:.85rem
+}
+
+@media(max-width:650px){
+.games{
+grid-template-columns:1fr
+}
+}
+</style>
+</head>
+
+<body>
+
+<header class="hero">
+<span class="brand">TEMMY SMART GAMES</span>
+<h1>Grade 6 Mathematics</h1>
+<p>7 Interactive Games Ready!</p>
+</header>
+
+<main class="container">
+
+<section class="card">
+
+<a class="back" href="index.html">← Back to Mathematics</a>
+
+<h2>Interactive Games</h2>
+
+<p class="intro">
+Choose a topic and challenge yourself with an interactive mathematics game.
+</p>
+
+<!-- MULTIPLES & FACTORS -->
+<div class="topic">
+
+<h2>Multiples & Factors <span class="count">1 Game</span></h2>
+
+<p>
+Build your skills with multiples and factors.
+</p>
+
+<div class="games">
+
+<div class="game">
+<h3>🎮 Multiples & Factors Challenge</h3>
+<p>Test your knowledge of multiples and factors.</p>
+<a class="play" href="games/grade6/multiples-factors/multiples-factors-challenge.html">
+Play Game
+</a>
 </div>
-</section></main><footer>© 2026 Temmy Smart Games • Interactive Learning Games</footer></body></html>
+
+</div>
+</div>
+
+
+<!-- POSITIVE & NEGATIVE -->
+<div class="topic">
+
+<h2>Positive & Negative Numbers <span class="count">1 Game</span></h2>
+
+<p>
+Explore positive and negative numbers through interactive challenges.
+</p>
+
+<div class="games">
+
+<div class="game">
+<h3>🎮 Positive & Negative Numbers</h3>
+<p>Practise working with positive and negative numbers.</p>
+<a class="play" href="games/grade6/positive-negative/positive-negative-numbers.html">
+Play Game
+</a>
+</div>
+
+</div>
+</div>
+
+
+<!-- WEEK 5 INTEGERS -->
+<div class="topic">
+
+<h2>Integers — Week 5 <span class="count">5 Games</span></h2>
+
+<p>
+Five interactive games designed to strengthen Grade 6 integer skills.
+</p>
+
+<div class="games">
+
+<div class="game">
+<h3>🎮 Integer Race</h3>
+<p>Race through integer challenges and improve your accuracy.</p>
+<a class="play" href="games/grade6/week5-integers/01-integer-race.html">
+Play Game
+</a>
+</div>
+
+<div class="game">
+<h3>🎮 Integer Vault</h3>
+<p>Unlock the correct answers by solving integer problems.</p>
+<a class="play" href="games/grade6/week5-integers/02-integer-vault.html">
+Play Game
+</a>
+</div>
+
+<div class="game">
+<h3>🎮 Integer Expedition</h3>
+<p>Go on an interactive expedition through integer challenges.</p>
+<a class="play" href="games/grade6/week5-integers/03-integer-expedition.html">
+Play Game
+</a>
+</div>
+
+<div class="game">
+<h3>🎮 Integer Match Lab</h3>
+<p>Match integer problems with their correct answers.</p>
+<a class="play" href="games/grade6/week5-integers/04-integer-match-lab.html">
+Play Game
+</a>
+</div>
+
+<div class="game">
+<h3>🎮 Integer Command</h3>
+<p>Take command and demonstrate your integer skills.</p>
+<a class="play" href="games/grade6/week5-integers/05-integer-command.html">
+Play Game
+</a>
+</div>
+
+</div>
+</div>
+
+</section>
+</main>
+
+<footer>
+© 2026 Temmy Smart Games • Interactive Learning Games
+</footer>
+
+</body>
+</html>
