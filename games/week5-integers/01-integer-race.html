@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temmy Smart Games • Integer Race</title>
+<style>
+:root{--blue:#153B7A;--purple:#6B46A8;--gold:#C99700;--ink:#172033;--muted:#687386;--soft:#F4F7FB;--green:#16835b;--red:#b42336}
+*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:linear-gradient(135deg,#f5f8ff,#fffaf0);color:var(--ink)}
+.wrap{max-width:1050px;margin:auto;padding:18px}.card{background:#fff;border-radius:26px;padding:26px;box-shadow:0 16px 45px #153b7a20}
+.center{text-align:center}.badge,.pill{display:inline-block;padding:8px 13px;border-radius:999px;background:#eee9ff;color:var(--purple);font-weight:800}.brand{letter-spacing:.1em;font-size:.78rem}
+h1{font-size:clamp(2.1rem,6vw,4rem);color:var(--blue);margin:10px 0}.sub{font-size:1.1rem;color:var(--muted)}
+input{width:min(480px,90%);padding:14px;border:2px solid #dce3ef;border-radius:13px;font-size:18px}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:850px;margin:20px auto}.mode{border:3px solid #eef1f6;background:#fafbfe;text-align:left}.mode.selected{border-color:var(--purple);background:#f3efff}.mode b{display:block;color:var(--purple);margin-bottom:5px}
+button{border:0;border-radius:14px;padding:13px 17px;font-size:17px;font-weight:800;cursor:pointer}.primary{background:var(--blue);color:#fff}.green{background:var(--green);color:#fff}.hidden{display:none}
+.top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}.bar{height:10px;background:#e7ebf2;border-radius:10px;margin:16px 0;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple),var(--gold));width:0;transition:.3s}
+.level{text-align:center;color:var(--purple);font-weight:900;letter-spacing:.05em}.q{text-align:center;font-size:clamp(25px,4vw,38px);font-weight:900;margin:15px 0}.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;max-width:720px;margin:82px auto 18px}.answers button{background:#f1edff;color:var(--purple);min-height:62px}.correct{background:#c9f7e5!important;color:var(--green)!important}.wrong{background:#ffdce1!important;color:var(--red)!important}
+.feedback{text-align:center;font-size:20px;font-weight:800;min-height:30px;margin:14px}.hint{text-align:center;color:var(--muted);min-height:26px}.next{display:block;margin:14px auto}
+.numberline{max-width:900px;margin:20px auto 0;padding:16px 8px 28px;overflow:hidden}.ticks{display:flex;align-items:flex-start;justify-content:space-between;gap:2px}.tick{flex:1;text-align:center;font-weight:800}.tick:before{content:"";display:block;height:15px;width:3px;background:var(--ink);margin:0 auto 4px}.tick button{padding:5px;background:transparent;color:var(--ink);font-size:14px}.line{height:4px;background:var(--ink);margin:-25px 12px 0;position:relative;z-index:0}.ticks{position:relative;z-index:1}.runner{font-size:28px;text-align:center;margin:4px}
+.callout{max-width:800px;margin:18px auto;padding:15px 18px;border-radius:16px;background:#f5f8ff;border-left:6px solid var(--blue);line-height:1.5}.toast{position:fixed;left:50%;top:18px;transform:translate(-50%,-130px);background:var(--ink);color:#fff;padding:14px 22px;border-radius:18px;font-weight:900;transition:.3s;z-index:10}.toast.show{transform:translate(-50%,0)}
+.stars{font-size:42px;color:var(--gold)}.big{font-size:2.4rem;font-weight:900;color:var(--blue)}
+@media(max-width:700px){.modes,.answers{grid-template-columns:1fr}.card{padding:18px}.tick button{font-size:11px;padding:4px}.line{margin-top:-23px}}
+
+/* Celebration upgrade */
+.soundBtn{background:#fff;border:2px solid #dce3ef;color:var(--blue);padding:9px 12px;border-radius:12px;font-size:15px}
+#confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:30}
+.confettiPiece{position:absolute;top:-20px;width:10px;height:18px;opacity:.95;animation:fall 2.8s linear forwards;transform:rotate(0deg)}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.1}}
+.trophyWrap{font-size:92px;line-height:1;animation:trophyPop .75s cubic-bezier(.2,1.5,.4,1) both;filter:drop-shadow(0 8px 8px #153b7a25)}
+@keyframes trophyPop{0%{transform:scale(.2) rotate(-15deg);opacity:0}70%{transform:scale(1.15) rotate(4deg)}100%{transform:scale(1) rotate(0);opacity:1}}
+.tier{display:inline-block;margin:12px 0;padding:10px 18px;border-radius:999px;background:#f4f0ff;color:var(--purple);font-weight:900;font-size:18px}
+.scoreReveal{animation:scorePop .8s ease both}
+@keyframes scorePop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.miniBurst{position:fixed;left:50%;top:48%;transform:translate(-50%,-50%);font-size:46px;z-index:25;pointer-events:none;animation:burst .9s ease-out forwards}
+@keyframes burst{0%{transform:translate(-50%,-50%) scale(.5);opacity:0}25%{opacity:1}100%{transform:translate(-50%,-120%) scale(1.5);opacity:0}}
+@media(max-width:700px){.trophyWrap{font-size:72px}}
+</style>
+</head>
+<body>
+<div class="wrap"><div class="card">
+<section id="home" class="center">
+<div class="badge brand">TEMMY SMART GAMES • GRADE 6</div>
+<div style="font-size:68px;margin-top:8px">🏃‍♂️</div>
+<h1>INTEGER RACE</h1>
+<div class="sub">Positive & Negative Integers • Unit 4.1 • Week 5</div>
+<p><b>Think → Move → Calculate → Check</b></p>
+<p>Race along the number line by solving integer problems correctly.</p>
+<input id="player" maxlength="24" placeholder="Enter your name">
+<div class="modes">
+<button id="practice" class="mode selected" onclick="setMode('practice')"><b>🟢 Practice</b>Learn from mistakes. No lives lost.</button>
+<button id="challenge" class="mode" onclick="setMode('challenge')"><b>🟣 Challenge</b>15 questions • 3 lives.</button>
+<button id="classmode" class="mode" onclick="setMode('class')"><b>🟡 Class Race</b>Answer, explain and discuss.</button>
+</div>
+<button class="primary" onclick="startGame()">START RACE 🚀</button>
+<div class="callout"><b>Week 5 focus</b><br>Add and subtract positive and negative integers, use a number line, find the difference between integers, and estimate before calculating when appropriate.</div>
+</section>
+
+<section id="game" class="hidden">
+<div class="top"><span class="pill">👤 <span id="name"></span></span><span class="pill">🏁 LEVEL <span id="level">1</span></span><span class="pill">⭐ <span id="score">0</span>/15</span><span id="lifePill" class="pill">❤️ <span id="lives">3</span></span><span class="pill">🔥 <span id="streak">0</span></span><button id="soundBtn" class="soundBtn" onclick="toggleSound()">🔊 Sound ON</button></div>
+<div class="bar"><div id="fill" class="fill"></div></div>
+<div id="levelText" class="level"></div><div id="runner" class="runner">🏃‍♂️</div>
+<div id="question" class="q"></div><div id="special"></div>
+<div id="answers" class="answers"></div><div id="feedback" class="feedback"></div><div id="hint" class="hint"></div><div id="progressText" class="hint"></div>
+<button id="next" class="next green hidden" onclick="nextQ()">NEXT ➜</button>
+</section>
+
+<section id="done" class="center hidden">
+<div id="trophy" class="trophyWrap">🏆</div>
+<div id="tier" class="tier"></div>
+<div id="stars" class="stars"></div><h1>RACE COMPLETE!</h1>
+<div class="big scoreReveal"><span id="final">0</span> / 15 base points</div>
+<p id="result"></p><div id="achievement" class="badge"></div>
+<p id="message" style="font-size:19px"></p>
+<button class="primary" onclick="location.reload()">RACE AGAIN 🔄</button>
+</section>
+</div><p class="center" style="color:var(--muted)">Temmy Smart Games • Assalam Private School • Mathematics Department</p></div>
+<div id="toast" class="toast"></div><div id="confetti"></div>
+
+<script>
+const BANK=[
+['Start at −7. Move +2. Where do you land?',['−9','−5','5','9'],'−5','Adding +2 means move 2 steps right.',-5],
+['Start at 4. Move −8. Where do you land?',['12','−4','4','−12'],'−4','Subtracting 8 means move 8 steps left.',-4],
+['Calculate: −30 + 5',['−35','−25','25','35'],'−25','Start at −30 and move 5 steps right.',-25],
+['Calculate: −7 + 2',['−9','−5','5','9'],'−5','A positive number moves you right.',-5],
+['Calculate: 4 − 8',['12','4','−4','−12'],'−4','4 − 8 means move 8 steps left.',-4],
+['Calculate: −5 − 3',['−2','2','−8','8'],'−8','Subtracting 3 moves 3 steps left.',-8],
+['Calculate: 6 − (−4)',['2','−2','10','−10'],'10','Subtracting a negative is the same as adding.',10],
+['Calculate: −9 − (−5)',['−14','−4','4','14'],'−4','−9 + 5 = −4.',-4],
+['Find the difference between −5 and 3.',['2','8','−8','−2'],'8','Count the distance from −5 to 3: 8 units.',8],
+['Find the difference between −12 and −4.',['−16','−8','8','16'],'8','The distance between −12 and −4 is 8 units.',8],
+['Estimate: 48,700 + 19,900 ≈',['50,000','60,000','70,000','80,000'],'70,000','Round 48,700 to 50,000 and 19,900 to 20,000.',null],
+['Start at −10. Move +6, then −4. Final position?',['−20','−8','0','8'],'−8','−10 + 6 = −4, then −4 − 4 = −8.',-8],
+['Start at 8. Move −13, then +2. Final position?',['−7','−3','3','7'],'−3','8 − 13 = −5, then −5 + 2 = −3.',-3],
+['Calculate: −18 − 7',['−11','−25','25','11'],'−25','Move 7 steps left from −18.',-25],
+['BOSS: Start at −4. Move +7, −5, then +8. Final position?',['−10','0','6','10'],'6','−4 + 7 = 3; 3 − 5 = −2; −2 + 8 = 6.',6]
+];
+let mode='practice',i=0,score=0,correct=0,lives=3,streak=0,best=0,locked=false;
+let soundOn=true,audioCtx=null;
+const $=id=>document.getElementById(id);
+function setMode(m){mode=m;['practice','challenge','classmode'].forEach(x=>$(x).classList.remove('selected'));$(m==='class'?'classmode':m).classList.add('selected')}
+function startGame(){const n=$('player').value.trim();if(!n){alert('Please enter your name first.');return}
+initAudio();i=0;score=0;correct=0;lives=3;streak=0;best=0;$('name').textContent=n;$('home').classList.add('hidden');$('done').classList.add('hidden');$('game').classList.remove('hidden');$('lifePill').style.display=mode==='challenge'?'inline-block':'none';showQ()}
+
+function initAudio(){
+  if(!soundOn)return;
+  try{
+    if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended')audioCtx.resume();
+  }catch(e){}
+}
+function tone(freq,duration,type='sine',volume=.045,delay=0){
+  if(!soundOn)return;
+  try{
+    initAudio(); if(!audioCtx)return;
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type=type;o.frequency.setValueAtTime(freq,audioCtx.currentTime+delay);
+    g.gain.setValueAtTime(0.0001,audioCtx.currentTime+delay);
+    g.gain.exponentialRampToValueAtTime(volume,audioCtx.currentTime+delay+.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+delay+duration);
+    o.connect(g);g.connect(audioCtx.destination);o.start(audioCtx.currentTime+delay);o.stop(audioCtx.currentTime+delay+duration+.03);
+  }catch(e){}
+}
+function correctSound(){tone(660,.12,'sine',.055);tone(880,.16,'sine',.045,.09)}
+function wrongSound(){tone(220,.16,'triangle',.035);tone(175,.18,'triangle',.025,.12)}
+function streakSound(level=1){
+  const notes=level>=5?[523,659,784,1047]:[523,659,784];
+  notes.forEach((n,k)=>tone(n,.14,'sine',.045,k*.08));
+}
+function victorySound(pct){
+  const notes=pct>=90?[523,659,784,1047,1319]:pct>=75?[523,659,784,1047]:pct>=60?[440,554,659,880]:[392,494,587];
+  notes.forEach((n,k)=>tone(n,.22,'sine',.055,k*.14));
+}
+function toggleSound(){
+  soundOn=!soundOn;
+  $('soundBtn').textContent=soundOn?'🔊 Sound ON':'🔇 Sound OFF';
+  if(soundOn)initAudio();
+  if(soundOn)tone(660,.12);
+}
+function miniCelebrate(emoji){
+  const el=document.createElement('div');el.className='miniBurst';el.textContent=emoji;
+  document.body.appendChild(el);setTimeout(()=>el.remove(),950);
+}
+function confetti(count=90){
+  const box=$('confetti');box.innerHTML='';
+  for(let k=0;k<count;k++){
+    const el=document.createElement('span');el.className='confettiPiece';
+    el.textContent=Math.random()>.5?'◆':'●';
+    el.style.left=(Math.random()*100)+'%';
+    el.style.animationDelay=(Math.random()*0.7)+'s';
+    el.style.animationDuration=(2.1+Math.random()*1.7)+'s';
+    el.style.fontSize=(8+Math.random()*10)+'px';
+    el.style.color=['#153B7A','#6B46A8','#C99700','#16835b','#b42336'][k%5];
+    box.appendChild(el);
+  }
+  setTimeout(()=>box.innerHTML='',4300);
+}
+function finalCelebration(pct,stars){
+  const tier=pct>=90?'🏆 CHAMPION TROPHY':pct>=75?'🥇 GOLD MEDAL':pct>=60?'🥈 SILVER MEDAL':'🌱 KEEP RACING';
+  $('tier').textContent=tier;
+  $('trophy').textContent=pct>=90?'🏆':pct>=75?'🥇':pct>=60?'🥈':'🌱';
+  if(pct>=60){confetti(pct>=90?130:95);miniCelebrate(pct>=90?'🏆':'🎉');}
+  else {miniCelebrate('💪');}
+  victorySound(pct);
+}
+function showQ(){locked=false;const d=BANK[i],level=i<3?1:i<6?2:i<9?3:i<12?4:5;$('level').textContent=level;$('levelText').textContent=['WARM-UP','INTEGER MOVES','SUBTRACTION ZONE','MIXED TRACK','BOSS RACE'][level-1];$('score').textContent=score;$('lives').textContent=lives;$('streak').textContent=streak;$('fill').style.width=(i/BANK.length*100)+'%';$('runner').textContent=level===5?'🏆':'🏃‍♂️';$('question').textContent=d[0];$('feedback').textContent='';$('hint').textContent='';$('progressText').textContent='Question '+(i+1)+' of 15';$('next').classList.add('hidden');$('answers').innerHTML='';d[1].forEach(x=>{const b=document.createElement('button');b.textContent=x;b.onclick=()=>answer(b,x);$('answers').appendChild(b)});renderLine(d)}
+function renderLine(d){const s=document.createElement('div');s.className='numberline';const t=document.createElement('div');t.className='ticks';for(let n=-10;n<=10;n++){const w=document.createElement('div');w.className='tick';const b=document.createElement('button');b.textContent=n;b.onclick=()=>lineGuess(n);w.appendChild(b);t.appendChild(w)}const line=document.createElement('div');line.className='line';s.appendChild(t);s.appendChild(line);$('special').innerHTML='';$('special').appendChild(s)}
+function lineGuess(n){const target=BANK[i][4];if(target!==null&&n===target){const b=[...$('answers').children].find(x=>x.textContent===BANK[i][2]);answer(b,BANK[i][2])}else $('feedback').textContent='Use the number line carefully — try again.'}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1300)}
+function answer(btn,a){if(locked)return;locked=true;const d=BANK[i],ok=a===d[2];if(ok){correct++;score++;streak++;best=Math.max(best,streak);if(btn)btn.classList.add('correct');$('feedback').textContent='✅ Correct! +1 base point 🎉';$('hint').textContent='🧠 '+d[3];correctSound();miniCelebrate('✨');if(streak===3){toast('🔥 3-answer streak!');streakSound(3)}if(streak===5){toast('🔥🔥 5-answer streak!');streakSound(5)}}else{streak=0;if(mode==='challenge')lives--;if(btn)btn.classList.add('wrong');$('feedback').textContent='❌ Not quite. Correct answer: '+d[2];$('hint').textContent='💡 '+d[3];wrongSound();[...$('answers').children].forEach(b=>{if(b.textContent===d[2])b.classList.add('correct')})}$('score').textContent=score;$('lives').textContent=lives;$('streak').textContent=streak;$('next').classList.remove('hidden');if(mode==='challenge'&&lives<=0){$('next').classList.add('hidden');setTimeout(endGame,700)}}
+function nextQ(){i++;if(i>=BANK.length||(mode==='challenge'&&lives<=0))endGame();else showQ()}
+function endGame(){
+  $('game').classList.add('hidden');$('done').classList.remove('hidden');
+  const pct=Math.round(correct/BANK.length*100),stars=pct>=90?5:pct>=75?4:pct>=60?3:pct>=40?2:1;
+  $('final').textContent=score;
+  $('stars').textContent='★'.repeat(stars)+'☆'.repeat(5-stars);
+  $('achievement').textContent=stars===5?'🏆 INTEGER RACE CHAMPION':stars>=4?'🥇 INTEGER RACER':stars>=3?'🥉 NUMBER-LINE EXPLORER':'🌱 INTEGER STARTER';
+  $('result').textContent=correct+' / 15 correct • '+pct+'% accuracy • Best streak: '+best+' 🔥';
+  $('message').innerHTML=(pct>=75?'Excellent work! ':'Good effort! ')+'Remember: move right for positive changes and left for negative changes. Explain your method, not just your answer.';
+  finalCelebration(pct,stars);
+}
+</script>
+</body></html>
