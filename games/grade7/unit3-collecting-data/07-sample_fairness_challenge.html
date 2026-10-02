@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temmy Smart Games — Sample Fairness Challenge</title>
+<style>
+:root{--b:#153B7A;--g:#C99700;--p:#6B46C1;--i:#172033;--s:#f5f7fc;--ok:#18864b;--bad:#c0392b}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef3ff,#fff9e8);color:var(--i)}
+.app{max-width:1000px;margin:auto;padding:18px}.top{background:linear-gradient(135deg,var(--b),var(--p));color:white;border-radius:22px;padding:22px;text-align:center}
+.badge{display:inline-block;background:#ffffff22;border:1px solid #ffffff55;border-radius:30px;padding:7px 13px;font-weight:700;font-size:13px}
+h1{margin:10px 0 4px;font-size:30px}.sub{opacity:.92}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:15px 0}
+.stat{background:white;border-radius:15px;padding:12px;text-align:center;box-shadow:0 5px 18px #153b7a12}.stat b{display:block;color:var(--b);font-size:22px}
+.card{background:white;border-radius:22px;padding:24px;margin-top:14px;box-shadow:0 8px 28px #153b7a15}.round{color:var(--p);font-weight:800}
+.scenario{font-size:21px;font-weight:800;line-height:1.4;margin:12px 0 18px}.question{background:var(--s);border-left:5px solid var(--g);padding:17px;border-radius:12px;margin-bottom:18px}
+.options{display:grid;gap:12px}.opt{border:2px solid #dce2ef;background:white;border-radius:14px;padding:15px;text-align:left;font-size:16px;font-weight:700;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--p);background:#faf8ff}.opt.wrong{border-color:var(--bad);background:#fff0ee;color:var(--bad)}.opt.correct{border-color:var(--ok);background:#eaf8f0;color:var(--ok)}
+.controls{display:flex;gap:10px;margin-top:18px}.btn{border:0;border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer}.hint{background:#fff6d8;color:#765900}.next{background:var(--b);color:white}.next:disabled{opacity:.35}
+.feedback,.hintbox{margin-top:16px;padding:15px;border-radius:13px;line-height:1.5}.feedback{display:none}.good{background:#eaf8f0;border:1px solid #9ed7b8}.bad{background:#fff0ee;border:1px solid #efaaa3}.hintbox{display:none;background:#f2efff;border:1px solid #cfc2f5}
+.progress{height:9px;background:#e8ebf3;border-radius:10px;overflow:hidden;margin-top:15px}.bar{height:100%;background:linear-gradient(90deg,var(--g),var(--p));transition:.3s}.foot{text-align:center;padding:18px;color:#687084;font-size:13px}
+@media(max-width:650px){.stats{grid-template-columns:repeat(2,1fr)}h1{font-size:24px}.card{padding:17px}}
+</style></head><body><div class="app">
+<div class="top"><span class="badge">GRADE 7 • UNIT 3 • GAME 7</span><h1>⚖️ Sample Fairness Challenge</h1><div class="sub">Investigate sample size, representation and fairness before trusting the data.</div></div>
+<div class="stats"><div class="stat">Score<b id="score">0</b></div><div class="stat">Streak<b id="streak">0</b></div><div class="stat">Accuracy<b id="accuracy">0%</b></div><div class="stat">Case<b id="caseNo">1/10</b></div></div>
+<div class="card"><div class="round" id="round">CASE 1</div><div class="scenario" id="scenario"></div><div class="question"><strong>Investigator question:</strong><br><span id="prompt"></span></div><div class="options" id="options"></div>
+<div class="controls"><button class="btn hint" id="hint">💡 Hint</button><button class="btn next" id="next" disabled>Next Case →</button></div>
+<div class="hintbox" id="hintbox"></div><div class="feedback" id="feedback"></div><div class="progress"><div class="bar" id="bar"></div></div></div>
+<div class="foot">TEMMY SMART GAMES • Interactive Mathematics • Learn • Play • Think • Achieve</div></div>
+<script>
+const cases=[
+["A school has 1,000 students. A researcher wants to know whether students like the new school uniform. She asks 10 students from one class.","What is the main concern with this sample?",["The sample may be too small and may not represent the whole school","The sample is automatically random","The sample must contain only teachers","The population is exactly 10 students"],0,"Only 10 students from one class may not give a good picture of all 1,000 students.","Think about both the size of the sample and where the students came from."],
+["A school has 600 students. A researcher randomly selects 60 students from the school's full student list.","Why is this a sensible sampling plan?",["It gives a reasonably sized group and uses random selection from the population","It guarantees that every student will give the same answer","It asks only students who agree with the researcher","It includes every student in the school"],0,"The sample is large enough to collect useful information and is selected randomly from the population.","Look at sample size AND how the students are selected."],
+["A school wants to know students' favourite sport. The researcher asks only members of the football team.","Why could this sample be unrepresentative?",["Football team members may have different preferences from the wider student population","The football team contains no students","The population must be the football team","Random sampling always selects football players"],0,"The group has been selected because of its connection to one sport, so it may not reflect all students' preferences.","Would football-team members necessarily have the same preferences as everyone else?"],
+["Two plans are proposed for a survey of 900 students. Plan A asks 15 students from one class. Plan B randomly selects 90 students from across the school.","Which statement best describes the two plans?",["Plan B has broader coverage and is more likely to represent the school","Plan A must always be more representative","Both plans contain the entire population","Sample size and selection method do not matter"],0,"Plan B uses a larger random sample drawn across the school, giving broader coverage of the population.","Compare where the students come from and how many are selected."],
+["A researcher asks 100 volunteers about school lunch. Most volunteers strongly support the lunch menu.","What should the researcher consider before using the result to describe all students?",["Volunteers may differ from students who did not volunteer","The result is automatically representative because 100 is a large number","Volunteers are always a random sample","No population is needed"],0,"People who choose to volunteer may have different opinions from those who do not volunteer.","Ask whether everyone had the same chance of being selected."],
+["A school has 800 students: 200 in Grade 7, 200 in Grade 8, 200 in Grade 9 and 200 in Grade 10. A survey randomly selects 80 students across the school.","What is a useful reason for selecting students across the school?",["It gives the sample coverage of different grade groups","It guarantees every answer is correct","It removes the need for a population","It makes the sample identical to the whole school"],0,"The investigation concerns the school, so including students from different grades can help the sample reflect the wider population.","Think about whether one grade can speak for all four grades."],
+["A researcher wants opinions about a new sports field. She asks 5 students who use the sports field every day.","What is the most important concern?",["The students selected may have views that differ from students who rarely or never use the field","The sample is automatically representative because the students are interested","The population is only those 5 students","Random selection has definitely occurred"],0,"Selecting only frequent users can leave out opinions from other students affected by the sports field.","Who has been left out?"],
+["A school has 400 students. Sample A contains 40 students chosen randomly. Sample B contains 40 students chosen by asking the researcher's friends.","Why is Sample A preferable for a fair investigation?",["Random selection reduces the risk of deliberately choosing a particular group","Friends always give better answers","Sample B is automatically larger","Random sampling means every student must be selected"],0,"A random method avoids selecting people simply because they are easy to reach or personally known to the researcher.","Compare the selection process, not just the number of students."],
+["A school survey has a population of 1,200 students. One proposed sample contains 2 students; another contains 80 students selected randomly across the school.","Which sample is more likely to give useful information about the whole population?",["The 80-student random sample","The 2-student sample","Both are equally likely because sample size never matters","Neither can contain any useful information"],0,"The larger sample gives more observations, while random selection helps it cover the wider population.","Consider sample size and selection together."],
+["A researcher concludes: “I asked 20 students, so their answers definitely represent every student in the school.”","What is the best response to this conclusion?",["Not necessarily; representativeness depends on how the sample was selected as well as its size","Yes. Any sample automatically represents everyone","Yes. A sample of 20 is always enough","No sample can ever be used"],0,"A sample does not automatically represent the population. The selection method, coverage and sample size all matter.","A sample is not judged by size alone."]
+];
+
+let score=0,streak=0,attempts=0,correct=0,current=0,solved=false;
+const $=id=>document.getElementById(id);
+const shuffle=a=>[...a].sort(()=>Math.random()-0.5);
+
+function render(){
+ solved=false;let c=cases[current];
+ $("round").textContent="CASE "+(current+1);$("caseNo").textContent=(current+1)+"/10";
+ $("scenario").textContent=c[0];$("prompt").textContent=c[1];$("feedback").style.display="none";$("hintbox").style.display="none";$("next").disabled=true;
+ $("bar").style.width=(current/10*100)+"%";$("options").innerHTML="";
+ let choices=c[2].map((text,i)=>({text,i}));shuffle(choices).forEach(x=>{
+  let b=document.createElement("button");b.className="opt";b.textContent=x.text;b.onclick=()=>answer(b,x.i);$("options").appendChild(b);
+ });
+ $("hint").onclick=()=>{$("hintbox").textContent=c[5];$("hintbox").style.display="block"};
+}
+function answer(btn,i){
+ if(solved)return;attempts++;
+ if(i===cases[current][4]){
+  solved=true;correct++;score+=100;streak++;btn.classList.add("correct");
+  [...$("options").children].forEach(x=>x.disabled=true);
+  $("feedback").className="feedback good";$("feedback").style.display="block";
+  $("feedback").innerHTML="<strong>✓ Excellent investigation!</strong><br>"+cases[current][3];$("next").disabled=false;
+ }else{
+  streak=0;btn.classList.add("wrong");btn.disabled=true;
+  $("feedback").className="feedback bad";$("feedback").style.display="block";
+  $("feedback").innerHTML="<strong>Not quite.</strong> Look at sample size, selection method and who may have been left out.";
+ }
+ update();
+}
+function update(){$("score").textContent=score;$("streak").textContent=streak;$("accuracy").textContent=attempts?Math.round(correct/attempts*100)+"%":"0%"}
+$("next").onclick=()=>{if(current<9){current++;render()}else finish()};
+function finish(){
+ $("bar").style.width="100%";$("round").textContent="🏆 FAIRNESS CHALLENGE COMPLETE";$("scenario").textContent="You completed the Sample Fairness Challenge.";
+ $("prompt").textContent="Replay to strengthen your ability to judge samples before trusting their conclusions.";$("options").innerHTML="";
+ $("feedback").className="feedback good";$("feedback").style.display="block";
+ $("feedback").innerHTML="<strong>"+(correct===10?"PERFECT SAMPLE INVESTIGATOR!":"Strong investigation!")+"</strong><br>Cases solved: "+correct+"/10 • Final score: "+score;
+ $("next").textContent="↻ Play Again";$("next").disabled=false;$("next").onclick=()=>{score=0;streak=0;attempts=0;correct=0;current=0;update();$("next").textContent="Next Case →";$("next").onclick=()=>{if(current<9){current++;render()}else finish()};render()};
+}
+render();update();
+</script></body></html>

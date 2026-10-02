@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temmy Smart Games – Data Collection Lab</title>
+<style>
+:root{--b:#153B7A;--g:#C99700;--p:#6A3FA0;--ink:#172033;--good:#16834a;--bad:#c62828}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef3fb,#fbf8ef);color:var(--ink)}
+header{background:linear-gradient(135deg,var(--b),#244f96,var(--p));color:#fff;text-align:center;padding:22px 14px}
+h1{margin:0;font-size:clamp(25px,6vw,39px)}header p{margin:7px 0}
+.wrap{max-width:1020px;margin:auto;padding:18px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.stat,.card{background:#fff;border-radius:18px;box-shadow:0 7px 24px #0001}
+.stat{text-align:center;padding:10px}.stat b{display:block;color:var(--b);font-size:20px}.stat small{color:#667}
+.bar{height:10px;background:#dfe4ee;border-radius:10px;margin:10px 0 18px;overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--p));transition:.3s}
+.card{padding:20px}.badge{display:inline-block;background:#eee8f8;color:var(--p);padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+h2{color:var(--b);margin:10px 0 5px}.sub{color:#606b7b;margin-top:0}
+.lab{background:#f6f8fc;border:2px solid #dbe2ed;border-radius:18px;padding:20px;margin:18px 0}
+.label{font-size:12px;font-weight:800;color:var(--p);letter-spacing:.6px}
+.scenario{font-size:clamp(22px,5vw,33px);font-weight:900;color:var(--b);margin:14px 0;line-height:1.35}
+.prompt{color:#596476;text-align:center;line-height:1.5;margin-bottom:15px}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.choice{background:#fff;border:2px solid #d2d9e5;color:var(--ink);font:inherit;font-weight:800;border-radius:14px;padding:17px;cursor:pointer;text-align:center}
+.choice:hover:not(:disabled){border-color:var(--g);transform:translateY(-2px)}
+.choice.correct{background:#e8f7ef;border-color:var(--good);color:var(--good)}
+.choice.wrong{background:#fdecec;border-color:var(--bad);color:var(--bad)}
+.choice small{display:block;font-weight:normal;color:#687385;margin-top:6px}
+.feedback{min-height:65px;background:#f7f8fb;border-radius:12px;padding:12px;margin-top:15px}
+.feedback strong{color:var(--b)}
+.evidence{display:none;background:#fff8df;border-left:5px solid var(--g);padding:13px;margin-top:10px;border-radius:9px;line-height:1.5}
+.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+button{font:inherit;font-weight:700;border-radius:12px;padding:12px 15px;cursor:pointer}
+.primary{background:var(--b);color:#fff;border:0}.secondary{background:#eee8f8;color:var(--p);border:0}
+.primary:disabled{opacity:.45;cursor:not-allowed}
+.summary{display:none;text-align:center}.big{font-size:44px;font-weight:900;color:var(--g)}
+footer{text-align:center;padding:18px;color:#687385;font-size:12px}
+@media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}.choices{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>🧰 DATA COLLECTION LAB</h1>
+<p>Compare • Select • Justify the best collection method</p>
+</header>
+<div class="wrap">
+<div class="stats">
+<div class="stat"><b id="round"></b><small>Lab Task</small></div>
+<div class="stat"><b id="score">0</b><small>Points</small></div>
+<div class="stat"><b id="streak">0</b><small>Streak</small></div>
+<div class="stat"><b id="acc">0%</b><small>Accuracy</small></div>
+</div>
+<div class="bar"><div class="fill" id="fill"></div></div>
+
+<section class="card" id="game">
+<span class="badge">GRADE 7 • UNIT 3 • DATA COLLECTION</span>
+<h2 id="title"></h2>
+<p class="sub"><strong>Compare → Select → Justify</strong> — choose the method because it fits the question.</p>
+
+<div class="lab">
+<div class="label">FIELDWORK SCENARIO</div>
+<div class="scenario" id="scenario"></div>
+<div class="prompt">Which data collection method makes the most sense?</div>
+<div class="choices" id="choices"></div>
+</div>
+
+<div class="feedback" id="feedback"><strong>Lab task:</strong> Select the method that best fits the investigation.</div>
+<div class="evidence" id="evidence"></div>
+<div class="actions">
+<button class="primary" id="next" disabled>Next Lab Task →</button>
+<button class="secondary" id="hint">💡 Lab Hint</button>
+</div>
+</section>
+
+<section class="card summary" id="summary">
+<h2 id="result"></h2><div class="big" id="final"></div>
+<p id="summaryText"></p>
+<button class="primary" id="restart">🧰 Run the Lab Again</button>
+</section>
+</div>
+<footer>Temmy Smart Games • Interactive Mathematics • Grade 7</footer>
+
+<script>
+const Q=[{"title": "Mission 1 — Traffic Count", "scenario": "You want to know whether more cars pass the school each minute in the morning than in the afternoon.", "choices": ["Observation", "Interview", "Questionnaire"], "answer": "Observation", "why": "Observation fits because you can watch and count the cars passing the school each minute."}, {"title": "Mission 2 — Furniture Opinions", "scenario": "A furniture shop wants to collect opinions from a sample of customers about its furniture.", "choices": ["Observation", "Interview", "Questionnaire"], "answer": "Questionnaire", "why": "The resource gives questionnaire or interview as suitable methods for customer opinions. A questionnaire is suitable for collecting responses from a sample."}, {"title": "Mission 3 — Detailed Customer Views", "scenario": "A shop wants detailed responses from customers and needs to ask follow-up questions directly.", "choices": ["Observation", "Interview", "Questionnaire"], "answer": "Interview", "why": "An interview is useful when detailed responses are needed and questions can be asked directly."}, {"title": "Mission 4 — Cars at Two Times", "scenario": "You need the actual number of cars passing the school during each minute at two different times of day.", "choices": ["Observation", "Interview", "Questionnaire"], "answer": "Observation", "why": "You need to watch and count what happens. Observation is the method that directly records the traffic."}, {"title": "Mission 5 — Class Preferences", "scenario": "You want responses from a sample of students about which sport they prefer.", "choices": ["Observation", "Interview", "Questionnaire"], "answer": "Questionnaire", "why": "A questionnaire can ask a set of clear questions and collect responses from a sample."}, {"title": "Mission 6 — Direct Questions", "scenario": "You want to ask selected people questions directly because you need detailed answers.", "choices": ["Observation", "Interview", "Questionnaire"], "answer": "Interview", "why": "The resource describes an interview as asking people questions directly and notes that it is useful for detailed responses."}, {"title": "Mission 7 — Measuring an Event", "scenario": "You want to investigate how many cars pass a particular point each minute without asking the drivers anything.", "choices": ["Observation", "Interview", "Questionnaire"], "answer": "Observation", "why": "You can watch, count or measure what happens. No questions to the drivers are required."}, {"title": "Mission 8 — Many Sample Responses", "scenario": "You need clear responses from a sample of people to a set of written questions.", "choices": ["Observation", "Interview", "Questionnaire"], "answer": "Questionnaire", "why": "A questionnaire asks a set of written questions and is useful for collecting responses from a sample."}, {"title": "Mission 9 — Follow-up Conversation", "scenario": "A researcher needs to ask people questions directly and explore their answers in more detail.", "choices": ["Observation", "Interview", "Questionnaire"], "answer": "Interview", "why": "Direct questioning with the opportunity for detailed responses makes an interview the suitable method."}, {"title": "Mission 10 — Method Master", "scenario": "You need to count something that is happening in front of you, rather than ask anyone for an opinion.", "choices": ["Observation", "Interview", "Questionnaire"], "answer": "Observation", "why": "Observation is the natural choice when you need to watch, count or measure what happens."}];
+const H=["Are you watching and counting what happens, or asking people questions?", "The shop wants responses from a sample. Which method asks a set of written questions?", "Which method asks people questions directly and allows detailed responses?", "You need actual counts of cars. Think about watching and counting.", "You want responses from a sample about a preference. Think about a set of clear questions.", "The clue is 'ask people directly' and 'detailed answers'.", "No one needs to answer questions. You need to watch and count.", "Written questions given to a sample point to one method.", "Direct questions and detailed responses point to one method.", "If you need to watch, count or measure what happens, which method fits?"];
+let i=0,score=0,streak=0,attempts=0,correct=0,locked=false,hint=false;
+const $=x=>document.getElementById(x);
+
+function render(){
+ const q=Q[i]; locked=false; hint=false;
+ $("round").textContent=`${i+1}/${Q.length}`;
+ $("score").textContent=score; $("streak").textContent=streak;
+ $("acc").textContent=attempts?Math.round(correct/attempts*100)+"%":"0%";
+ $("fill").style.width=(i/Q.length*100)+"%";
+ $("title").textContent=q.title; $("scenario").textContent=q.scenario;
+ $("feedback").innerHTML="<strong>Lab task:</strong> Select the method that best fits the investigation.";
+ $("evidence").style.display="none"; $("next").disabled=true; $("hint").disabled=false;
+ $("choices").innerHTML="";
+ const shuffled=[...q.choices].sort(()=>Math.random()-0.5);
+ shuffled.forEach(c=>{
+   const b=document.createElement("button");
+   b.className="choice";
+   b.innerHTML=(c==="Observation"?"👀 ":"🎤 ")+(c==="Questionnaire"?"📝 ":"")+(c==="Interview"?"🗣️ ":"")+c+
+     `<small>${c==="Observation"?"Watch • count • measure":c==="Interview"?"Ask directly • detailed responses":"Written questions • sample responses"}</small>`;
+   b.addEventListener("click",()=>check(b,c,q));
+   $("choices").appendChild(b);
+ });
+}
+
+function check(btn,c,q){
+ if(locked)return; attempts++;
+ if(c===q.answer){
+   locked=true;correct++;streak++;score+=hint?8:10;btn.classList.add("correct");
+   document.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+   $("feedback").innerHTML="<strong>🧰 Method selected!</strong> Your choice fits the investigation.";
+   $("evidence").innerHTML="<strong>Why?</strong> "+q.why;
+   $("evidence").style.display="block";$("next").disabled=false;$("hint").disabled=true;
+ }else{
+   streak=0;btn.classList.add("wrong");btn.disabled=true;
+   $("feedback").innerHTML="<strong>Try another method.</strong> Ask: What exactly must be observed, asked or measured?";
+ }
+ $("score").textContent=score;$("streak").textContent=streak;
+ $("acc").textContent=Math.round(correct/attempts*100)+"%";
+}
+
+$("hint").addEventListener("click",()=>{
+ if(locked)return;hint=true;$("hint").disabled=true;
+ $("feedback").innerHTML=`<strong>💡 Lab Hint:</strong> ${H[i]}`;
+});
+$("next").addEventListener("click",()=>{if(i<Q.length-1){i++;render()}else finish()});
+
+function finish(){
+ const pct=Math.round(correct/attempts*100);
+ $("game").style.display="none";$("summary").style.display="block";$("fill").style.width="100%";
+ $("final").textContent=score+" POINTS";
+ $("result").textContent=pct===100?"🏆 DATA COLLECTION MASTER!":pct>=90?"🌟 FIELDWORK EXPERT!":pct>=75?"👏 SKILLED INVESTIGATOR!":"🧰 KEEP TESTING METHODS!";
+ $("summaryText").textContent=`You completed all 10 Data Collection Lab tasks. Accuracy: ${pct}%. Strong investigators choose a collection method because it fits the question.`;
+}
+$("restart").addEventListener("click",()=>{i=0;score=0;streak=0;attempts=0;correct=0;$("game").style.display="block";$("summary").style.display="none";render()});
+render();
+</script>
+</body>
+</html>

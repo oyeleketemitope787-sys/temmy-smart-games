@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temmy Smart Games – Data Detective</title>
+<style>
+:root{--b:#153B7A;--g:#C99700;--p:#6A3FA0;--ink:#172033;--good:#16834a;--bad:#c62828}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef3fb,#fbf8ef);color:var(--ink)}
+header{background:linear-gradient(135deg,var(--b),#244f96,var(--p));color:#fff;text-align:center;padding:22px 14px}
+h1{margin:0;font-size:clamp(25px,6vw,39px)}header p{margin:7px 0}
+.wrap{max-width:1000px;margin:auto;padding:18px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.stat,.card{background:#fff;border-radius:18px;box-shadow:0 7px 24px #0001}.stat{text-align:center;padding:10px}.stat b{display:block;color:var(--b);font-size:20px}.stat small{color:#667}
+.bar{height:10px;background:#dfe4ee;border-radius:10px;margin:10px 0 18px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--p));transition:.3s}
+.card{padding:20px}.badge{display:inline-block;background:#eee8f8;color:var(--p);padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+h2{color:var(--b);margin:10px 0 5px}.sub{color:#606b7b;margin-top:0}
+.case{background:#f6f8fc;border:2px solid #dbe2ed;border-radius:18px;padding:22px;margin:18px 0;text-align:center}
+.case-label{font-weight:800;color:var(--p);letter-spacing:.5px}.variable{font-size:clamp(27px,7vw,44px);font-weight:900;color:var(--b);margin:18px 0 8px}
+.prompt{font-size:17px;color:#596476;line-height:1.5}.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.choice{background:#fff;border:2px solid #d2d9e5;color:var(--ink);font:inherit;font-weight:800;border-radius:14px;padding:16px;cursor:pointer}
+.choice:hover:not(:disabled){border-color:var(--g);transform:translateY(-2px)}.choice.correct{background:#e8f7ef;border-color:var(--good);color:var(--good)}.choice.wrong{background:#fdecec;border-color:var(--bad);color:var(--bad)}
+.choice small{display:block;font-weight:normal;color:#687385;margin-top:5px}
+.feedback{min-height:65px;background:#f7f8fb;border-radius:12px;padding:12px;margin-top:15px;text-align:left}.feedback strong{color:var(--b)}
+.evidence{display:none;background:#fff8df;border-left:5px solid var(--g);padding:13px;margin-top:10px;border-radius:9px;text-align:left;line-height:1.5}
+.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}button{font:inherit;font-weight:700;border-radius:12px;padding:12px 15px;cursor:pointer}
+.primary{background:var(--b);color:#fff;border:0}.secondary{background:#eee8f8;color:var(--p);border:0}.primary:disabled{opacity:.45;cursor:not-allowed}
+.summary{display:none;text-align:center}.big{font-size:44px;font-weight:900;color:var(--g)}footer{text-align:center;padding:18px;color:#687385;font-size:12px}
+@media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}.choices{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>🔎 DATA DETECTIVE</h1>
+<p>Classify the data • Find the clue • Explain WHY</p>
+</header>
+<div class="wrap">
+<div class="stats">
+<div class="stat"><b id="round">1/10</b><small>Case</small></div>
+<div class="stat"><b id="score">0</b><small>Points</small></div>
+<div class="stat"><b id="streak">0</b><small>Streak</small></div>
+<div class="stat"><b id="acc">0%</b><small>Accuracy</small></div>
+</div>
+<div class="bar"><div class="fill" id="fill"></div></div>
+
+<section class="card" id="game">
+<span class="badge">GRADE 7 • UNIT 3 • DATA DETECTIVE</span>
+<h2 id="title"></h2>
+<p class="sub">Use the decision rule: <strong>Category → Discrete → Continuous</strong></p>
+<div class="case">
+<div class="case-label">VARIABLE UNDER INVESTIGATION</div>
+<div class="variable" id="variable"></div>
+<div class="prompt" id="prompt"></div>
+<div class="choices" id="choices"></div>
+</div>
+<div class="feedback" id="feedback"><strong>Detective task:</strong> Identify the data type.</div>
+<div class="evidence" id="evidence"></div>
+<div class="actions">
+<button class="primary" id="next" disabled>Next Case →</button>
+<button class="secondary" id="hint">💡 Detective Hint</button>
+</div>
+</section>
+
+<section class="card summary" id="summary">
+<h2 id="result"></h2><div class="big" id="final"></div>
+<p id="summaryText"></p>
+<button class="primary" id="restart">🔎 Investigate Again</button>
+</section>
+</div>
+<footer>Temmy Smart Games • Interactive Mathematics • Grade 7</footer>
+
+<script>
+const Q=[
+{title:"Case 1 — Favourite Fruit",variable:"Favourite fruit",prompt:"Is this a category, something counted exactly, or something measured?",answer:"Categorical",why:"Favourite fruit is a category/name rather than a numerical measurement."},
+{title:"Case 2 — Books Read",variable:"Number of books read last week",prompt:"Can the values be counted exactly?",answer:"Discrete",why:"The resource classifies number of books read as discrete because books are counted in exact whole values."},
+{title:"Case 3 — Height",variable:"Height of a person",prompt:"Can the value be measured between two whole-number values?",answer:"Continuous",why:"Height is measured and can take values between whole numbers, so it is continuous."},
+{title:"Case 4 — Gender",variable:"Gender",prompt:"Is the information a category/name rather than a numerical measurement?",answer:"Categorical",why:"The resource classifies gender as categorical."},
+{title:"Case 5 — Age",variable:"Age last birthday",prompt:"How is the variable recorded in the question?",answer:"Discrete",why:"The resource classifies age last birthday as discrete because it is recorded as an exact counted value."},
+{title:"Case 6 — Reading Time",variable:"Number of minutes spent reading",prompt:"Use the way the variable is recorded in the classroom resource.",answer:"Discrete",why:"In this resource, number of minutes spent reading is classified as discrete because it is recorded as a count of minutes."},
+{title:"Case 7 — Favourite Author",variable:"Favourite author",prompt:"Is the answer a category or a measured number?",answer:"Categorical",why:"Favourite author is a category/name, so it is categorical."},
+{title:"Case 8 — Rainfall",variable:"Amount of rainfall",prompt:"Is rainfall counted as separate items or measured?",answer:"Continuous",why:"Amount of rainfall is measured, so it is continuous."},
+{title:"Case 9 — Siblings",variable:"Number of siblings",prompt:"Can the value be counted exactly?",answer:"Discrete",why:"Number of siblings is counted in exact values, so it is discrete."},
+{title:"Case 10 — Eye Colour",variable:"Eye colour",prompt:"What kind of information is being recorded?",answer:"Categorical",why:"Eye colour is a category, not a numerical measurement."}
+];
+
+const TYPES=[
+["Categorical","🏷️ Category / name"],
+["Discrete","🔢 Counted exactly"],
+["Continuous","📏 Measured"]
+];
+
+let i=0,score=0,streak=0,attempts=0,correct=0,locked=false,hint=false;
+const $=x=>document.getElementById(x);
+
+function render(){
+ const q=Q[i];locked=false;hint=false;
+ $("round").textContent=`${i+1}/${Q.length}`;
+ $("score").textContent=score;$("streak").textContent=streak;
+ $("acc").textContent=attempts?Math.round(correct/attempts*100)+"%":"0%";
+ $("fill").style.width=(i/Q.length*100)+"%";
+ $("title").textContent=q.title;$("variable").textContent=q.variable;$("prompt").textContent=q.prompt;
+ $("feedback").innerHTML="<strong>Detective task:</strong> Identify the data type.";
+ $("evidence").style.display="none";$("next").disabled=true;$("hint").disabled=false;
+ $("choices").innerHTML="";
+ TYPES.forEach(([name,desc])=>{
+   const b=document.createElement("button");b.className="choice";
+   b.innerHTML=name+"<small>"+desc+"</small>";
+   b.addEventListener("click",()=>check(b,name,q));
+   $("choices").appendChild(b);
+ });
+}
+
+function check(btn,c,q){
+ if(locked)return;
+ attempts++;
+ if(c===q.answer){
+   locked=true;correct++;streak++;score+=hint?8:10;btn.classList.add("correct");
+   document.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+   $("feedback").innerHTML="<strong>🔎 Case solved!</strong> Correct classification.";
+   $("evidence").innerHTML="<strong>Why?</strong> "+q.why;
+   $("evidence").style.display="block";
+   $("next").disabled=false;$("hint").disabled=true;
+ }else{
+   streak=0;btn.classList.add("wrong");btn.disabled=true;
+   $("feedback").innerHTML="<strong>Not quite.</strong> Use the decision question again and try another classification.";
+ }
+ $("score").textContent=score;$("streak").textContent=streak;
+ $("acc").textContent=Math.round(correct/attempts*100)+"%";
+}
+
+const hints=[
+"Ask: Is it a category/name rather than a number?",
+"Can the values be counted exactly?",
+"Is the variable measured, with possible values between whole numbers?",
+"Think: category or numerical value?",
+"Focus on how the age is recorded: last birthday.",
+"Follow the resource's classification for how the variable is recorded.",
+"An author's name is a category.",
+"Rainfall is measured rather than counted as separate objects.",
+"People have a whole-number count of siblings.",
+"Eye colour is a category/name."
+];
+
+$("hint").addEventListener("click",()=>{
+ if(locked)return;
+ hint=true;$("hint").disabled=true;
+ $("feedback").innerHTML=`<strong>💡 Detective Hint:</strong> ${hints[i]}`;
+});
+
+$("next").addEventListener("click",()=>{
+ if(i<Q.length-1){i++;render();}else finish();
+});
+
+function finish(){
+ const pct=Math.round(correct/attempts*100);
+ $("game").style.display="none";$("summary").style.display="block";
+ $("fill").style.width="100%";$("final").textContent=score+" POINTS";
+ $("result").textContent=pct===100?"🏆 DATA MASTER!":pct>=90?"🌟 DATA EXPERT!":pct>=75?"👏 SKILLED DATA DETECTIVE!":"🔎 KEEP INVESTIGATING!";
+ $("summaryText").textContent=`You investigated all 10 data cases. Accuracy: ${pct}%. Remember: classify the variable as it is recorded, then explain WHY.`;
+}
+
+$("restart").addEventListener("click",()=>{
+ i=0;score=0;streak=0;attempts=0;correct=0;
+ $("game").style.display="block";$("summary").style.display="none";render();
+});
+render();
+</script>
+</body>
+</html>
