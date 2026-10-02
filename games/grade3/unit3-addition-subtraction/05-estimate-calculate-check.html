@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games — Estimate Calculate Check</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#edf4ff,#fbf7ff);color:#17233c}
+header{background:linear-gradient(135deg,#153b7a,#4b2b82);color:#fff;text-align:center;padding:18px 14px}
+.badge{display:inline-block;background:#c99700;padding:7px 14px;border-radius:20px;font-size:.8rem;font-weight:800}
+h1{margin:9px 0 4px;font-size:clamp(1.75rem,6vw,2.6rem)}
+.subtitle{margin:0;font-weight:700}
+.wrap{max-width:920px;margin:auto;padding:16px 14px 35px}
+.panel{background:#fff;border-radius:22px;padding:19px;margin-bottom:15px;box-shadow:0 10px 30px rgba(21,59,122,.1)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:#f2f6ff;border-radius:14px;padding:9px;text-align:center;font-size:.84rem}
+.stat b{display:block;color:#153b7a;font-size:1.18rem;margin-top:3px}
+.progress{height:10px;background:#e6ebf4;border-radius:20px;margin-top:12px;overflow:hidden}
+.bar{height:100%;width:0;background:#c99700;transition:.35s}
+.title{text-align:center;color:#4b2b82;font-weight:900;margin:13px 0 3px}
+.caseinfo{text-align:center;color:#66738b;font-weight:700;font-size:.9rem}
+.problem{text-align:center;font-size:clamp(2.3rem,9vw,4rem);font-weight:900;margin:18px 0}
+.strategy{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:15px auto;max-width:760px}
+.step{border-radius:15px;padding:11px;text-align:center;font-weight:900;background:#f1f4fa;color:#68748b}
+.step.active{background:#eeeaf8;color:#4b2b82;border:2px solid #cfc4ee}
+.step.done{background:#edf8f2;color:#18794e}
+.question{text-align:center;font-weight:800;margin:14px 0}
+.choice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:700px;margin:auto}
+button{border:0;border-radius:14px;padding:13px 15px;font-size:1rem;font-weight:800;cursor:pointer;background:#153b7a;color:#fff}
+button.gold{background:#c99700}
+button.soft{background:#eeeaf8;color:#4b2b82}
+button:disabled{opacity:.45;cursor:not-allowed}
+.feedback{text-align:center;min-height:45px;font-weight:800;margin:11px 0}
+.explain{display:none;background:#f7f8fc;border-left:5px solid #4b2b82;border-radius:14px;padding:13px;line-height:1.5}
+.center{text-align:center}
+.hidden{display:none}
+.trophy{font-size:4rem}
+.meter{display:flex;justify-content:center;gap:5px;margin:10px}
+.meter span{height:7px;width:30px;background:#e1e6ef;border-radius:8px}
+.meter span.on{background:#c99700}
+.checkmark{font-size:1.5rem}
+@media(max-width:600px){
+.stats{grid-template-columns:repeat(2,1fr)}
+.strategy{grid-template-columns:1fr}
+.choice-grid{grid-template-columns:1fr}
+.problem{font-size:2.6rem}
+}
+</style>
+</head>
+<body>
+<header>
+<div class="badge">TEMMY SMART GAMES • GRADE 3</div>
+<h1>🧠 Estimate → Calculate → Check</h1>
+<p class="subtitle">Think • Calculate • Check if it makes sense</p>
+</header>
+
+<div class="wrap">
+<section class="panel">
+<div class="stats">
+<div class="stat">Score<b id="score">0</b></div>
+<div class="stat">Streak<b id="streak">0</b></div>
+<div class="stat">Accuracy<b id="accuracy">100%</b></div>
+<div class="stat">Case<b id="caseNo">1/6</b></div>
+</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="meter" id="meter"></div>
+</section>
+
+<section class="panel" id="game">
+<div class="title" id="title">CASE 1 • ADDITION CHECK</div>
+<div class="caseinfo" id="info">Complete all three stages.</div>
+<div class="problem" id="problem">215 + 67</div>
+
+<div class="strategy">
+<div class="step active" id="s1">1️⃣ ESTIMATE</div>
+<div class="step" id="s2">2️⃣ CALCULATE</div>
+<div class="step" id="s3">3️⃣ CHECK</div>
+</div>
+
+<div class="question" id="question">Round the numbers to the nearest 10.</div>
+<div class="choice-grid" id="choices"></div>
+<div class="feedback" id="feedback"></div>
+<div class="explain" id="explain"></div>
+
+<div class="center" style="margin-top:13px">
+<button id="next" class="gold" disabled>Next Case →</button>
+</div>
+</section>
+
+<section class="panel center hidden" id="finish">
+<div class="trophy">🏆</div>
+<h2>STRATEGY MASTER!</h2>
+<p id="finalText"></p>
+<button onclick="restart()">Play Again</button>
+</section>
+</div>
+
+<script>
+const cases=[
+{
+title:"CASE 1 • ADDITION CHECK",a:215,b:67,op:"+",round:"220 and 70",estimate:290,answer:282,
+check:"YES — 282 is close to 290",
+ex:["Round: 215 → 220 and 67 → 70.","Estimate: 220 + 70 = 290.","Calculate: 215 + 67 = 282.","Check: 282 is close to 290, so the answer is sensible."]
+},
+{
+title:"CASE 2 • ADDITION CHECK",a:148,b:136,op:"+",round:"150 and 140",estimate:290,answer:284,
+check:"YES — 284 is close to 290",
+ex:["Round: 148 → 150 and 136 → 140.","Estimate: 150 + 140 = 290.","Calculate: 148 + 136 = 284.","Check: 284 is close to 290, so the answer is sensible."]
+},
+{
+title:"CASE 3 • SUBTRACTION CHECK",a:472,b:267,op:"−",round:"470 and 270",estimate:200,answer:205,
+check:"YES — 205 is close to 200",
+ex:["Round: 472 → 470 and 267 → 270.","Estimate: 470 − 270 = 200.","Calculate: 472 − 267 = 205.","Check: 205 is close to 200, so the answer is sensible."]
+},
+{
+title:"CASE 4 • SUBTRACTION CHECK",a:683,b:548,op:"−",round:"680 and 550",estimate:130,answer:135,
+check:"YES — 135 is close to 130",
+ex:["Round: 683 → 680 and 548 → 550.","Estimate: 680 − 550 = 130.","Calculate: 683 − 548 = 135.","Check: 135 is close to 130, so the answer is sensible."]
+},
+{
+title:"CASE 5 • FIND THE SENSIBLE ANSWER",a:439,b:326,op:"+",round:"440 and 330",estimate:770,answer:765,
+check:"YES — 765 is close to 770",
+ex:["Round: 439 → 440 and 326 → 330.","Estimate: 440 + 330 = 770.","Calculate: 439 + 326 = 765.","Check: 765 is close to 770, so the answer is sensible."]
+},
+{
+title:"CASE 6 • FINAL STRATEGY CASE",a:731,b:286,op:"−",round:"730 and 290",estimate:440,answer:445,
+check:"YES — 445 is close to 440",
+ex:["Round: 731 → 730 and 286 → 290.","Estimate: 730 − 290 = 440.","Calculate: 731 − 286 = 445.","Check: 445 is close to 440, so the answer is sensible."]
+}
+];
+
+let i=0,stage=1,score=0,streak=0,total=0,right=0,locked=false;
+
+const $=id=>document.getElementById(id);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function render(){
+const q=cases[i];stage=1;locked=false;
+$("title").textContent=q.title;
+$("info").textContent="Your mission: complete ESTIMATE → CALCULATE → CHECK.";
+$("problem").textContent=`${q.a} ${q.op} ${q.b}`;
+setSteps();showStage();
+$("feedback").textContent="";$("explain").style.display="none";$("next").disabled=true;
+$("next").textContent=i===cases.length-1?"Complete Strategy →":"Next Case →";
+$("caseNo").textContent=`${i+1}/${cases.length}`;
+$("bar").style.width=(i/cases.length*100)+"%";
+$("meter").innerHTML=cases.map((_,n)=>`<span class="${n<=i?'on':''}"></span>`).join("");
+updateStats();
+}
+function setSteps(){
+["s1","s2","s3"].forEach((id,n)=>{
+const e=$(id);e.classList.remove("active","done");
+if(n+1===stage)e.classList.add("active");
+if(n+1<stage)e.classList.add("done");
+});
+}
+function updateStats(){
+$("score").textContent=score;$("streak").textContent=streak;
+$("accuracy").textContent=total?Math.round(right/total*100)+"%":"100%";
+}
+function showStage(){
+const q=cases[i];
+if(stage===1){
+$("question").textContent="Round the numbers to the nearest 10.";
+const vals=[q.round,q.round.split(" and ")[0]+" and "+(Number(q.round.split(" and ")[1])+10),
+(Number(q.round.split(" and ")[0])-10)+" and "+q.round.split(" and ")[1],
+(Number(q.round.split(" and ")[0])+10)+" and "+(Number(q.round.split(" and ")[1])-10)];
+$("choices").innerHTML=shuffle(vals).map(v=>`<button onclick="pick(this,'round','${v}')">${v}</button>`).join("");
+}
+if(stage===2){
+$("question").textContent=`Using your rounded numbers, choose the estimate.`;
+const vals=[q.estimate,q.estimate+10,q.estimate-10,q.answer];
+$("choices").innerHTML=shuffle([...new Set(vals)]).map(v=>`<button onclick="pick(this,'estimate',${v})">${v}</button>`).join("");
+}
+if(stage===3){
+$("question").textContent=`Calculate ${q.a} ${q.op} ${q.b}, then choose the exact answer.`;
+const vals=[q.answer,q.answer+10,q.answer-10,q.estimate];
+$("choices").innerHTML=shuffle([...new Set(vals)]).map(v=>`<button onclick="pick(this,'answer',${v})">${v}</button>`).join("");
+}
+if(stage===4){
+$("question").textContent=`Is ${q.answer} close to your estimate of ${q.estimate}?`;
+$("choices").innerHTML=shuffle(["YES — "+q.answer+" is close","NO — "+q.answer+" is far away"]).map((v,n)=>`<button onclick="pick(this,'check',${n===0})">${v}</button>`).join("");
+}
+}
+function pick(btn,type,value){
+if(locked)return;
+document.querySelectorAll("#choices button").forEach(b=>b.disabled=true);
+const q=cases[i];
+let ok=false,detail="";
+if(type==="round"){ok=value===q.round;detail=q.ex[0]}
+if(type==="estimate"){ok=Number(value)===q.estimate;detail=q.ex[1]}
+if(type==="answer"){ok=Number(value)===q.answer;detail=q.ex[2]}
+if(type==="check"){ok=value===true;detail=q.ex[3]}
+total++;
+if(ok){right++;streak++;score+=8+Math.min(streak-1,5)*2;$("feedback").textContent="✅ Strategy step correct!";$("feedback").style.color="#18794e";}
+else{streak=0;$("feedback").textContent="🔎 Check the evidence and keep going."; $("feedback").style.color="#b42318";}
+$("explain").innerHTML="<b>Evidence:</b> "+detail;
+$("explain").style.display="block";
+updateStats();
+if(type==="round"){stage=2;setTimeout(showStage,450)}
+else if(type==="estimate"){stage=3;setTimeout(showStage,450)}
+else if(type==="answer"){stage=4;setTimeout(showStage,450)}
+else {$("next").disabled=false;locked=true;}
+}
+$("next").onclick=()=>{if(i<cases.length-1){i++;render()}else finish()};
+function finish(){
+$("game").classList.add("hidden");$("finish").classList.remove("hidden");$("bar").style.width="100%";
+const acc=Math.round(right/total*100);
+const title=acc===100?"💎 PERFECT STRATEGIST!":acc>=90?"🥇 STRATEGY MASTER!":acc>=75?"🥈 SMART CHECKER!":"🌟 KEEP THINKING!";
+$("finalText").innerHTML=`${title}<br><br><b>${score} points</b> • ${acc}% step accuracy • ${right}/${total} correct<br><br>You completed six cases using the full routine:<br><b>ESTIMATE → CALCULATE → CHECK</b>`;
+}
+function restart(){i=0;stage=1;score=0;streak=0;total=0;right=0;$("game").classList.remove("hidden");$("finish").classList.add("hidden");render()}
+render();
+</script>
+</body>
+</html>

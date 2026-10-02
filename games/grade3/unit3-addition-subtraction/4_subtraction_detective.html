@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games — Subtraction Detective</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#edf4ff,#fbf7ff);color:#17233c}
+header{background:linear-gradient(135deg,#153b7a,#4b2b82);color:#fff;text-align:center;padding:18px 14px}
+.badge{display:inline-block;background:#c99700;padding:7px 14px;border-radius:20px;font-size:.8rem;font-weight:800}
+h1{margin:9px 0 4px;font-size:clamp(1.8rem,6vw,2.7rem)}
+.subtitle{margin:0;font-weight:700}
+.wrap{max-width:900px;margin:auto;padding:16px 14px 35px}
+.panel{background:#fff;border-radius:22px;padding:19px;margin-bottom:15px;box-shadow:0 10px 30px rgba(21,59,122,.1)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:#f2f6ff;border-radius:14px;padding:9px;text-align:center;font-size:.84rem}
+.stat b{display:block;color:#153b7a;font-size:1.18rem;margin-top:3px}
+.progress{height:10px;background:#e6ebf4;border-radius:20px;margin-top:12px;overflow:hidden}
+.bar{height:100%;width:0;background:#c99700;transition:.35s}
+.case{text-align:center;color:#4b2b82;font-weight:900;margin:13px 0 3px}
+.clue{text-align:center;color:#66738b;font-weight:700;font-size:.9rem}
+.problem{text-align:center;font-size:clamp(2.5rem,10vw,4.4rem);font-weight:900;margin:20px 0 10px}
+.question{text-align:center;font-weight:800;font-size:1.05rem;margin:10px 0 15px}
+.choice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:680px;margin:auto}
+button{border:0;border-radius:14px;padding:13px 16px;font-size:1rem;font-weight:800;cursor:pointer;background:#153b7a;color:#fff}
+button.gold{background:#c99700}
+button.soft{background:#eeeaf8;color:#4b2b82}
+button:disabled{opacity:.45;cursor:not-allowed}
+.evidence{background:#f7f4ff;border-left:5px solid #4b2b82;border-radius:14px;padding:13px;margin:14px auto;max-width:680px}
+.feedback{text-align:center;min-height:45px;font-weight:800;margin:10px 0}
+.explain{display:none;background:#f7f8fc;border-radius:14px;padding:13px;line-height:1.5;margin-top:10px}
+.center{text-align:center}
+.hidden{display:none}
+.stamp{font-size:4rem}
+.meter{display:flex;justify-content:center;gap:5px;margin:11px 0}
+.meter span{height:7px;width:32px;background:#e1e6ef;border-radius:8px}
+.meter span.on{background:#c99700}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.choice-grid{grid-template-columns:1fr}.problem{font-size:2.7rem}}
+</style>
+</head>
+<body>
+<header>
+<div class="badge">TEMMY SMART GAMES • GRADE 3</div>
+<h1>🕵️ Subtraction Detective</h1>
+<p class="subtitle">Investigate • Regroup • Solve • Explain</p>
+</header>
+
+<div class="wrap">
+<section class="panel">
+<div class="stats">
+<div class="stat">Score<b id="score">0</b></div>
+<div class="stat">Streak<b id="streak">0</b></div>
+<div class="stat">Accuracy<b id="accuracy">100%</b></div>
+<div class="stat">Case<b id="caseNo">1/8</b></div>
+</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="meter" id="meter"></div>
+</section>
+
+<section class="panel" id="game">
+<div class="case" id="caseTitle">CASE 1 • THE MISSING ONES</div>
+<div class="clue" id="clue">Clue: Do we have enough ones?</div>
+<div class="problem" id="problem">423 − 7</div>
+<div class="question" id="question">Can we subtract the ones without regrouping?</div>
+<div class="choice-grid" id="choices"></div>
+<div class="evidence hidden" id="evidence"></div>
+<div class="feedback" id="feedback"></div>
+<div class="explain" id="explain"></div>
+<div class="center" style="margin-top:13px">
+<button id="next" class="gold" disabled>Next Case →</button>
+</div>
+</section>
+
+<section class="panel center hidden" id="finish">
+<div class="stamp">🏅</div>
+<h2>MASTER DETECTIVE!</h2>
+<p id="finalText"></p>
+<button onclick="restart()">Investigate Again</button>
+</section>
+</div>
+
+<script>
+const cases=[
+{a:423,b:7,ans:416,kind:"3-digit − 1-digit",stage:"CASE 1 • THE MISSING ONES",q:"Can we subtract the ones without regrouping?",opts:["YES","NO — regroup 1 ten"],correct:"NO — regroup 1 ten",evidence:"3 ones − 7 ones is not possible. Regroup 1 ten as 10 ones: 13 − 7 = 6.",ex:"After regrouping, 2 tens become 1 ten and 3 ones become 13 ones. So 423 − 7 = 416."},
+{a:267,b:5,ans:262,kind:"3-digit − 1-digit",stage:"CASE 2 • CHECK THE ONES",q:"Do we need to regroup?",opts:["YES","NO"],correct:"NO",evidence:"7 ones − 5 ones is possible. There are enough ones, so no regrouping is needed.",ex:"267 − 5 = 262. Notice that the ones column had enough ones to subtract."},
+{a:472,b:267,ans:205,kind:"3-digit − 2-digit",stage:"CASE 3 • THE REGROUPING TRAIL",q:"What should happen first?",opts:["Regroup 1 ten","Add the ones","Regroup 1 hundred","Do nothing"],correct:"Regroup 1 ten",evidence:"2 ones − 7 ones is not possible. Regroup 1 ten: 12 − 7 = 5.",ex:"Then 6 tens − 6 tens = 0 tens, and 4 hundreds − 2 hundreds = 2 hundreds. Answer: 205."},
+{a:178,b:25,ans:153,kind:"3-digit − 2-digit",stage:"CASE 4 • FOLLOW THE CLUES",q:"What is the exact answer?",opts:["153","143","163","150"],correct:"153",evidence:"178 − 25 = 153. The ones are 8 − 5 = 3, so no regrouping is needed in the ones column.",ex:"Subtract the ones, then tens, then hundreds. The answer is 153."},
+{a:262,b:37,ans:225,kind:"3-digit − 2-digit",stage:"CASE 5 • HIDDEN REGROUPING",q:"Which statement is correct?",opts:["2 − 7 needs regrouping","6 − 3 needs regrouping","2 − 3 is possible","No regrouping is needed"],correct:"2 − 7 needs regrouping",evidence:"2 ones − 7 ones is not possible. Regroup 1 ten as 10 ones, making 12 ones.",ex:"12 − 7 = 5, then 5 tens − 3 tens = 2 tens. Answer: 225."},
+{a:683,b:548,ans:135,kind:"3-digit − 3-digit",stage:"CASE 6 • THE BIG CASE",q:"What is the exact answer?",opts:["135","125","145","130"],correct:"135",evidence:"683 − 548 = 135. Regroup carefully: 13 − 8 = 5, 7 − 4 = 3, 5 − 5 = 0.",ex:"The exact answer is 135. The estimate 680 − 550 = 130 tells us 135 is sensible."},
+{a:731,b:286,ans:445,kind:"3-digit − 3-digit",stage:"CASE 7 • DOUBLE CLUE",q:"Which first move is needed?",opts:["Regroup the ones","Add 2 + 8","Regroup the hundreds","No regrouping"],correct:"Regroup the ones",evidence:"1 one − 6 ones is not possible. Regroup 1 ten as 10 ones, making 11 ones.",ex:"11 − 6 = 5. Continue through the tens and hundreds to get 445."},
+{a:584,b:29,ans:555,kind:"3-digit − 2-digit",stage:"CASE 8 • FINAL MYSTERY",q:"FINAL CASE: What is the answer?",opts:["555","545","565","550"],correct:"555",evidence:"584 − 29 = 555. Estimate 580 − 30 = 550, so 555 is close to the estimate.",ex:"The answer is 555. The estimate helps us check that our exact answer is sensible."}
+];
+
+let i=0,score=0,streak=0,total=0,right=0,locked=false;
+const $=id=>document.getElementById(id);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function render(){
+ const q=cases[i];locked=false;
+ $("caseTitle").textContent=q.stage;
+ $("clue").textContent="Clue: "+q.kind;
+ $("problem").textContent=q.a+" − "+q.b;
+ $("question").textContent=q.q;
+ $("choices").innerHTML=shuffle(q.opts).map(x=>`<button onclick="answer(this,'${x.replace(/'/g,"\\'")}')">${x}</button>`).join("");
+ $("evidence").classList.add("hidden");$("feedback").textContent="";$("explain").style.display="none";$("next").disabled=true;
+ $("next").textContent=i===cases.length-1?"Close Case →":"Next Case →";
+ $("caseNo").textContent=(i+1)+"/"+cases.length;
+ $("bar").style.width=(i/cases.length*100)+"%";
+ $("meter").innerHTML=cases.map((_,n)=>`<span class="${n<=i?'on':''}"></span>`).join("");
+ $("score").textContent=score;$("streak").textContent=streak;
+ $("accuracy").textContent=total?Math.round(right/total*100)+"%":"100%";
+}
+function answer(btn,x){
+ if(locked)return;locked=true;
+ document.querySelectorAll("#choices button").forEach(b=>b.disabled=true);
+ const q=cases[i];total++;
+ const ok=x===q.correct;
+ if(ok){right++;streak++;score+=10+Math.min(streak-1,5)*2;$("feedback").textContent="🕵️ Case clue confirmed!";$("feedback").style.color="#18794e";}
+ else{streak=0;$("feedback").textContent="🔎 The evidence says otherwise. Study the clue."; $("feedback").style.color="#b42318";}
+ $("evidence").innerHTML="<b>Evidence Board:</b> "+q.evidence;
+ $("evidence").classList.remove("hidden");
+ $("explain").innerHTML="<b>Detective explanation:</b> "+q.ex;
+ $("explain").style.display="block";
+ $("next").disabled=false;
+ $("score").textContent=score;$("streak").textContent=streak;$("accuracy").textContent=Math.round(right/total*100)+"%";
+}
+$("next").onclick=()=>{if(i<cases.length-1){i++;render()}else finish()};
+function finish(){
+ $("game").classList.add("hidden");$("finish").classList.remove("hidden");$("bar").style.width="100%";
+ const acc=Math.round(right/total*100);
+ const title=acc===100?"💎 PERFECT MASTER DETECTIVE!":acc>=90?"🥇 SUBTRACTION DETECTIVE!":acc>=75?"🥈 CASE-SOLVING CHAMPION!":"🌟 CASES COMPLETED!";
+ $("finalText").innerHTML=`${title}<br><br><b>${score} points</b> • ${acc}% accuracy • ${right}/${total} correct<br><br>You investigated regrouping from 3-digit − 1-digit through 3-digit − 3-digit subtraction.`;
+}
+function restart(){i=0;score=0;streak=0;total=0;right=0;$("game").classList.remove("hidden");$("finish").classList.add("hidden");render()}
+render();
+</script>
+</body>
+</html>

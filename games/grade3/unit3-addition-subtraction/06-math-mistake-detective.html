@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Temmy Smart Games — Math Mistake Detective</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#edf4ff,#fbf7ff);color:#17233c}header{background:linear-gradient(135deg,#153b7a,#4b2b82);color:#fff;text-align:center;padding:18px 14px}.badge{display:inline-block;background:#c99700;padding:7px 14px;border-radius:20px;font-size:.8rem;font-weight:800}h1{margin:9px 0 4px;font-size:clamp(1.75rem,6vw,2.6rem)}.subtitle{margin:0;font-weight:700}.wrap{max-width:920px;margin:auto;padding:16px 14px 35px}.panel{background:#fff;border-radius:22px;padding:19px;margin-bottom:15px;box-shadow:0 10px 30px rgba(21,59,122,.1)}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{background:#f2f6ff;border-radius:14px;padding:9px;text-align:center;font-size:.84rem}.stat b{display:block;color:#153b7a;font-size:1.18rem;margin-top:3px}.progress{height:10px;background:#e6ebf4;border-radius:20px;margin-top:12px;overflow:hidden}.bar{height:100%;width:0;background:#c99700;transition:.35s}.case{text-align:center;color:#4b2b82;font-weight:900;margin:13px 0 3px}.clue{text-align:center;color:#66738b;font-weight:700;font-size:.9rem}.problem{font-size:clamp(1.8rem,7vw,3.4rem);font-weight:900;text-align:center;margin:20px 0 8px}.wrong{display:inline-block;background:#fff1f1;color:#b42318;padding:8px 15px;border-radius:12px}.question{text-align:center;font-weight:800;font-size:1.05rem;margin:15px 0}.choice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:700px;margin:auto}button{border:0;border-radius:14px;padding:13px 15px;font-size:1rem;font-weight:800;cursor:pointer;background:#153b7a;color:#fff}button.gold{background:#c99700}button.soft{background:#eeeaf8;color:#4b2b82}button:disabled{opacity:.45;cursor:not-allowed}.evidence{background:#f7f4ff;border-left:5px solid #4b2b82;border-radius:14px;padding:13px;margin:15px auto;max-width:700px;line-height:1.5}.feedback{text-align:center;min-height:45px;font-weight:800;margin:10px 0}.explain{display:none;background:#f7f8fc;border-radius:14px;padding:13px;line-height:1.5}.center{text-align:center}.hidden{display:none}.stamp{font-size:4rem}.meter{display:flex;justify-content:center;gap:5px;margin:10px}.meter span{height:7px;width:31px;background:#e1e6ef;border-radius:8px}.meter span.on{background:#c99700}@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.choice-grid{grid-template-columns:1fr}.problem{font-size:2.2rem}}
+</style></head><body>
+<header><div class="badge">TEMMY SMART GAMES • GRADE 3</div><h1>🔎 Math Mistake Detective</h1><p class="subtitle">Spot • Investigate • Correct • Explain</p></header>
+<div class="wrap"><section class="panel"><div class="stats"><div class="stat">Score<b id="score">0</b></div><div class="stat">Streak<b id="streak">0</b></div><div class="stat">Accuracy<b id="accuracy">100%</b></div><div class="stat">Case<b id="caseNo">1/7</b></div></div><div class="progress"><div class="bar" id="bar"></div></div><div class="meter" id="meter"></div></section>
+<section class="panel" id="game"><div class="case" id="caseTitle"></div><div class="clue" id="clue"></div><div class="problem"><span class="wrong" id="wrong"></span></div><div class="question" id="question"></div><div class="choice-grid" id="choices"></div><div class="evidence hidden" id="evidence"></div><div class="evidence hidden" id="hintBox"></div><div class="center" style="margin:10px 0"><button id="hintBtn" class="soft hidden">🔎 Detective Hint</button></div><div class="feedback" id="feedback"></div><div class="explain" id="explain"></div><div class="center" style="margin-top:13px"><button id="next" class="gold" disabled>Next Case →</button></div></section>
+<section class="panel center hidden" id="finish"><div class="stamp">🕵️</div><h2>MASTER MISTAKE DETECTIVE!</h2><p id="finalText"></p><button onclick="restart()">Investigate Again</button></section></div>
+<script>
+const cases=[
+["CASE 1 • THE MISSING TEN","372 + 58 = 420","What went wrong?",["The 10 ones were not regrouped","The numbers were rounded","The hundreds were added twice","Nothing — 420 is correct"],0,"2 + 8 = 10 ones. The 10 ones must become 1 ten and 0 ones.","Correct thinking: 372 + 58 = 430. The missing step was regrouping the 10 ones into 1 ten."],
+["CASE 2 • CHECK THE ONES","248 + 7 = 254","Which place-value mistake caused the wrong answer?",["8 + 7 was treated as 14","The 1 ten was not added","The hundreds were changed","No mistake"],1,"8 + 7 = 15 ones → 5 ones + 1 regrouped ten. The extra ten must be added to the tens.","Correct answer: 248 + 7 = 255. Regrouping changes the tens from 4 to 5."],
+["CASE 3 • SUBTRACTION CLUE","423 − 7 = 426","What should the learner have done first?",["Regroup 1 ten","Add 3 + 7","Round to 430","Regroup 1 hundred"],0,"3 ones − 7 ones is not possible. Regroup 1 ten as 10 ones, making 13 ones.","Then 13 − 7 = 6, so 423 − 7 = 416."],
+["CASE 4 • ESTIMATE ALERT","215 + 67 = 292","What does the estimate tell us?",["292 is close to 290","292 is exactly the estimate","292 is far from 290","Estimation cannot help"],0,"215 → 220 and 67 → 70. Estimate: 220 + 70 = 290.","The exact answer is 282. It is close to 290, so 282 is sensible."],
+["CASE 5 • SUBTRACTION REGROUPING","472 − 267 = 215","Which calculation should be checked first?",["2 − 7 in the ones","4 − 2 in the hundreds","7 − 6 in the tens","There is no regrouping"],0,"2 ones − 7 ones is not possible. Regroup 1 ten: 12 − 7 = 5.","After regrouping, the tens must also be checked carefully. The correct answer is 205."],
+["CASE 6 • THREE-DIGIT CHECK","683 − 548 = 125","Use the estimate to investigate. Which estimate is correct?",["680 − 550 = 130","680 + 550 = 1230","690 − 540 = 150","680 − 500 = 180"],0,"683 rounds to 680 and 548 rounds to 550. So the estimate is 130.","The exact answer is 135, which is close to 130. Correct calculation: 683 − 548 = 135."],
+["CASE 7 • FINAL MYSTERY","439 + 326 = 755","Which place-value fact should you investigate first?",["9 + 6 = 15 ones","4 + 3 = 7 hundreds","3 + 2 = 5 tens","No regrouping is needed"],0,"9 + 6 = 15 ones. Write 5 ones and regroup 1 ten before adding the tens.","439 + 326 = 765. The learner missed the extra ten created by the 15 ones."]
+];
+let i=0,score=0,streak=0,right=0,locked=false;const $=x=>document.getElementById(x);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function render(){let q=cases[i];locked=false;$("caseTitle").textContent=q[0];$("wrong").textContent=q[1];$("clue").textContent="Clue: Find the place-value evidence.";$("question").textContent=q[2];$("choices").innerHTML=shuffle(q[3].map((x,n)=>({x,n}))).map(o=>`<button onclick="answer(${o.n})">${o.x}</button>`).join("");$("evidence").classList.add("hidden");$("hintBox").classList.add("hidden");$("hintBtn").classList.add("hidden");$("hintBtn").disabled=true;$("feedback").textContent="";$("explain").style.display="none";$("next").disabled=true;$("caseNo").textContent=`${i+1}/${cases.length}`;$("bar").style.width=(i/cases.length*100)+"%";$("meter").innerHTML=cases.map((_,n)=>`<span class="${n<=i?'on':''}"></span>`).join("");update()}
+function update(){$("score").textContent=score;$("streak").textContent=streak;$("accuracy").textContent=((right/(i+1))*100).toFixed(0)+"%"}
+function answer(n){
+if(locked)return;
+let q=cases[i],ok=n===q[4];
+document.querySelectorAll("#choices button").forEach(b=>b.disabled=true);
+
+if(ok){
+  locked=true; right++; streak++; score+=12+Math.min(streak-1,5)*2;
+  $("feedback").textContent="🔎 Excellent investigation!";
+  $("feedback").style.color="#18794e";
+  $("evidence").innerHTML="<b>Evidence Board:</b> "+q[5];
+  $("evidence").classList.remove("hidden");
+  $("explain").innerHTML="<b>Case solved:</b> "+q[6];
+  $("explain").style.display="block";
+  $("next").disabled=false;
+  update();
+  return;
+}
+
+streak=0;
+$("feedback").textContent="🧩 The evidence says something is wrong. Investigate before moving on.";
+$("feedback").style.color="#b42318";
+$("hintBtn").classList.remove("hidden");
+$("hintBtn").disabled=false;
+$("hintBox").classList.add("hidden");
+$("explain").style.display="none";
+$("next").disabled=true;
+}
+
+$("hintBtn").onclick=()=>{
+const q=cases[i];
+$("hintBtn").disabled=true;
+$("hintBox").innerHTML="<b>🔎 Detective Hint:</b> "+q[5]+"<br><br><b>Look again at the original choices.</b> Which choice matches this evidence?";
+$("hintBox").classList.remove("hidden");
+
+document.querySelectorAll("#choices button").forEach(b=>b.disabled=false);
+$("feedback").textContent="Now investigate again. Use the clue to choose the correct diagnosis.";
+$("feedback").style.color="#4b2b82";
+};
+
+function update(){
+$("score").textContent=score;
+$("streak").textContent=streak;
+$("accuracy").textContent=((right/(i+1))*100).toFixed(0)+"%";
+}
+$("next").onclick=()=>{if(i<cases.length-1){i++;render()}else finish()};
+function finish(){$("game").classList.add("hidden");$("finish").classList.remove("hidden");$("bar").style.width="100%";let acc=Math.round(right/cases.length*100);$("finalText").innerHTML=`${acc===100?"💎 PERFECT INVESTIGATOR!":acc>=90?"🥇 MASTER MISTAKE DETECTIVE!":acc>=75?"🥈 ERROR-FINDING CHAMPION!":"🌟 KEEP INVESTIGATING!"}<br><br><b>${score} points</b> • ${acc}% accuracy • ${right}/${cases.length} cases solved<br><br>You used place value, regrouping and estimation to investigate mathematical mistakes.`}
+function restart(){i=0;score=0;streak=0;right=0;$("game").classList.remove("hidden");$("finish").classList.add("hidden");render()}render();
+</script></body></html>

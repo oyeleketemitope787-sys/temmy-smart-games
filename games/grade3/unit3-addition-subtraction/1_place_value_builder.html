@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temmy Smart Games | Place Value Builder</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef4ff,#f8f5ff);color:#17233c}
+header{background:linear-gradient(135deg,#153b7a,#4b2b82);color:white;padding:18px 16px;text-align:center}
+.badge{display:inline-block;background:#c99700;padding:7px 14px;border-radius:20px;font-weight:800;font-size:.8rem}
+h1{margin:10px 0 4px;font-size:clamp(1.7rem,5vw,2.5rem)}
+.subtitle{margin:0;font-weight:600;opacity:.92}
+.wrap{max-width:900px;margin:auto;padding:18px 14px 35px}
+.panel{background:white;border-radius:22px;padding:20px;box-shadow:0 10px 30px #153b7a18;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:#f2f6ff;border-radius:14px;padding:10px;text-align:center}
+.stat b{display:block;font-size:1.2rem;color:#153b7a}
+.progress{height:10px;background:#e6eaf2;border-radius:20px;overflow:hidden;margin-top:12px}
+.bar{height:100%;width:0;background:#c99700;transition:.35s}
+.level{text-align:center;color:#4b2b82;font-weight:800;margin:14px 0}
+.instruction{text-align:center;font-size:1.08rem;font-weight:700;margin:10px 0 16px}
+.problem{display:flex;justify-content:center;align-items:center;gap:18px;font-size:clamp(2.3rem,10vw,4.5rem);font-weight:900;margin:12px 0 20px}
+.column{display:flex;flex-direction:column;align-items:center;line-height:1}
+.plus{font-size:.55em;color:#c99700}
+.builder{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px auto;max-width:650px}
+.place{border:3px solid #d9e1f2;border-radius:18px;min-height:150px;padding:12px;text-align:center;background:#fbfcff}
+.place h3{margin:0 0 8px;color:#153b7a}
+.count{font-size:2.3rem;font-weight:900;margin:8px}
+.blocks{min-height:42px;font-size:1.5rem;word-break:break-word}
+.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+button{border:0;border-radius:14px;padding:12px 17px;font-weight:800;font-size:1rem;cursor:pointer;background:#153b7a;color:white}
+button.secondary{background:#eeeaf8;color:#4b2b82}
+button.gold{background:#c99700;color:white}
+button:disabled{opacity:.45;cursor:not-allowed}
+.feedback{text-align:center;min-height:48px;font-weight:800;font-size:1.08rem;margin:10px 0}
+.explain{background:#f7f4ff;border-left:5px solid #4b2b82;border-radius:12px;padding:12px;margin-top:12px;display:none}
+.choice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:650px;margin:auto}
+.choice{background:#f1f5ff;color:#153b7a;border:2px solid #d7e1f5}
+.choice:hover{transform:translateY(-2px)}
+.hidden{display:none}
+.center{text-align:center}
+.trophy{font-size:4rem}
+@media(max-width:600px){
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .builder{grid-template-columns:1fr}
+ .problem{font-size:2.6rem}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="badge">TEMMY SMART GAMES • GRADE 3</div>
+  <h1>🏗️ Place Value Builder</h1>
+  <p class="subtitle">Addition Regrouping • Build It • Explain It</p>
+</header>
+
+<div class="wrap">
+<section class="panel">
+  <div class="stats">
+    <div class="stat">Score<b id="score">0</b></div>
+    <div class="stat">Streak<b id="streak">0</b></div>
+    <div class="stat">Accuracy<b id="accuracy">100%</b></div>
+    <div class="stat">Round<b id="round">1/8</b></div>
+  </div>
+  <div class="progress"><div class="bar" id="bar"></div></div>
+</section>
+
+<section class="panel" id="game">
+  <div class="level" id="level">MISSION 1 • ONES</div>
+  <div class="instruction" id="instruction">Build the answer by thinking about the place values.</div>
+  <div class="problem">
+    <div class="column"><span id="a">248</span><span class="plus">＋</span><span id="b">7</span></div>
+  </div>
+
+  <div id="builderArea">
+    <div class="center"><b>Step 1:</b> What happens to the ones?</div>
+    <div class="choice-grid" id="choices"></div>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+  <div class="explain" id="explain"></div>
+  <div class="controls">
+    <button id="next" class="gold" disabled>Next Build →</button>
+  </div>
+</section>
+
+<section class="panel center hidden" id="finish">
+  <div class="trophy">🏆</div>
+  <h2>BUILD COMPLETE!</h2>
+  <p id="finalText"></p>
+  <button onclick="restart()">Play Again</button>
+</section>
+</div>
+
+<script>
+const questions=[
+ {a:248,b:7, ones:15, carry:1, answer:255, text:"8 + 7 = 15 ones. Regroup 10 ones as 1 ten."},
+ {a:267,b:5, ones:12, carry:1, answer:272, text:"7 + 5 = 12 ones. Regroup 10 ones as 1 ten."},
+ {a:372,b:58, ones:10, carry:1, answer:430, text:"2 + 8 = 10 ones. That becomes 0 ones and 1 extra ten."},
+ {a:145,b:27, ones:12, carry:1, answer:172, text:"5 + 7 = 12 ones. Regroup 10 ones as 1 ten."},
+ {a:148,b:136, ones:14, carry:1, answer:284, text:"8 + 6 = 14. Write 4 ones and regroup 1 ten."},
+ {a:326,b:48, ones:14, carry:1, answer:374, text:"6 + 8 = 14. Write 4 ones and regroup 1 ten."},
+ {a:257,b:164, ones:11, carry:1, answer:421, text:"7 + 4 = 11. Write 1 one and regroup 1 ten."},
+ {a:439,b:326, ones:15, carry:1, answer:765, text:"9 + 6 = 15. Write 5 ones and regroup 1 ten."}
+];
+let i=0,score=0,streak=0,correct=0,answered=false;
+const $=id=>document.getElementById(id);
+function render(){
+ const q=questions[i]; answered=false;
+ $("a").textContent=q.a;$("b").textContent=q.b;
+ $("round").textContent=(i+1)+"/"+questions.length;
+ $("bar").style.width=(i/questions.length*100)+"%";
+ $("feedback").textContent="";$("explain").style.display="none";$("next").disabled=true;
+ $("level").textContent=i<2?"MISSION "+(i+1)+" • ONES":i<4?"MISSION "+(i+1)+" • REGROUPING":i<6?"MISSION "+(i+1)+" • BUILD & THINK":"MISSION "+(i+1)+" • MASTER BUILDER";
+ const choices=[q.ones,q.ones-1,q.ones+1, q.ones===10?11:10];
+ const unique=[...new Set(choices)].sort(()=>Math.random()-.5);
+ $("choices").innerHTML=unique.map(x=>`<button class="choice" onclick="choose(${x})">${x} ones</button>`).join("");
+}
+function choose(x){
+ if(answered)return; answered=true;
+ const q=questions[i];
+ if(x===q.ones){
+   correct++;streak++;score+=10+Math.min(streak-1,5)*2;
+   $("feedback").textContent="✅ Correct! Great place-value thinking.";
+   $("feedback").style.color="#18794e";
+   $("explain").innerHTML="<b>Build it:</b> "+q.text+"<br><br>Now the extra ten joins the tens column. Final answer: <b>"+q.answer+"</b>.";
+ }else{
+   streak=0;
+   $("feedback").textContent="🔎 Not quite. Look carefully at the ones.";
+   $("feedback").style.color="#b42318";
+   $("explain").innerHTML="<b>Think again:</b> Add the ones first. If there are 10 or more ones, regroup 10 ones as 1 ten.";
+ }
+ $("score").textContent=score;$("streak").textContent=streak;
+ $("accuracy").textContent=Math.round(correct/(i+1)*100)+"%";
+ $("explain").style.display="block";$("next").disabled=false;
+}
+$("next").onclick=()=>{
+ if(i<questions.length-1){i++;render();}
+ else finish();
+};
+function finish(){
+ $("game").classList.add("hidden");$("finish").classList.remove("hidden");
+ $("bar").style.width="100%";
+ const acc=Math.round(correct/questions.length*100);
+ let title=acc===100?"💎 PERFECT BUILDER!":acc>=75?"🏆 PLACE-VALUE CHAMPION!":"🌟 KEEP BUILDING!";
+ $("finalText").innerHTML=`${title}<br><br><b>${score} points</b> • ${acc}% accuracy<br><br>You practised the key idea: <b>10 ones = 1 ten</b>.`;
+}
+function restart(){i=0;score=0;streak=0;correct=0;$("score").textContent=0;$("streak").textContent=0;$("accuracy").textContent="100%";$("game").classList.remove("hidden");$("finish").classList.add("hidden");render();}
+render();
+</script>
+</body>
+</html>

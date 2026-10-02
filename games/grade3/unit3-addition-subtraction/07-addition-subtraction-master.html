@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games — Addition & Subtraction Master</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#edf4ff,#fbf7ff);color:#17233c}
+header{background:linear-gradient(135deg,#153b7a,#4b2b82);color:#fff;text-align:center;padding:18px 14px}
+.badge{display:inline-block;background:#c99700;padding:7px 14px;border-radius:20px;font-size:.8rem;font-weight:800}
+h1{margin:9px 0 4px;font-size:clamp(1.7rem,6vw,2.6rem)}
+.subtitle{margin:0;font-weight:700}
+.wrap{max-width:930px;margin:auto;padding:16px 14px 35px}
+.panel{background:#fff;border-radius:22px;padding:19px;margin-bottom:15px;box-shadow:0 10px 30px rgba(21,59,122,.1)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:#f2f6ff;border-radius:14px;padding:9px;text-align:center;font-size:.83rem}
+.stat b{display:block;color:#153b7a;font-size:1.18rem;margin-top:3px}
+.progress{height:10px;background:#e6ebf4;border-radius:20px;margin-top:12px;overflow:hidden}
+.bar{height:100%;width:0;background:#c99700;transition:.35s}
+.round{text-align:center;color:#4b2b82;font-weight:900;margin:13px 0 3px}
+.focus{text-align:center;color:#66738b;font-weight:700;font-size:.9rem}
+.problem{text-align:center;font-size:clamp(2rem,8vw,3.8rem);font-weight:900;margin:19px 0}
+.question{text-align:center;font-weight:800;font-size:1.05rem;margin:13px 0}
+.choice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:720px;margin:auto}
+button{border:0;border-radius:14px;padding:13px 15px;font-size:1rem;font-weight:800;cursor:pointer;background:#153b7a;color:#fff}
+button.gold{background:#c99700}
+button.soft{background:#eeeaf8;color:#4b2b82}
+button:disabled{opacity:.45;cursor:not-allowed}
+.feedback{text-align:center;min-height:44px;font-weight:800;margin:10px 0}
+.explain{display:none;background:#f7f8fc;border-left:5px solid #4b2b82;border-radius:14px;padding:13px;line-height:1.5}
+.badgebar{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:12px 0}
+.pill{padding:6px 10px;border-radius:20px;background:#eef2ff;color:#153b7a;font-size:.8rem;font-weight:800}
+.meter{display:flex;justify-content:center;gap:5px;margin:10px}
+.meter span{height:7px;width:28px;background:#e1e6ef;border-radius:8px}
+.meter span.on{background:#c99700}
+.center{text-align:center}
+.hidden{display:none}
+.trophy{font-size:4.5rem}
+.finalscore{font-size:2rem;font-weight:900;color:#153b7a}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.choice-grid{grid-template-columns:1fr}.problem{font-size:2.5rem}}
+</style>
+</head>
+<body>
+<header>
+<div class="badge">TEMMY SMART GAMES • GRADE 3</div>
+<h1>🏆 Addition & Subtraction Master</h1>
+<p class="subtitle">Think • Estimate • Calculate • Check • Explain</p>
+</header>
+
+<div class="wrap">
+<section class="panel">
+<div class="stats">
+<div class="stat">Score<b id="score">0</b></div>
+<div class="stat">Streak<b id="streak">0</b></div>
+<div class="stat">Accuracy<b id="accuracy">100%</b></div>
+<div class="stat">Round<b id="round">1/12</b></div>
+</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="meter" id="meter"></div>
+</section>
+
+<section class="panel" id="game">
+<div class="round" id="roundTitle">ROUND 1 • QUICK THINK</div>
+<div class="focus" id="focus">Show your place-value thinking.</div>
+<div class="badgebar"><span class="pill" id="skill">REGROUPING</span></div>
+<div class="problem" id="problem">248 + 7</div>
+<div class="question" id="question">What happens in the ones column?</div>
+<div class="choice-grid" id="choices"></div>
+<div class="feedback" id="feedback"></div>
+<div class="explain" id="explain"></div>
+<div class="center" style="margin-top:13px"><button id="next" class="gold" disabled>Next Round →</button></div>
+</section>
+
+<section class="panel center hidden" id="finish">
+<div class="trophy" id="trophy">🏆</div>
+<h2 id="resultTitle">ADDITION & SUBTRACTION MASTER!</h2>
+<div class="finalscore" id="finalScore"></div>
+<p id="finalText"></p>
+<button onclick="restart()">Play Again</button>
+</section>
+</div>
+
+<script>
+const qs=[
+{title:"ROUND 1 • QUICK THINK",focus:"Show your place-value thinking.",skill:"REGROUPING",p:"248 + 7",q:"8 + 7 = ?",opts:["15 ones","14 ones","16 ones","13 ones"],ans:"15 ones",ex:"8 + 7 = 15 ones. Write 5 ones and regroup 1 ten."},
+{title:"ROUND 2 • ADDITION",focus:"Calculate carefully.",skill:"ADDITION",p:"372 + 58",q:"What is the exact answer?",opts:["430","420","440","428"],ans:"430",ex:"2 + 8 = 10 ones, so regroup 1 ten. Then 7 + 5 + 1 = 13 tens. Answer = 430."},
+{title:"ROUND 3 • ESTIMATE",focus:"Round first, then estimate.",skill:"ESTIMATION",p:"215 + 67",q:"What is the best estimate?",opts:["290","280","300","270"],ans:"290",ex:"215 → 220 and 67 → 70. Then 220 + 70 = 290."},
+{title:"ROUND 4 • SUBTRACTION",focus:"Investigate the ones column.",skill:"SUBTRACTION",p:"423 − 7",q:"What must happen first?",opts:["Regroup 1 ten","Add 3 + 7","Regroup 1 hundred","Nothing"],ans:"Regroup 1 ten",ex:"3 ones − 7 ones is not possible. Regroup 1 ten as 10 ones, making 13 ones."},
+{title:"ROUND 5 • SUBTRACTION",focus:"Calculate with regrouping.",skill:"SUBTRACTION",p:"472 − 267",q:"What is the exact answer?",opts:["205","215","195","200"],ans:"205",ex:"Regroup: 12 − 7 = 5, 6 − 6 = 0, 4 − 2 = 2. Answer = 205."},
+{title:"ROUND 6 • CHECK",focus:"Use an estimate to judge the answer.",skill:"CHECKING",p:"683 − 548",q:"Which statement is sensible?",opts:["135 is close to 130","135 is close to 200","135 is close to 1000","135 cannot be checked"],ans:"135 is close to 130",ex:"Estimate: 680 − 550 = 130. Exact answer: 135. Since 135 is close to 130, it is sensible."},
+{title:"ROUND 7 • MISTAKE DETECTIVE",focus:"Find the missing place-value step.",skill:"ERROR DETECTION",p:"372 + 58 = 420",q:"What was missed?",opts:["Regrouping the 10 ones","Rounding the numbers","Adding hundreds twice","Nothing"],ans:"Regrouping the 10 ones",ex:"2 + 8 = 10 ones. Those 10 ones must become 1 ten. Correct answer: 430."},
+{title:"ROUND 8 • THINK",focus:"Explain the reason for regrouping.",skill:"REASONING",p:"472 − 267",q:"Why do we regroup?",opts:["There are not enough ones to subtract","The answer is too large","We always regroup","To make the numbers even"],ans:"There are not enough ones to subtract",ex:"2 ones cannot subtract 7 ones. We regroup 1 ten as 10 ones so we have enough ones."},
+{title:"ROUND 9 • PROBLEM SOLVING",focus:"Choose the operation and solve.",skill:"WORD PROBLEM",p:"472 + 267",q:"A post office has 472 parcels. Another 267 arrive. How many altogether?",opts:["739","705","729","749"],ans:"739",ex:"The word 'altogether' means add. 472 + 267 = 739."},
+{title:"ROUND 10 • PROBLEM SOLVING",focus:"Compare quantities and subtract.",skill:"WORD PROBLEM",p:"439 − 326",q:"A library has 439 fiction books and 326 non-fiction books. How many more fiction books?",opts:["113","765","103","123"],ans:"113",ex:"'How many more' asks for the difference. 439 − 326 = 113."},
+{title:"ROUND 11 • FINAL BOSS",focus:"Use the full strategy.",skill:"ESTIMATE → CALCULATE → CHECK",p:"326 + 48",q:"Which complete statement is correct?",opts:["Estimate 370; exact 374; sensible","Estimate 360; exact 364; sensible","Estimate 400; exact 374; not sensible","Estimate 330; exact 364; not sensible"],ans:"Estimate 370; exact 374; sensible",ex:"326 → 330 and 48 → 50, so estimate = 380. Exact answer = 374, which is close to the estimate and therefore sensible."},
+{title:"ROUND 12 • MASTER CHALLENGE",focus:"Final challenge — show everything you know.",skill:"MASTER",p:"731 − 286",q:"Which answer and check are correct?",opts:["445; estimate 440; sensible","455; estimate 440; sensible","445; estimate 500; not sensible","435; estimate 400; not sensible"],ans:"445; estimate 440; sensible",ex:"731 → 730 and 286 → 290, so estimate = 440. Exact answer = 445. The answer is close to the estimate and is sensible."}
+];
+
+let i=0,score=0,streak=0,right=0,locked=false;
+const $=id=>document.getElementById(id);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function render(){
+ const q=qs[i];locked=false;
+ $("roundTitle").textContent=q.title;$("focus").textContent=q.focus;$("skill").textContent=q.skill;
+ $("problem").textContent=q.p;$("question").textContent=q.q;
+ $("choices").innerHTML=shuffle(q.opts).map(x=>`<button onclick="answer(this,'${x.replace(/'/g,"\\'")}')">${x}</button>`).join("");
+ $("feedback").textContent="";$("explain").style.display="none";$("next").disabled=true;
+ $("next").textContent=i===qs.length-1?"Finish Mastery →":"Next Round →";
+ $("round").textContent=`${i+1}/${qs.length}`;$("bar").style.width=(i/qs.length*100)+"%";
+ $("meter").innerHTML=qs.map((_,n)=>`<span class="${n<=i?'on':''}"></span>`).join("");
+ update();
+}
+function update(){
+ $("score").textContent=score;$("streak").textContent=streak;
+ $("accuracy").textContent=Math.round(right/(i+1)*100)+"%";
+}
+function answer(btn,x){
+ if(locked)return;locked=true;
+ document.querySelectorAll("#choices button").forEach(b=>b.disabled=true);
+ const q=qs[i],ok=x===q.ans;
+ if(ok){right++;streak++;score+=12+Math.min(streak-1,5)*2;$("feedback").textContent="✅ Correct! Mastery progress secured.";$("feedback").style.color="#18794e";}
+ else{streak=0;$("feedback").textContent="🔎 Not quite. Study the explanation carefully.";$("feedback").style.color="#b42318";}
+ $("explain").innerHTML="<b>Mastery evidence:</b> "+q.ex;$("explain").style.display="block";
+ $("next").disabled=false;update();
+}
+$("next").onclick=()=>{if(i<qs.length-1){i++;render()}else finish()};
+function finish(){
+ $("game").classList.add("hidden");$("finish").classList.remove("hidden");$("bar").style.width="100%";
+ const acc=Math.round(right/qs.length*100);
+ let title,trophy;
+ if(acc===100){title="💎 PERFECT UNIT MASTERY!";trophy="🏆✨";}
+ else if(acc>=90){title="🥇 ADDITION & SUBTRACTION MASTER!";trophy="🏆";}
+ else if(acc>=75){title="🥈 UNIT CHAMPION!";trophy="🥈";}
+ else{title="🌟 MATHEMATICS EXPLORER!";trophy="🌟";}
+ $("trophy").textContent=trophy;$("resultTitle").textContent=title;
+ $("finalScore").textContent=`${score} points • ${acc}% accuracy`;
+ $("finalText").innerHTML=`You completed all 12 mastery rounds.<br><br>
+ <b>Skills demonstrated:</b><br>
+ Place value • Regrouping • Estimation • Addition • Subtraction • Checking • Error detection • Problem solving<br><br>
+ <b>Think → Estimate → Calculate → Check → Explain</b>`;
+}
+function restart(){i=0;score=0;streak=0;right=0;$("game").classList.remove("hidden");$("finish").classList.add("hidden");render()}
+render();
+</script>
+</body>
+</html>

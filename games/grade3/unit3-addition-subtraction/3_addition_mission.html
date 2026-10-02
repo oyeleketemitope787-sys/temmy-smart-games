@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games — Addition Mission</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#edf4ff,#faf6ff);color:#17233c}
+header{background:linear-gradient(135deg,#153b7a,#4b2b82);color:#fff;text-align:center;padding:18px 14px}
+.badge{display:inline-block;background:#c99700;padding:7px 14px;border-radius:20px;font-size:.8rem;font-weight:800}
+h1{margin:9px 0 4px;font-size:clamp(1.8rem,6vw,2.7rem)}
+.subtitle{margin:0;font-weight:700}
+.wrap{max-width:900px;margin:auto;padding:16px 14px 35px}
+.panel{background:#fff;border-radius:22px;padding:19px;margin-bottom:15px;box-shadow:0 10px 30px rgba(21,59,122,.1)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:#f2f6ff;border-radius:14px;padding:9px;text-align:center;font-size:.84rem}
+.stat b{display:block;color:#153b7a;font-size:1.18rem;margin-top:3px}
+.progress{height:10px;background:#e6ebf4;border-radius:20px;margin-top:12px;overflow:hidden}
+.bar{height:100%;width:0;background:#c99700;transition:.35s}
+.mission{text-align:center;color:#4b2b82;font-weight:900;margin:13px 0 4px}
+.target{text-align:center;font-size:.85rem;color:#69758c;font-weight:700}
+.problem{text-align:center;font-size:clamp(2.5rem,10vw,4.4rem);font-weight:900;margin:18px 0}
+.sumline{height:4px;background:#c99700;max-width:330px;margin:-8px auto 18px;border-radius:10px}
+.estimate{background:#f7f4ff;border-left:5px solid #4b2b82;padding:12px;border-radius:12px;margin:12px auto;max-width:650px;text-align:center}
+.choice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:650px;margin:auto}
+button{border:0;border-radius:14px;padding:13px 16px;font-size:1rem;font-weight:800;cursor:pointer;background:#153b7a;color:#fff}
+button.gold{background:#c99700}
+button.soft{background:#eeeaf8;color:#4b2b82}
+button:disabled{opacity:.45;cursor:not-allowed}
+.feedback{text-align:center;min-height:45px;font-weight:800;margin:11px 0}
+.explain{display:none;background:#f7f8fc;border-radius:14px;padding:13px;line-height:1.5}
+.center{text-align:center}
+.hidden{display:none}
+.meter{display:flex;gap:5px;justify-content:center;margin:10px 0}
+.meter span{width:36px;height:7px;border-radius:8px;background:#e1e6ef}
+.meter span.on{background:#c99700}
+.badgebig{font-size:4rem}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.choice-grid{grid-template-columns:1fr}.problem{font-size:2.7rem}}
+</style>
+</head>
+<body>
+<header>
+<div class="badge">TEMMY SMART GAMES • GRADE 3</div>
+<h1>🚀 Addition Mission</h1>
+<p class="subtitle">Regroup • Calculate • Prove Your Answer</p>
+</header>
+
+<div class="wrap">
+<section class="panel">
+<div class="stats">
+<div class="stat">Score<b id="score">0</b></div>
+<div class="stat">Streak<b id="streak">0</b></div>
+<div class="stat">Accuracy<b id="accuracy">100%</b></div>
+<div class="stat">Mission<b id="round">1/10</b></div>
+</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="meter" id="meter"></div>
+</section>
+
+<section class="panel" id="game">
+<div class="mission" id="mission">MISSION 1 • LAUNCH PAD</div>
+<div class="target" id="target">3-digit + 1-digit</div>
+<div class="problem" id="problem">248 + 7</div>
+<div class="sumline"></div>
+
+<div class="estimate" id="estimate">💡 Quick Think: What happens in the ones column?</div>
+<div class="choice-grid" id="choices"></div>
+
+<div class="feedback" id="feedback"></div>
+<div class="explain" id="explain"></div>
+<div class="center" style="margin-top:13px">
+<button id="next" class="gold" disabled>Next Mission →</button>
+</div>
+</section>
+
+<section class="panel center hidden" id="finish">
+<div class="badgebig">🏆</div>
+<h2>ADDITION MISSION COMPLETE!</h2>
+<p id="finalText"></p>
+<button onclick="restart()">Play Again</button>
+</section>
+</div>
+
+<script>
+const qs=[
+{a:248,b:7,ans:255,type:"3-digit + 1-digit",prompt:"8 + 7 = ?",choices:[15,14,16,13],ex:"8 + 7 = 15 ones. Write 5 ones and regroup 1 ten. The answer is 255."},
+{a:267,b:5,ans:272,type:"3-digit + 1-digit",prompt:"7 + 5 = ?",choices:[12,11,13,10],ex:"7 + 5 = 12 ones. Write 2 ones and regroup 1 ten. The answer is 272."},
+{a:372,b:58,ans:430,type:"3-digit + 2-digit",prompt:"What is the exact answer?",choices:[430,420,440,428],ex:"2 + 8 = 10 ones → 0 ones and 1 extra ten. Then 7 + 5 + 1 = 13 tens. The answer is 430."},
+{a:215,b:67,ans:282,type:"3-digit + 2-digit",prompt:"What is the exact answer?",choices:[282,272,292,280],ex:"215 + 67 = 282. The estimate 220 + 70 = 290 helps us check that 282 is sensible."},
+{a:145,b:27,ans:172,type:"3-digit + 2-digit",prompt:"What is the exact answer?",choices:[172,162,182,170],ex:"5 + 7 = 12 ones. Regroup 1 ten, then continue with the tens and hundreds."},
+{a:148,b:136,ans:284,type:"3-digit + 3-digit",prompt:"8 + 6 = ?",choices:[14,13,15,12],ex:"8 + 6 = 14. Write 4 ones and regroup 1 ten. Then 4 + 3 + 1 = 8 tens."},
+{a:326,b:48,ans:374,type:"3-digit + 2-digit",prompt:"What is the exact answer?",choices:[374,364,384,370],ex:"326 + 48 = 374. The ones regroup because 6 + 8 = 14."},
+{a:257,b:164,ans:421,type:"3-digit + 3-digit",prompt:"What is the exact answer?",choices:[421,411,431,420],ex:"257 + 164 = 421. Start with the ones, regroup, then continue through the place values."},
+{a:439,b:326,ans:765,type:"3-digit + 3-digit",prompt:"What is the exact answer?",choices:[765,755,775,745],ex:"9 + 6 = 15 ones → regroup 1 ten. Continue carefully through the tens and hundreds."},
+{a:684,b:257,ans:941,type:"3-digit + 3-digit",prompt:"FINAL MISSION: What is the exact answer?",choices:[941,931,951,939],ex:"684 + 257 = 941. Work from ones to tens to hundreds, regrouping whenever a place value reaches 10."}
+];
+
+let i=0,score=0,streak=0,total=0,right=0,locked=false;
+const $=id=>document.getElementById(id);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function render(){
+ const q=qs[i];locked=false;
+ $("mission").textContent=i<2?"MISSION "+(i+1)+" • LAUNCH PAD":i<5?"MISSION "+(i+1)+" • CLIMB":i<9?"MISSION "+(i+1)+" • HIGH ALTITUDE":"MISSION 10 • FINAL FLIGHT";
+ $("target").textContent=q.type;
+ $("problem").textContent=q.a+" + "+q.b;
+ $("estimate").textContent="💡 "+q.prompt;
+ $("choices").innerHTML=shuffle(q.choices).map(x=>`<button onclick="answer(this,${x})">${x}</button>`).join("");
+ $("feedback").textContent="";$("explain").style.display="none";$("next").disabled=true;
+ $("next").textContent=i===qs.length-1?"Mission Complete →":"Next Mission →";
+ $("round").textContent=(i+1)+"/"+qs.length;
+ $("bar").style.width=(i/qs.length*100)+"%";
+ $("meter").innerHTML=qs.map((_,n)=>`<span class="${n<=i?'on':''}"></span>`).join("");
+ $("score").textContent=score;$("streak").textContent=streak;
+ $("accuracy").textContent=total?Math.round(right/total*100)+"%":"100%";
+}
+function answer(btn,x){
+ if(locked)return;locked=true;
+ document.querySelectorAll("#choices button").forEach(b=>b.disabled=true);
+ const q=qs[i];total++;
+ if(x===q.ans){
+   right++;streak++;score+=10+Math.min(streak-1,5)*2;
+   $("feedback").textContent="🚀 Correct! Mission progress secured!";
+   $("feedback").style.color="#18794e";
+ }else{
+   streak=0;
+   $("feedback").textContent="🔎 Check your place values and try the next mission.";
+   $("feedback").style.color="#b42318";
+ }
+ $("explain").innerHTML="<b>Mission evidence:</b> "+q.ex;
+ $("explain").style.display="block";$("next").disabled=false;
+ $("score").textContent=score;$("streak").textContent=streak;
+ $("accuracy").textContent=Math.round(right/total*100)+"%";
+}
+$("next").onclick=()=>{if(i<qs.length-1){i++;render()}else finish()};
+function finish(){
+ $("game").classList.add("hidden");$("finish").classList.remove("hidden");$("bar").style.width="100%";
+ const acc=Math.round(right/total*100);
+ const title=acc===100?"💎 PERFECT ADDITION PILOT!":acc>=90?"🥇 ADDITION MASTER!":acc>=75?"🥈 ADDITION CHAMPION!":"🌟 MISSION COMPLETED!";
+ $("finalText").innerHTML=`${title}<br><br><b>${score} points</b> • ${acc}% accuracy • ${right}/${total} correct<br><br>You completed addition missions from 3-digit + 1-digit through 3-digit + 3-digit with regrouping.`;
+}
+function restart(){i=0;score=0;streak=0;total=0;right=0;$("game").classList.remove("hidden");$("finish").classList.add("hidden");render()}
+render();
+</script>
+</body>
+</html>
