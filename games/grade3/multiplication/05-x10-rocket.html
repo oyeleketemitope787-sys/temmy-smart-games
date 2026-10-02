@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temmy Smart Games — ×10 Rocket</title>
+<style>
+:root{--blue:#153B7A;--gold:#C99700;--purple:#5B3A9D;--ink:#24364b;--soft:#f4f7fb;--green:#16845b;--red:#c94d4d}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#071b3e,#102f63 58%,#f4f7fb 58%);color:var(--ink);min-height:100vh}
+.wrap{max-width:940px;margin:auto;padding:18px 14px 40px}.brand{text-align:center;color:white}.brand .tag{display:inline-block;background:#ffffff18;border:1px solid #ffffff38;border-radius:999px;padding:7px 13px;font-weight:800;font-size:12px;letter-spacing:.8px}.brand h1{margin:12px 0 4px;font-size:clamp(30px,6vw,52px);letter-spacing:1px}.brand p{margin:0 0 16px;color:#dce9ff}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0}.stat{background:#fff;border-radius:15px;padding:10px;text-align:center;box-shadow:0 6px 18px #071b3e28}.stat b{display:block;font-size:20px;color:var(--blue)}.stat span{font-size:11px;color:#708197;font-weight:800}
+.card{background:#fff;border-radius:24px;padding:22px;box-shadow:0 12px 32px #071b3e2a;margin-top:12px}.mission{text-align:center}.mission h2{margin:0;color:var(--purple);font-size:22px}.mission p{margin:7px 0;color:#687c91;font-weight:700}.progress{height:10px;background:#e9eef5;border-radius:99px;overflow:hidden;margin:16px 0}.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple),var(--gold));transition:.35s}
+.space{height:235px;border-radius:22px;background:radial-gradient(circle at 70% 25%,#fff 0 1px,transparent 2px),radial-gradient(circle at 25% 65%,#fff 0 1px,transparent 2px),linear-gradient(135deg,#071b3e,#183d78 60%,#5B3A9D);background-size:90px 70px,120px 90px,100% 100%;position:relative;overflow:hidden;margin:12px 0}
+.planet{position:absolute;width:80px;height:80px;border-radius:50%;right:9%;top:18%;background:linear-gradient(145deg,#e7c55a,#a8750a);box-shadow:0 0 30px #e4bd4c88}.rocket{position:absolute;left:8%;bottom:35px;font-size:58px;filter:drop-shadow(0 0 8px #fff);transition:transform .7s cubic-bezier(.2,.8,.2,1)}.rocket.launch{transform:translate(570px,-125px) rotate(-8deg)}.trail{position:absolute;left:7%;bottom:33px;width:75px;height:12px;border-radius:50%;background:linear-gradient(90deg,#e85d75,#f2b233,transparent);filter:blur(3px);opacity:.85}.target{position:absolute;right:7%;bottom:25px;font-size:26px;color:#fff;font-weight:900}
+.question{font-size:clamp(32px,8vw,58px);font-weight:900;color:var(--blue);margin:8px 0}.missionName{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-weight:900}
+.answers{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}.answer{border:2px solid #dbe5ef;background:#fff;border-radius:18px;padding:18px 8px;font-size:25px;font-weight:900;color:var(--blue);cursor:pointer;transition:.18s;box-shadow:0 5px 12px #153b7a12}.answer:hover{transform:translateY(-3px);border-color:var(--purple)}.answer.good{background:#e8f8f0;border-color:var(--green);color:var(--green)}.answer.bad{background:#fff0f0;border-color:var(--red);color:var(--red)}
+.feedback{min-height:52px;margin-top:15px;padding:13px;border-radius:15px;background:#f7f9fc;font-weight:800}.explain{margin-top:6px;color:#687c91;font-weight:600;font-size:14px}
+.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px}button{border:0;border-radius:999px;padding:12px 20px;font-weight:900;cursor:pointer}.next{background:var(--blue);color:#fff}.restart{background:#edf2f8;color:var(--blue)}
+.hidden{display:none}.perfect{text-align:center}.perfect h2{font-size:34px;color:var(--purple);margin:5px}.bigscore{font-size:48px;color:var(--blue);font-weight:900}.medal{font-size:72px}.conf{position:fixed;top:-15px;width:9px;height:18px;border-radius:2px;animation:fall 2.2s linear forwards;z-index:20}@keyframes fall{to{transform:translateY(110vh) rotate(650deg);opacity:0}}
+
+.journey{display:flex;justify-content:space-between;gap:5px;margin:12px 0 8px;overflow-x:auto;padding-bottom:4px}
+.stop{flex:1;min-width:105px;text-align:center;padding:8px 5px;border-radius:999px;background:#eef2f7;color:#8795a5;font-size:10px;font-weight:900;white-space:nowrap}
+.stop.active{background:#153B7A;color:#fff}.stop.done{background:#e9f6f0;color:#16845b}
+.placeValue{margin:10px auto 0;padding:12px;border-radius:15px;background:#eef5ff;border:2px solid #cddcf2;color:#153B7A;font-weight:900;max-width:520px;animation:pop .35s ease}
+.pvNumber{font-size:24px}.pvArrow{font-size:24px;color:#C99700;padding:0 10px}.pvNote{display:block;color:#687c91;font-size:12px;margin-top:5px}
+.fuelWrap{max-width:420px;margin:0 auto 10px}.fuelLabel{font-size:12px;font-weight:900;color:#C99700;margin-bottom:5px}.fuel{height:11px;background:#e9eef5;border-radius:99px;overflow:hidden}.fuel>div{height:100%;width:100%;background:#16845b;transition:width .1s linear}
+@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+
+@media(max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}.answers{grid-template-columns:repeat(2,1fr)}.space{height:200px}.rocket.launch{transform:translate(210px,-105px)}.card{padding:16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="brand">
+    <div class="tag">TEMMY SMART GAMES • GRADE 3 MATHEMATICS</div>
+    <h1>🚀 ×10 ROCKET</h1>
+    <p>Multiply by 10 • Learn • Launch • Achieve</p>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><b id="score">0</b><span>SCORE</span></div>
+    <div class="stat"><b id="streak">0</b><span>STREAK</span></div>
+    <div class="stat"><b id="accuracy">0%</b><span>ACCURACY</span></div>
+    <div class="stat"><b id="round">1/5</b><span>MISSION</span></div>
+  </div>
+
+  <main id="game" class="card">
+    <div class="mission">
+      <div class="missionName" id="missionName">MISSION 1 • LAUNCH BASICS</div>
+      <h2 id="missionTitle">Fuel the Rocket</h2>
+      <p id="missionHint">Choose the answer that makes the rocket launch.</p>
+      <div class="journey" id="journey">
+      <span class="stop active" data-stop="0">🚀 Launch Pad</span>
+      <span class="stop" data-stop="1">🌙 Moon</span>
+      <span class="stop" data-stop="2">🪐 Planet</span>
+      <span class="stop" data-stop="3">🛰️ Space Station</span>
+      <span class="stop" data-stop="4">⭐ Temmy Star</span>
+    </div>
+    <div class="progress"><div id="bar"></div></div>
+    <div id="placeValue" class="placeValue hidden"></div>
+    </div>
+
+    <div class="space">
+      <div class="planet"></div><div class="trail"></div>
+      <div class="rocket" id="rocket">🚀</div><div class="target">★</div>
+    </div>
+
+    <section style="text-align:center">
+      <div id="fuelWrap" class="fuelWrap hidden">
+      <div class="fuelLabel">⛽ FUEL <span id="fuelText">10</span>s</div>
+      <div class="fuel"><div id="fuelBar"></div></div>
+    </div>
+    <div class="question" id="question">3 × 10 = ?</div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback">Choose a planet to launch!</div>
+      <div class="controls">
+        <button class="next hidden" id="next">NEXT MISSION ➜</button>
+      </div>
+    </section>
+  </main>
+
+  <section id="end" class="card perfect hidden">
+    <div class="medal">🏆</div>
+    <h2 id="endTitle">×10 ROCKET MASTER!</h2>
+    <div class="bigscore" id="finalScore">0</div>
+    <p id="result"></p>
+    <div class="controls"><button class="restart" onclick="restart()">PLAY AGAIN</button></div>
+  </section>
+</div>
+<div id="celebrate"></div>
+
+<script>
+const missions=[
+ {name:"MISSION 1 • LAUNCH BASICS",title:"Fuel the Rocket",hint:"Build confidence with simple ×10 facts.",qs:[[2,20],[3,30],[4,40],[5,50]],place:true},
+ {name:"MISSION 2 • SPEED ORBIT",title:"Orbit Challenge",hint:"Beat the fuel clock and keep your streak alive.",qs:[[6,60],[7,70],[8,80],[9,90]],timer:true},
+ {name:"MISSION 3 • WHICH PLANET?",title:"Choose the Correct Target",hint:"Watch the place-value pattern and choose carefully.",qs:[[10,100],[11,110],[12,120],[15,150]],place:true},
+ {name:"MISSION 4 • MISSING NUMBER",title:"Repair the Rocket",hint:"Find the missing factor.",qs:[["?",70,7],["?",90,9],["?",120,12],["?",150,15]]},
+ {name:"MISSION 5 • SPACE COMMANDER",title:"Final Mission",hint:"Mixed ×10 challenges. Show what you know!",qs:[[13,130],[18,180],["?",200,20],["reason",24,240]],boss:true}
+];
+let m=0,q=0,score=0,streak=0,total=0,correct=0,locked=false,timer=null,timeLeft=10;
+const $=id=>document.getElementById(id);
+
+function beep(good=true){
+ try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const c=new C(),o=c.createOscillator(),g=c.createGain(),t=c.currentTime;
+ o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(good?560:220,t);o.frequency.exponentialRampToValueAtTime(good?850:150,t+.16);
+ g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.08,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.28);o.start(t);o.stop(t+.3)}catch(e){}
+}
+function makeOptions(correctAnswer){
+ const set=new Set([correctAnswer]);
+ while(set.size<4){
+   const choices=[correctAnswer+10,correctAnswer-10,correctAnswer+20,correctAnswer-20,correctAnswer+1,correctAnswer+100,correctAnswer*10];
+   const x=choices[Math.floor(Math.random()*choices.length)];
+   if(x>0)set.add(x);
+ }
+ return [...set].sort(()=>Math.random()-.5);
+}
+function stopTimer(){if(timer){clearInterval(timer);timer=null}}
+function render(){
+ stopTimer();locked=false;$("next").classList.add("hidden");
+ $("missionName").textContent=missions[m].name;$("missionTitle").textContent=missions[m].title;$("missionHint").textContent=missions[m].hint;
+ $("round").textContent=`${m+1}/${missions.length}`;$("bar").style.width=((m/missions.length)*100)+"%";
+ document.querySelectorAll(".stop").forEach((x,i)=>{x.classList.toggle("active",i===m);x.classList.toggle("done",i<m)});
+ $("feedback").innerHTML="Choose the correct answer to launch the rocket!";
+ $("rocket").classList.remove("launch");$("placeValue").classList.add("hidden");$("fuelWrap").classList.toggle("hidden",!missions[m].timer);
+ const item=missions[m].qs[q];let answer;
+ if(item[0]==="?"){$("question").textContent=`${item[1]} ÷ 10 = ?`;answer=item[2]}
+ else if(item[0]==="reason"){$("question").textContent=`Which number is 10 times greater than ${item[1]}?`;answer=item[2]}
+ else {$("question").textContent=`${item[0]} × 10 = ?`;answer=item[1]}
+ const answers=$("answers");answers.innerHTML="";
+ makeOptions(answer).forEach(x=>{const b=document.createElement("button");b.className="answer";b.textContent=x;b.onclick=()=>choose(b,x,answer);answers.appendChild(b)});
+ if(missions[m].timer)startTimer();else $("fuelBar").style.width="100%";
+}
+function startTimer(){
+ timeLeft=10;$("fuelText").textContent=timeLeft;$("fuelBar").style.width="100%";let began=Date.now();
+ timer=setInterval(()=>{
+   timeLeft=10-Math.floor((Date.now()-began)/1000);$("fuelText").textContent=Math.max(0,timeLeft);$("fuelBar").style.width=Math.max(0,timeLeft*10)+"%";
+   if(timeLeft<=0){stopTimer();if(!locked){locked=true;total++;streak=0;beep(false);$("feedback").innerHTML=`⛽ <b>FUEL EMPTY!</b> The correct answer was shown in the target.`;const item=missions[m].qs[q];const ans=item[0]==="?"?item[2]:item[1];document.querySelectorAll(".answer").forEach(b=>{b.disabled=true;if(Number(b.textContent)===ans)b.classList.add("good")});$("accuracy").textContent=Math.round(correct/total*100)+"%";$("next").classList.remove("hidden")}}
+ },100);
+}
+function choose(btn,value,answer){
+ if(locked)return;locked=true;stopTimer();total++;
+ document.querySelectorAll(".answer").forEach(b=>b.disabled=true);
+ if(value===answer){
+   correct++;streak++;const bonus=Math.min(15,streak*3);score+=10+bonus;
+   btn.classList.add("good");$("rocket").classList.add("launch");beep(true);
+   showPlaceValue(answer);
+   $("feedback").innerHTML=`🚀 <b>LAUNCH SUCCESS!</b> +${10+bonus} points<div class="explain">${explain(answer,missions[m].qs[q])}</div>`;
+ }else{
+   streak=0;btn.classList.add("bad");beep(false);
+   $("feedback").innerHTML=`🛰️ Not this target. The correct answer is <b>${answer}</b>.<div class="explain">${explain(answer,missions[m].qs[q])}</div>`;
+   document.querySelectorAll(".answer").forEach(b=>{if(Number(b.textContent)===answer)b.classList.add("good")});
+ }
+ $("score").textContent=score;$("streak").textContent=streak;$("accuracy").textContent=Math.round(correct/total*100)+"%";
+ $("next").classList.remove("hidden");
+}
+function showPlaceValue(answer){
+ if(!missions[m].place)return;
+ const item=missions[m].qs[q];if(item[0]==="?"||item[0]==="reason")return;
+ const n=item[0];
+ $("placeValue").innerHTML=`<span class="pvNumber">${n}</span><span class="pvArrow">×10 →</span><span class="pvNumber">${answer}</span><span class="pvNote">${n} becomes ten times as large. The digits move one place to the left in the place-value system.</span>`;
+ $("placeValue").classList.remove("hidden");
+}
+function explain(answer,item){
+ if(item[0]==="reason")return `${item[1]} × 10 = ${answer}.`;
+ if(item[0]==="?")return `${item[1]} ÷ 10 = ${answer}. This is the inverse of multiplying by 10.`;
+ return `${item[0]} × 10 = ${answer}. Multiplying by 10 makes the number ten times as large.`;
+}
+$("next").onclick=()=>{
+ stopTimer();q++;
+ if(q>=missions[m].qs.length){m++;q=0}
+ if(m>=missions.length){finish();return}
+ render();
+};
+function finish(){
+ stopTimer();$("game").classList.add("hidden");$("end").classList.remove("hidden");
+ $("bar").style.width="100%";$("finalScore").textContent=score+" points";
+ const acc=total?Math.round(correct/total*100):0;
+ $("result").innerHTML=`You completed all 5 missions with <b>${correct}/${total}</b> correct answers and <b>${acc}%</b> accuracy.<br><br><b>Key idea:</b> Multiplying by 10 makes a number ten times as large.`;
+ $("endTitle").textContent=acc===100?"🏆 PERFECT ×10 ROCKET MASTER!":acc>=90?"🌟 ×10 ROCKET COMMANDER!":"🚀 ×10 ROCKET FINISHER!";
+ if(acc===100)confetti();
+}
+function confetti(){
+ const box=$("celebrate");
+ for(let i=0;i<80;i++){const x=document.createElement("div");x.className="conf";x.style.left=Math.random()*100+"%";x.style.background=["#153B7A","#C99700","#5B3A9D","#16845b","#e85d75"][Math.floor(Math.random()*5)];x.style.animationDelay=Math.random()*.5+"s";box.appendChild(x)}
+ setTimeout(()=>box.innerHTML="",2500);beep(true);
+}
+function restart(){stopTimer();m=0;q=0;score=0;streak=0;total=0;correct=0;$("game").classList.remove("hidden");$("end").classList.add("hidden");render()}
+render();
+</script>
+</body>
+</html>

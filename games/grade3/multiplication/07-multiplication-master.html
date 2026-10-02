@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Temmy Smart Games — Multiplication Master</title>
+<style>
+:root{--b:#153B7A;--g:#C99700;--p:#5B3A9D;--ink:#24364b;--green:#16845b;--red:#c94d4d}*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#071b3e 0 55%,#f4f7fb 55%);color:var(--ink)}.wrap{max-width:940px;margin:auto;padding:18px 14px 42px}.brand{text-align:center;color:#fff}.tag{display:inline-block;padding:7px 13px;border:1px solid #fff4;border-radius:99px;font-size:12px;font-weight:900}.brand h1{font-size:clamp(30px,6vw,52px);margin:12px 0 3px}.brand p{color:#dbe8ff;margin:0 0 16px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.stat{background:#fff;border-radius:15px;padding:10px;text-align:center;box-shadow:0 6px 18px #0002}.stat b{display:block;color:var(--b);font-size:20px}.stat span{font-size:11px;font-weight:900;color:#718096}.card{background:#fff;border-radius:24px;padding:22px;margin-top:12px;box-shadow:0 12px 32px #0002}.head{text-align:center}.head h2{color:var(--p);margin:0}.head p{color:#687c91;font-weight:700}.rounds{display:flex;gap:6px;overflow:auto;margin:12px 0}.round{min-width:112px;text-align:center;padding:9px;border-radius:99px;background:#edf1f7;color:#8791a4;font-size:10px;font-weight:900}.round.active{background:var(--p);color:#fff}.round.done{background:#e8f7ef;color:var(--green)}.progress{height:10px;background:#e9eef5;border-radius:99px;overflow:hidden;margin:10px 0 18px}.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--b),var(--p),var(--g));transition:.35s}.arena{text-align:center;background:linear-gradient(135deg,#f8f9ff,#fffaf0);border:2px solid #e2e3f0;border-radius:22px;padding:20px}.badge{color:var(--g);font-size:12px;font-weight:900;letter-spacing:1px}.strategy{display:inline-block;margin:4px auto 8px;padding:7px 11px;border-radius:999px;background:#eef5ff;color:#153B7A;font-size:11px;font-weight:900}.question{font-size:clamp(30px,7vw,52px);font-weight:900;color:var(--b);margin:12px 0}.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.ans{background:#fff;border:2px solid #dbe5ef;border-radius:17px;padding:16px;font-size:21px;font-weight:900;color:var(--b);cursor:pointer}.ans:hover{border-color:var(--p);transform:translateY(-2px)}.ans.good{background:#e8f8f0;border-color:var(--green);color:var(--green)}.ans.bad{background:#fff0f0;border-color:var(--red);color:var(--red)}.feedback{min-height:50px;background:#f7f9fc;border-radius:15px;padding:13px;margin-top:13px;font-weight:800}.explain{color:#687c91;font-size:14px;margin-top:5px}.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px}button{border:0;border-radius:99px;padding:12px 20px;font-weight:900;cursor:pointer}.next{background:var(--b);color:#fff}.hint{background:#fff5d4;color:#755800}.hidden{display:none!important}.end{text-align:center}.trophy{font-size:78px}.end h2{color:var(--p);font-size:32px}.score{font-size:48px;font-weight:900;color:var(--b)}.badgeFinal{display:inline-block;background:var(--b);color:#fff;padding:10px 16px;border-radius:99px;font-weight:900}.conf{position:fixed;top:-15px;width:9px;height:18px;z-index:20;animation:fall 2.2s linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(700deg);opacity:0}}@media(max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}.card{padding:16px}}
+</style></head><body><div class="wrap">
+<header class="brand"><div class="tag">TEMMY SMART GAMES • GRADE 3 MATHEMATICS</div><h1>🏆 MULTIPLICATION MASTER</h1><p>The Final Challenge • Think • Solve • Master</p></header>
+<div class="stats"><div class="stat"><b id="score">0</b><span>SCORE</span></div><div class="stat"><b id="streak">0</b><span>STREAK</span></div><div class="stat"><b id="acc">0%</b><span>ACCURACY</span></div><div class="stat"><b id="rn">1/6</b><span>ROUND</span></div></div>
+<main id="game" class="card"><div class="head"><h2 id="title">Championship Arena</h2><p id="sub">Show what you have learned.</p></div>
+<div class="rounds"><span class="round active">ROUND 1<br>QUICK FACTS</span><span class="round">ROUND 2<br>BUILD IT</span><span class="round">ROUND 3<br>FACT FAMILY</span><span class="round">ROUND 4<br>PATTERNS</span><span class="round">ROUND 5<br>×10</span><span class="round">FINAL BOSS</span></div>
+<div class="progress"><div id="bar"></div></div><div class="arena"><div class="badge" id="badge">ROUND 1 • QUICK FACTS</div><div id="strategy" class="strategy hidden"></div><div class="question" id="q">3 × 4 = ?</div><div class="answers" id="answers"></div><div class="feedback" id="fb">Choose your answer, Champion!</div><div class="controls"><button class="hint" id="hint">💡 THINKING HINT</button><button class="next hidden" id="next">NEXT ROUND ➜</button></div></div></main>
+<section id="end" class="card end hidden"><div class="trophy">🏆</div><div class="badgeFinal" id="finalBadge">MULTIPLICATION MASTER</div><h2 id="endTitle">CHAMPIONSHIP COMPLETE!</h2><div class="score" id="finalScore">0 points</div><p id="result"></p><div class="controls"><button onclick="restart()">PLAY AGAIN</button></div></section></div><div id="conf"></div>
+<script>
+const rounds=[
+{name:"ROUND 1 • QUICK FACTS",title:"Quick Facts",sub:"Show your multiplication fact fluency.",qs:[["3 × 4 = ?",12],["5 × 6 = ?",30],["7 × 4 = ?",28],["8 × 3 = ?",24]]},
+{name:"ROUND 2 • BUILD IT",title:"Build It in Your Mind",sub:"Think in equal groups and arrays.",qs:[["4 groups of 7 = ?",28],["6 rows of 5 = ?",30],["3 groups of 9 = ?",27],["8 groups of 4 = ?",32]]},
+{name:"ROUND 3 • FACT FAMILY",title:"Fact Family",sub:"Use the same three numbers to find the related fact.",qs:[["3 × 5 = 15. Which is related?", "5 × 3 = 15"],["4 × 6 = 24. Which is related?","24 ÷ 6 = 4"],["7 × 5 = 35. Which is related?","35 ÷ 5 = 7"],["2 × 10 = 20. Which is related?","20 ÷ 2 = 10"]]},
+{name:"ROUND 4 • PATTERNS",title:"Pattern Power",sub:"Use multiples of 2, 5 and 10.",qs:[["Which is a multiple of 5?",25],["Which is a multiple of 10?",60],["Which is a multiple of 2?",18],["Which belongs to all three groups?",20]]},
+{name:"ROUND 5 • ×10",title:"×10 Mission",sub:"Remember: multiplying by 10 makes the number ten times as large.",qs:[["7 × 10 = ?",70],["12 × 10 = ?",120],["15 × 10 = ?",150],["Which is 10 times greater than 24?",240]]},
+{name:"FINAL BOSS • MASTER CHALLENGE",title:"Final Boss",sub:"Choose the strategy, avoid the traps, and solve.",qs:[
+["A box has 6 pencils. There are 4 boxes. Total?",24],
+["A class has 5 rows of 8 chairs. Total?",40],
+["Which number completes ? × 10 = 190?",19],
+["4 packs have 10 stickers each. 6 are given away. How many remain?",34],
+["Which strategy is best for 7 × 4?", "4 groups of 7"],
+["A shop has 3 trays with 10 apples on each tray. It sells 4 apples. How many remain?",26]
+]}
+];
+let r=0,i=0,score=0,streak=0,total=0,correct=0,locked=false,hinted=false;
+const $=x=>document.getElementById(x);
+function beep(good=true){try{let C=AudioContext||webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain(),t=c.currentTime;o.connect(g);g.connect(c.destination);o.frequency.setValueAtTime(good?560:220,t);o.frequency.exponentialRampToValueAtTime(good?820:150,t+.15);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.08,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.28);o.start(t);o.stop(t+.3)}catch(e){}}
+function options(ans){
+ let s=new Set();
+ if(r===5){
+   const authored={
+     24:[24,10,18,28],
+     40:[40,13,35,48],
+     19:[19,29,9,190],
+     34:[34,46,40,28],
+     "4 groups of 7":["4 groups of 7","7 + 4","7 − 4","4 × 4"],
+     26:[26,34,30,36]
+   };
+   const pool=authored[String(ans)]||[ans,ans+10,ans-10,ans*2];
+   pool.forEach(x=>s.add(x));
+   return [...s];
+ }
+ s.add(ans);
+ let a=[ans+1,ans-1,ans+5,ans+10,ans-10,ans*2,ans/2];
+ while(s.size<4){let x=a[Math.floor(Math.random()*a.length)];if(typeof x==="number"&&x>0&&Number.isInteger(x))s.add(x)}
+ return [...s].sort(()=>Math.random()-.5)
+}
+$("hint").onclick=()=>{if(hinted)return;hinted=true;score=Math.max(0,score-3);$("score").textContent=score;let h=["Think of the multiplication fact as equal groups.","Imagine the rows and columns in an array.","Use the same three numbers in the fact family.","Check the last digit for multiples of 2, 5 and 10.","Think: ×10 makes the number ten times as large.","Break the problem into clear steps."][r];$("fb").innerHTML=`💡 <b>Hint:</b> ${h}<div class="explain">Hint used: −3 points.</div>`}
+function choose(btn,v,ans){if(locked)return;locked=true;total++;document.querySelectorAll(".ans").forEach(b=>b.disabled=true);let ok=String(v)===String(ans);if(ok){correct++;streak++;let pts=10+Math.min(15,streak*3);score+=pts;btn.classList.add("good");beep(true);$("fb").innerHTML=`🏆 <b>CHAMPIONSHIP POINT!</b> +${pts} points<div class="explain">${explain()}</div>`}else{streak=0;btn.classList.add("bad");beep(false);$("fb").innerHTML=`🔎 The correct answer is <b>${ans}</b>.<div class="explain">${explain()}</div>`;document.querySelectorAll(".ans").forEach(b=>{if(String(b.textContent)===String(ans))b.classList.add("good")})}$("score").textContent=score;$("streak").textContent=streak;$("acc").textContent=Math.round(correct/total*100)+"%";$("next").classList.remove("hidden")}
+function explain(){
+ if(r===0)return"Multiplication facts help you solve quickly and accurately.";
+ if(r===1)return"Equal groups or rows can be represented with multiplication.";
+ if(r===2)return"The related facts use the same three numbers.";
+ if(r===3)return"Look at the last digit to recognise these multiples.";
+ if(r===4)return"Multiplying by 10 makes the number ten times as large.";
+ const item=rounds[r].qs[i];
+ if(i===0)return"4 groups of 6 means 4 × 6 = 24.";
+ if(i===1)return"5 rows of 8 means 5 × 8 = 40.";
+ if(i===2)return"19 × 10 = 190.";
+ if(i===3)return"First: 4 × 10 = 40. Then: 40 − 6 = 34.";
+ if(i===4)return"7 × 4 can be seen as 4 equal groups of 7.";
+ return"First: 3 × 10 = 30. Then: 30 − 4 = 26.";
+}
+$("next").onclick=()=>{i++;if(i>=rounds[r].qs.length){r++;i=0}if(r>=6)finish();else render()}
+function finish(){let acc=Math.round(correct/total*100);$("game").classList.add("hidden");$("end").classList.remove("hidden");$("bar").style.width="100%";$("finalScore").textContent=score+" points";$("finalBadge").textContent=acc===100?"💎 PERFECT MASTERY":acc>=90?"🥇 MULTIPLICATION MASTER":acc>=75?"🥈 MULTIPLICATION CHAMPION":"🥉 MULTIPLICATION EXPLORER";$("endTitle").textContent=acc===100?"PERFECT CHAMPIONSHIP!":"CHAMPIONSHIP COMPLETE!";$("result").innerHTML=`You completed all <b>6 rounds</b> with <b>${correct}/${total}</b> correct answers and <b>${acc}%</b> accuracy.<br><br><b>Skills mastered:</b> facts • equal groups • fact families • multiples • ×10 • strategy • problem solving`;if(acc===100)celebrate()}
+function celebrate(){let box=$("conf");for(let n=0;n<90;n++){let x=document.createElement("div");x.className="conf";x.style.left=Math.random()*100+"%";x.style.background=["#153B7A","#C99700","#5B3A9D","#16845b","#e85d75"][Math.floor(Math.random()*5)];x.style.animationDelay=Math.random()*.5+"s";box.appendChild(x)}setTimeout(()=>box.innerHTML="",2500);beep(true)}
+function restart(){r=0;i=0;score=0;streak=0;total=0;correct=0;$("game").classList.remove("hidden");$("end").classList.add("hidden");render()}render();
+</script></body></html>

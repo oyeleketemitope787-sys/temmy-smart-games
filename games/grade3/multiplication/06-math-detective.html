@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games — Math Detective</title>
+<style>
+:root{--blue:#153B7A;--gold:#C99700;--purple:#5B3A9D;--ink:#24364b;--soft:#f4f7fb;--green:#16845b;--red:#c94d4d}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#11152c,#24204d 55%,#f4f7fb 55%);color:var(--ink);min-height:100vh}
+.wrap{max-width:940px;margin:auto;padding:18px 14px 42px}.brand{text-align:center;color:white}.tag{display:inline-block;background:#ffffff15;border:1px solid #ffffff35;border-radius:999px;padding:7px 14px;font-weight:900;font-size:12px;letter-spacing:.8px}.brand h1{margin:12px 0 3px;font-size:clamp(31px,6vw,52px)}.brand p{margin:0 0 16px;color:#e3e3ff}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:12px 0}.stat{background:white;border-radius:15px;padding:10px;text-align:center;box-shadow:0 6px 18px #0002}.stat b{display:block;font-size:20px;color:var(--blue)}.stat span{font-size:11px;color:#708197;font-weight:900}
+.card{background:white;border-radius:24px;padding:22px;box-shadow:0 12px 32px #0002;margin-top:12px}.head{text-align:center}.head h2{margin:0;color:var(--purple)}.head p{margin:7px;color:#687c91;font-weight:700}
+.cases{display:flex;gap:6px;overflow:auto;margin:14px 0 8px;padding-bottom:4px}.case{min-width:108px;text-align:center;padding:9px;border-radius:999px;background:#edf0f8;color:#8791a4;font-size:10px;font-weight:900}.case.active{background:var(--purple);color:#fff}.case.done{background:#e9f6f0;color:var(--green)}
+.progress{height:10px;background:#e9eef5;border-radius:99px;overflow:hidden;margin:12px 0 18px}.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple),var(--gold));transition:.35s}
+.detective{background:linear-gradient(135deg,#f7f5ff,#fff9eb);border:2px solid #e1d9f4;border-radius:22px;padding:18px;margin:10px 0}.badge{font-size:12px;font-weight:900;color:var(--gold);text-transform:uppercase;letter-spacing:1px}.story{font-size:19px;line-height:1.55;font-weight:800;color:#263a53;margin:8px 0}.clues{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.clue{background:#fff;border:1px solid #dbe3ee;border-radius:12px;padding:8px 10px;font-size:12px;font-weight:800;color:var(--blue)}
+.question{font-size:24px;font-weight:900;color:var(--purple);margin:15px 0 10px}.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}.answer{border:2px solid #dbe5ef;background:#fff;border-radius:17px;padding:15px 10px;font-size:20px;font-weight:900;color:var(--blue);cursor:pointer;transition:.18s}.answer:hover{transform:translateY(-2px);border-color:var(--purple)}.answer.good{background:#e8f8f0;border-color:var(--green);color:var(--green)}.answer.bad{background:#fff0f0;border-color:var(--red);color:var(--red)}
+.feedback{min-height:52px;margin-top:13px;padding:13px;border-radius:15px;background:#f7f9fc;font-weight:800}.explain{margin-top:6px;color:#687c91;font-size:14px;font-weight:600}.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px}button{border:0;border-radius:999px;padding:12px 20px;font-weight:900;cursor:pointer}.next{background:var(--blue);color:#fff}.next.hidden{display:none!important}.hint{background:#fff7d9;color:#775b00}
+.hidden{display:none}.end{text-align:center}.medal{font-size:72px}.end h2{color:var(--purple);font-size:32px}.big{font-size:46px;font-weight:900;color:var(--blue)}.conf{position:fixed;top:-15px;width:9px;height:18px;animation:fall 2.2s linear forwards;z-index:20}@keyframes fall{to{transform:translateY(110vh) rotate(650deg);opacity:0}}
+@media(max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}.card{padding:16px}.story{font-size:17px}}
+
+.evidence{margin:12px 0;background:#fffdf2;border:2px solid #e6d48a;border-radius:17px;padding:14px;text-align:left;animation:stamp .35s ease}.evidenceTitle{font-size:12px;font-weight:900;color:#775b00;letter-spacing:1px}.evidenceRow{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px dashed #dfd3a1;font-size:13px;font-weight:800}.evidenceRow:last-child{border-bottom:0}.evidenceAnswer{color:#16845b}.whyBox{margin:12px 0;padding:14px;background:#f5f1ff;border:2px solid #ded3f1;border-radius:17px}.whyTitle{font-size:12px;color:#5B3A9D;font-weight:900;letter-spacing:1px}.whyAnswers{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.whyBtn{border:1px solid #d7ddec;background:#fff;border-radius:12px;padding:10px;font-weight:800;color:#153B7A;cursor:pointer}.whyBtn.correct{background:#e8f8f0;border-color:#16845b;color:#16845b}.whyBtn.wrong{background:#fff0f0;border-color:#c94d4d;color:#c94d4d}.detectiveBadge{display:inline-block;background:#153B7A;color:#fff;border-radius:999px;padding:9px 15px;font-size:13px;font-weight:900;letter-spacing:.6px}.caseStamp{display:inline-block;margin-top:8px;color:#16845b;font-weight:900;animation:stamp .35s ease}@keyframes stamp{from{transform:scale(1.15) rotate(-2deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="brand">
+<div class="tag">TEMMY SMART GAMES • GRADE 3 MATHEMATICS</div>
+<h1>🕵️ MATH DETECTIVE</h1>
+<p>Read • Find the Clues • Solve • Think</p>
+</header>
+
+<div class="stats">
+<div class="stat"><b id="score">0</b><span>SCORE</span></div>
+<div class="stat"><b id="streak">0</b><span>STREAK</span></div>
+<div class="stat"><b id="accuracy">0%</b><span>ACCURACY</span></div>
+<div class="stat"><b id="caseNo">1/5</b><span>CASE</span></div>
+</div>
+
+<main id="game" class="card">
+<div class="head">
+<h2 id="title">Crack the Case</h2>
+<p id="subtitle">A good detective reads the clues before solving.</p>
+</div>
+<div class="cases" id="cases">
+<span class="case active">CASE 1</span><span class="case">CASE 2</span><span class="case">CASE 3</span><span class="case">CASE 4</span><span class="case">FINAL CASE</span>
+</div>
+<div class="progress"><div id="bar"></div></div>
+
+<div class="detective">
+<div class="badge" id="badge">🔎 CASE 1 • FIND THE GROUPS</div>
+<div class="story" id="story"></div>
+<div class="clues" id="clues"></div>
+<div class="question" id="question"></div>
+<div class="answers" id="answers"></div>
+<div id="evidence" class="evidence hidden"><div class="evidenceTitle">📋 EVIDENCE BOARD</div><div id="evidenceContent"></div></div>
+<div id="whyBox" class="whyBox hidden"><div class="whyTitle">🧠 WHY THIS OPERATION?</div><div id="whyQuestion"></div><div id="whyAnswers" class="whyAnswers"></div></div>
+<div class="feedback" id="feedback">Study the clues, Detective!</div>
+<div class="controls">
+<button class="hint" id="hintBtn">💡 DETECTIVE HINT</button>
+<button class="next hidden" id="next">NEXT CASE ➜</button>
+</div>
+</div>
+</main>
+
+<section id="end" class="card end hidden">
+<div class="medal">🏆</div><div class="detectiveBadge">🕵️ MASTER DETECTIVE</div>
+<h2 id="endTitle">MASTER DETECTIVE!</h2>
+<div class="big" id="finalScore">0 points</div>
+<p id="result"></p>
+<div class="controls"><button onclick="restart()">INVESTIGATE AGAIN</button></div>
+</section>
+</div>
+<div id="celebrate"></div>
+
+<script>
+const cases=[
+ {label:"CASE 1 • FIND THE GROUPS",title:"Find the Equal Groups",story:"A classroom has 4 trays. Each tray holds 6 pencils. How many pencils are there altogether?",clues:["4 equal groups","6 in each group"],why:["There are equal groups.","We are taking away.","We are sharing equally.","There are equal groups."],question:"Which multiplication sentence matches the case?",options:["4 × 6 = 24","4 + 6 = 10","6 − 4 = 2","24 ÷ 4 = 8"],answer:"4 × 6 = 24",explain:"There are 4 equal groups of 6, so 4 × 6 = 24."},
+ {label:"CASE 2 • CHOOSE THE OPERATION",title:"Choose the Right Operation",story:"There are 5 bags. Each bag contains 7 marbles. You need to find the total number of marbles.",clues:["5 bags","7 marbles in each"],why:["There are equal groups.","We are taking away.","We are comparing temperatures.","We are sharing equally."],question:"Which operation should the detective use?",options:["Multiplication","Subtraction","Addition only","Division"],answer:"Multiplication",explain:"Equal groups with the same number in each group are a multiplication situation."},
+ {label:"CASE 3 • SOLVE THE CASE",title:"Solve the Evidence",story:"A baker puts 8 cupcakes on each tray. She fills 3 trays. How many cupcakes are there?",clues:["3 trays","8 cupcakes per tray"],why:["There are equal groups.","We are taking away.","We are sharing equally.","There is no repeated amount."],question:"How many cupcakes are there altogether?",options:["11","24","16","32"],answer:"24",explain:"3 groups of 8 means 3 × 8 = 24."},
+ {label:"CASE 4 • DETECTIVE THINKING",title:"Spot the Missing Evidence",story:"A teacher has 6 boxes. Each box has the same number of books. Altogether there are 30 books.",clues:["6 equal boxes","30 books altogether"],why:["We know equal groups and the total.","We are taking away.","We are adding different amounts.","We are measuring length."],question:"How many books are in each box?",options:["5","6","24","36"],answer:"5",explain:"6 × 5 = 30, so each box has 5 books."},
+ {label:"FINAL CASE • MYSTERY CHALLENGE",title:"Crack the Final Case",story:"A school buys 4 packs of stickers. Each pack has 10 stickers. Then 5 stickers are used. How many stickers are left?",clues:["4 packs","10 stickers per pack","5 used"],why:["We first find equal groups, then subtract used stickers.","We only need addition.","We only need division.","We ignore the stickers used."],question:"What is the final number of stickers?",options:["35","40","45","30"],answer:"35",explain:"First find the total: 4 × 10 = 40. Then 40 − 5 = 35."}
+];
+let c=0,score=0,streak=0,total=0,correct=0,locked=false,hintUsed=false,whyDone=false;
+const $=id=>document.getElementById(id);
+
+function beep(good=true){
+try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const a=new C(),o=a.createOscillator(),g=a.createGain(),t=a.currentTime;o.connect(g);g.connect(a.destination);o.frequency.setValueAtTime(good?560:220,t);o.frequency.exponentialRampToValueAtTime(good?820:150,t+.15);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.08,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+.28);o.start(t);o.stop(t+.3)}catch(e){}
+}
+function render(){
+locked=false;hintUsed=false;whyDone=false;$("next").classList.add("hidden");$("evidence").classList.add("hidden");$("whyBox").classList.add("hidden");
+const x=cases[c];$("title").textContent=x.title;$("subtitle").textContent="A good detective reads the clues before solving.";
+$("badge").textContent="🔎 "+x.label;$("story").textContent=x.story;$("question").textContent=x.question;
+$("clues").innerHTML=x.clues.map(v=>`<span class="clue">🔍 ${v}</span>`).join("");
+$("feedback").innerHTML="Study the clues, Detective!";$("caseNo").textContent=`${c+1}/${cases.length}`;$("bar").style.width=(c/cases.length*100)+"%";
+document.querySelectorAll(".case").forEach((el,i)=>{el.classList.toggle("active",i===c);el.classList.toggle("done",i<c)});
+const a=$("answers");a.innerHTML="";
+x.options.forEach(v=>{const b=document.createElement("button");b.className="answer";b.textContent=v;b.onclick=()=>choose(b,v);a.appendChild(b)});
+}
+$("hintBtn").onclick=()=>{
+if(hintUsed)return;hintUsed=true;score=Math.max(0,score-3);$("score").textContent=score;
+const x=cases[c];let h;
+if(c===0)h="Look for the two numbers that describe the equal groups.";
+if(c===1)h="Ask: Are there equal groups with the same amount in each?";
+if(c===2)h="Multiply the number of trays by the number of cupcakes on each tray.";
+if(c===3)h="Think: 6 groups make 30. What number times 6 gives 30?";
+if(c===4)h="First multiply to find all the stickers. Then subtract the stickers used.";
+$("feedback").innerHTML=`💡 <b>Detective Hint:</b> ${h}<div class="explain">Hint used: −3 points.</div>`;
+};
+function choose(btn,value){
+if(locked)return;locked=true;total++;const x=cases[c];document.querySelectorAll(".answer").forEach(b=>b.disabled=true);
+if(value===x.answer){
+ correct++;streak++;const bonus=Math.min(15,streak*3);score+=10+bonus;btn.classList.add("good");beep(true);
+ $("feedback").innerHTML=`🕵️ <b>CASE CRACKED!</b> +${10+bonus} points<div class="caseStamp">✓ EVIDENCE CONFIRMED</div>`;
+ showEvidence(x);showWhy(x);
+}else{
+ streak=0;btn.classList.add("bad");beep(false);
+ $("feedback").innerHTML=`🔎 <b>Keep investigating.</b> The correct evidence is <b>${x.answer}</b>.<div class="explain">${x.explain}</div>`;
+ document.querySelectorAll(".answer").forEach(b=>{if(b.textContent===x.answer)b.classList.add("good")});
+ showEvidence(x);
+}
+$("score").textContent=score;$("streak").textContent=streak;$("accuracy").textContent=Math.round(correct/total*100)+"%";
+if(!x.why){$("next").classList.remove("hidden")}
+}
+function showEvidence(x){
+let operation=c===4?"Multiplication → Subtraction":c===3?"Multiplication (find the missing factor)":"Multiplication";
+$("evidenceContent").innerHTML=`<div class="evidenceRow"><span>🔍 Clues</span><span>${x.clues.join(" • ")}</span></div><div class="evidenceRow"><span>🧮 Operation</span><span>${operation}</span></div><div class="evidenceRow"><span>✓ Solution</span><span class="evidenceAnswer">${x.answer}</span></div>`;
+$("evidence").classList.remove("hidden");
+}
+function showWhy(x){
+if(!x.why)return;
+$("whyQuestion").textContent="Why is this the best mathematical operation?";
+const box=$("whyAnswers");box.innerHTML="";
+x.why.forEach((v,i)=>{const b=document.createElement("button");b.className="whyBtn";b.textContent=v;b.onclick=()=>{
+if(whyDone)return;whyDone=true;
+if(i===0){b.classList.add("correct");score+=5;$("score").textContent=score;beep(true);$("feedback").innerHTML=`🧠 <b>EXCELLENT REASONING!</b> +5 detective points<div class="explain">You identified the mathematical clue behind the operation.</div>`}
+else{b.classList.add("wrong");beep(false);box.querySelectorAll(".whyBtn")[0].classList.add("correct");$("feedback").innerHTML=`🧠 The key clue is <b>equal groups</b>. That tells us multiplication is needed.`}
+$("whyBox").classList.add("hidden");$("next").classList.remove("hidden");
+};box.appendChild(b)});
+$("whyBox").classList.remove("hidden");
+}
+function confetti(){let box=$("celebrate");for(let i=0;i<75;i++){let x=document.createElement("div");x.className="conf";x.style.left=Math.random()*100+"%";x.style.background=["#153B7A","#C99700","#5B3A9D","#16845b","#e85d75"][Math.floor(Math.random()*5)];x.style.animationDelay=Math.random()*.5+"s";box.appendChild(x)}setTimeout(()=>box.innerHTML="",2500);beep(true)}
+function restart(){c=0;score=0;streak=0;total=0;correct=0;$("game").classList.remove("hidden");$("end").classList.add("hidden");render()}
+render();
+</script>
+</body>
+</html>

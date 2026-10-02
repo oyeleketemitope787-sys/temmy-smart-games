@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temmy Smart Games | Grade 3 | Array Builder</title>
+<style>
+:root{
+  --blue:#153B7A; --gold:#C99700; --purple:#5B3A9D; --teal:#0B8FA3;
+  --ink:#17324D; --soft:#F5F8FC; --white:#fff; --green:#198754; --red:#C83E4D;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);
+  background:linear-gradient(135deg,#eef5ff,#fbf8ff 55%,#fff9ea);
+  min-height:100vh;
+}
+.topbar{
+  background:var(--blue);color:#fff;padding:14px 18px;
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+}
+.brand{font-weight:800;letter-spacing:.8px}.grade{font-size:13px;opacity:.9}
+.wrap{max-width:980px;margin:auto;padding:22px 16px 40px}
+.hero{text-align:center;margin-bottom:18px}
+.badge{display:inline-block;background:var(--gold);color:#fff;font-weight:800;border-radius:999px;padding:7px 14px;font-size:12px}
+h1{margin:10px 0 5px;font-size:clamp(28px,6vw,46px);color:var(--blue)}
+.subtitle{margin:0;color:#55708c}
+.panel{
+  background:rgba(255,255,255,.96);border:2px solid #e2e9f3;border-radius:24px;
+  box-shadow:0 14px 35px rgba(21,59,122,.12);padding:20px;
+}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.stat{background:var(--soft);border-radius:16px;padding:11px;text-align:center}
+.stat b{display:block;font-size:23px;color:var(--blue)} .stat span{font-size:12px;color:#61758a}
+.progress{height:10px;background:#e9eef5;border-radius:99px;overflow:hidden;margin:4px 0 18px}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--purple),var(--gold));transition:width .4s}
+.question{text-align:center}
+.prompt{font-size:24px;font-weight:800;color:var(--purple);margin:5px 0 4px}
+.help{font-size:14px;color:#65798d;margin-bottom:12px}
+.array{
+  display:grid;gap:7px;justify-content:center;align-content:center;
+  margin:15px auto;min-height:170px;padding:18px;
+  background:#f8fbff;border-radius:20px;border:2px dashed #b9cbe0;
+}
+.star{
+  width:30px;height:30px;border-radius:9px;background:#ffd45c;
+  display:flex;align-items:center;justify-content:center;font-size:19px;
+  box-shadow:0 3px 0 #d4a83b;animation:pop .35s both;
+}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+.options{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;max-width:560px;margin:16px auto}
+button{
+  border:0;border-radius:15px;padding:14px 12px;font-size:17px;font-weight:800;
+  cursor:pointer;transition:.18s;touch-action:manipulation
+}
+.answer{background:#fff;border:2px solid #dce5f0;color:var(--blue)}
+.answer:hover{transform:translateY(-2px);border-color:var(--purple)}
+.answer.correct{background:#e8f7ef;border-color:var(--green);color:var(--green)}
+.answer.wrong{background:#fff0f2;border-color:var(--red);color:var(--red)}
+.action{background:var(--blue);color:#fff;max-width:260px;width:100%}
+.secondary{background:#eef3f9;color:var(--blue)}
+.feedback{min-height:52px;text-align:center;font-weight:700;padding:10px}
+.explain{font-weight:500;color:#60758a;font-size:14px}
+.hidden{display:none}
+.end{text-align:center;padding:24px 8px}
+.trophy{font-size:70px;animation:bounce 1s infinite alternate}
+@keyframes bounce{to{transform:translateY(-8px) rotate(3deg)}}
+.celebrate{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:5}
+.confetti{position:absolute;width:9px;height:16px;top:-20px;animation:fall 2.3s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.2}}
+.footer{text-align:center;margin-top:16px;color:#71869b;font-size:12px}
+@media(max-width:650px){
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .options{grid-template-columns:1fr}
+ .star{width:27px;height:27px}
+ .array{gap:5px}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">TEMMY SMART GAMES</div>
+  <div class="grade">GRADE 3 • MATHEMATICS</div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <span class="badge">SEGMENT 1 • EQUAL GROUPS & ARRAYS</span>
+    <h1>🏗️ Array Builder</h1>
+    <p class="subtitle">See multiplication as equal groups. Build it, count it, and think like a mathematician!</p>
+  </section>
+
+  <section class="panel">
+    <div class="stats">
+      <div class="stat"><b id="score">0</b><span>Score</span></div>
+      <div class="stat"><b id="streak">0</b><span>Streak</span></div>
+      <div class="stat"><b id="round">1/8</b><span>Round</span></div>
+      <div class="stat"><b id="accuracy">0%</b><span>Accuracy</span></div>
+    </div>
+    <div class="progress"><div id="bar"></div></div>
+
+    <div id="game">
+      <div class="question">
+        <div class="prompt" id="prompt">How many objects are there?</div>
+        <div class="help" id="help">Look at the equal rows and columns. Choose the matching multiplication fact.</div>
+        <div class="array" id="array"></div>
+        <div id="controlsHost"></div><div class="options" id="options"></div>
+        <div class="feedback" id="feedback"></div>
+        <button class="action hidden" id="next">NEXT CHALLENGE →</button>
+      </div>
+    </div>
+
+    <div id="end" class="end hidden">
+      <div class="trophy">🏆</div>
+      <h2 id="endTitle">ARRAY MASTER!</h2>
+      <p id="endText"></p>
+      <button class="action" onclick="restart()">PLAY AGAIN</button>
+    </div>
+  </section>
+
+  <div class="footer">Temmy Smart Games • Interactive Mathematics • Think like a mathematician!</div>
+</main>
+<div class="celebrate" id="celebrate"></div>
+
+<script>
+const rounds = [
+ {r:3,c:4, mode:"identify", title:"Read the Array", ask:"Which multiplication fact matches this array?"},
+ {r:5,c:2, mode:"groups", title:"Equal Groups", ask:"There are 5 equal groups with 2 in each. How many altogether?"},
+ {r:4,c:6, mode:"build", title:"Build the Array", ask:"Build 4 rows with 6 objects in each row."},
+ {r:2,c:7, mode:"identify", title:"Read the Array", ask:"Which multiplication fact matches this array?"},
+ {r:5,c:3, mode:"groups", title:"Equal Groups", ask:"There are 5 equal groups with 3 in each. How many altogether?"},
+ {r:6,c:4, mode:"build", title:"Build the Array", ask:"Build 6 rows with 4 objects in each row."},
+ {r:3,c:5, mode:"turn", title:"Turn the Array Around", ask:"Turn the array around. Which fact shows the same total?"},
+ {r:4,c:5, mode:"think", title:"Think Like a Mathematician", ask:"If 4 groups have 5 in each group, how many are there?"}
+];
+
+let index=0, score=0, streak=0, correct=0, answered=false, buildRows=0, buildCols=0;
+
+const $=id=>document.getElementById(id);
+
+function sound(kind){
+ try{
+  const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+  const ctx=new C(),o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g);g.connect(ctx.destination);const n=ctx.currentTime;
+  const freq=kind==="correct"?[520,780]:kind==="wrong"?[220,140]:[440,660];
+  o.frequency.setValueAtTime(freq[0],n);o.frequency.exponentialRampToValueAtTime(freq[1],n+.12);
+  g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(kind==="wrong"?.06:.10,n+.02);
+  g.gain.exponentialRampToValueAtTime(.0001,n+.28);o.start(n);o.stop(n+.3);
+ }catch(e){}
+}
+
+function updateStats(){
+ $("round").textContent=`${index+1}/${rounds.length}`;
+ $("score").textContent=score;$("streak").textContent=streak;
+ $("accuracy").textContent=index?`${Math.round(correct/index*100)}%`:"0%";
+ $("bar").style.width=(index/rounds.length*100)+"%";
+}
+
+function drawArray(rows,cols,rotate=false){
+ const arr=$("array");arr.innerHTML="";
+ arr.style.gridTemplateColumns=`repeat(${rotate?rows:cols}, 30px)`;
+ for(let i=0;i<rows*cols;i++){
+  const s=document.createElement("div");s.className="star";s.textContent="★";
+  s.style.animationDelay=(i*.025)+"s";arr.appendChild(s);
+ }
+}
+
+function render(){
+ answered=false;buildRows=0;buildCols=0;
+ const q=rounds[index];updateStats();
+ $("prompt").textContent=q.ask;
+ $("feedback").innerHTML="";
+ $("next").classList.add("hidden");
+ $("help").textContent = q.mode==="build"
+   ?"Tap the row and column buttons to build the array."
+   :"Look carefully at the equal groups, rows and columns.";
+
+ const arr=$("array");arr.innerHTML="";
+ const box=$("options");box.innerHTML="";
+
+ if(q.mode==="build"){
+  arr.style.display="flex";arr.style.flexDirection="column";arr.style.alignItems="center";
+  arr.style.gap="8px";arr.style.minHeight="170px";
+  const controls=document.createElement("div");controls.style.cssText="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:8px 0";
+  for(let r=1;r<=6;r++){
+   const b=document.createElement("button");b.className="secondary";b.textContent=`${r} rows`;
+   b.onclick=()=>{buildRows=r;drawBuild(arr);};controls.appendChild(b);
+  }
+  $("controlsHost").appendChild(controls);
+  const controls2=document.createElement("div");controls2.style.cssText="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:4px 0 12px";
+  for(let c=1;c<=7;c++){
+   const b=document.createElement("button");b.className="secondary";b.textContent=`${c} each`;
+   b.onclick=()=>{buildCols=c;drawBuild(arr);};controls2.appendChild(b);
+  }
+  $("controlsHost").appendChild(controls2);
+  const check=document.createElement("button");check.className="action";check.textContent="CHECK MY ARRAY";
+  check.onclick=()=>checkBuild(q);
+  $("controlsHost").appendChild(check);
+  arr._dynamic=[controls,controls2,check];
+ }else{
+  arr.style.display="grid";arr.style.flexDirection="";arr.style.gap="";
+  drawArray(q.r,q.c,q.mode==="turn");
+  let correctAnswer;
+  if(q.mode==="identify") correctAnswer=`${q.r} × ${q.c}`;
+  if(q.mode==="groups"||q.mode==="think") correctAnswer=q.r*q.c;
+  if(q.mode==="turn") correctAnswer=`${q.c} × ${q.r}`;
+
+  let opts;
+  if(typeof correctAnswer==="number"){
+   const set=new Set([correctAnswer]);
+   while(set.size<4)set.add(Math.max(1,correctAnswer+[-3,-2,-1,1,2,3][Math.floor(Math.random()*6)]));
+   opts=[...set].sort(()=>Math.random()-.5);
+  }else{
+   opts=[correctAnswer,`${q.c} × ${q.r}`,`${q.r} × ${q.c+1}`,`${q.r+1} × ${q.c}`]
+     .filter((v,i,a)=>a.indexOf(v)===i).sort(()=>Math.random()-.5);
+  }
+  opts.forEach(v=>{
+   const b=document.createElement("button");b.className="answer";b.textContent=v;
+   b.onclick=()=>choose(b,v,correctAnswer,q);box.appendChild(b);
+  });
+ }
+}
+
+function cleanupDynamic(){
+ $("controlsHost").innerHTML="";
+ const arr=$("array");
+ if(arr._dynamic){arr._dynamic.forEach(x=>x.remove());arr._dynamic=null;}
+}
+
+function drawBuild(arr){
+ arr.innerHTML="";
+ if(!buildRows||!buildCols){
+  arr.innerHTML='<div style="color:#65798d;font-weight:700">Choose rows and objects in each row.</div>';return;
+ }
+ arr.style.display="grid";arr.style.flexDirection="";
+ arr.style.gridTemplateColumns=`repeat(${buildCols},30px)`;arr.style.gap="7px";
+ for(let i=0;i<buildRows*buildCols;i++){
+  const s=document.createElement("div");s.className="star";s.textContent="★";
+  s.style.animationDelay=(i*.02)+"s";arr.appendChild(s);
+ }
+}
+
+function checkBuild(q){
+ if(answered)return;
+ answered=true;
+ const good=buildRows===q.r&&buildCols===q.c;
+ document.querySelectorAll(".secondary").forEach(b=>b.disabled=true);
+ if(good){
+  correct++;streak++;const points=12+Math.min(streak-1,5)*2;score+=points;sound("correct");
+  $("feedback").innerHTML=`✅ Perfect array! +${points} points<div class="explain">${q.r} rows × ${q.c} in each row = ${q.r*q.c}.</div>`;
+  pulse();
+ }else{
+  streak=0;sound("wrong");
+  $("feedback").innerHTML=`💡 Let's check it. The target is <b>${q.r} rows × ${q.c}</b>.<div class="explain">An array has equal rows with the same number in each row.</div>`;
+ }
+ $("score").textContent=score;$("streak").textContent=streak;$("accuracy").textContent=`${Math.round(correct/(index+1)*100)}%`;
+ $("next").classList.remove("hidden");
+}
+
+function choose(btn,value,correctAnswer,q){
+ if(answered)return;answered=true;
+ const ok=String(value)===String(correctAnswer);
+ document.querySelectorAll(".answer").forEach(b=>b.disabled=true);
+ if(ok){
+  correct++;streak++;const points=10+Math.min(streak-1,5)*2;score+=points;
+  btn.classList.add("correct");sound("correct");
+  $("feedback").innerHTML=`✅ Correct! +${points} points${streak>=3?` 🔥 ${streak} in a row!`:""}<div class="explain">${explanation(q,correctAnswer)}</div>`;
+  if(streak>=3)pulse();
+ }else{
+  streak=0;btn.classList.add("wrong");sound("wrong");
+  $("feedback").innerHTML=`❌ Not quite. The answer is <b>${correctAnswer}</b>.<div class="explain">${explanation(q,correctAnswer)}</div>`;
+ }
+ $("score").textContent=score;$("streak").textContent=streak;$("accuracy").textContent=`${Math.round(correct/(index+1)*100)}%`;
+ $("next").classList.remove("hidden");
+}
+
+function explanation(q,ans){
+ if(q.mode==="turn")return `${q.r} × ${q.c} = ${q.c} × ${q.r}. Turning the array changes its direction, not its total.`;
+ return `${q.r} rows × ${q.c} in each row = ${q.r*q.c}.`;
+}
+
+$("next").onclick=()=>{
+ cleanupDynamic();index++;
+ if(index>=rounds.length)finish();else render();
+};
+
+function pulse(){
+ $("score").animate([{transform:"scale(1)"},{transform:"scale(1.35)"},{transform:"scale(1)"}],{duration:450});
+}
+
+function confetti(){
+ const box=$("celebrate");box.innerHTML="";
+ for(let i=0;i<70;i++){
+  const c=document.createElement("div");c.className="confetti";c.style.left=Math.random()*100+"%";
+  c.style.animationDelay=(Math.random()*.7)+"s";
+  c.style.background=["#153B7A","#C99700","#5B3A9D","#0B8FA3","#E85D75"][Math.floor(Math.random()*5)];
+  box.appendChild(c);
+ }
+ setTimeout(()=>box.innerHTML="",2600);sound("celebrate");
+}
+
+function finish(){
+ cleanupDynamic();$("game").classList.add("hidden");$("end").classList.remove("hidden");
+ const acc=Math.round(correct/rounds.length*100);
+ $("endText").innerHTML=`You scored <b>${score}</b> points with <b>${acc}% accuracy</b>.<br><br>`+
+ (acc===100?"🌟 PERFECT ARRAY BUILDER! Every challenge was correct!":
+  acc>=80?"🎉 Excellent work! You are building strong multiplication thinking.":
+  "💪 Good effort! Practise the arrays again and keep building.");
+ $("bar").style.width="100%";if(acc===100)confetti();
+}
+
+function restart(){
+ cleanupDynamic();index=0;score=0;streak=0;correct=0;
+ $("game").classList.remove("hidden");$("end").classList.add("hidden");render();
+}
+render();
+</script>
+</body>
+</html>

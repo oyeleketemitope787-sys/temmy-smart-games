@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games | Grade 3 | Multiple Sorter</title>
+<style>
+:root{--blue:#153B7A;--gold:#C99700;--purple:#5B3A9D;--teal:#0B8FA3;--ink:#17324D;--soft:#F5F8FC;--green:#198754;--red:#C83E4D}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:linear-gradient(135deg,#eef5ff,#fbf8ff 55%,#fff9ea);min-height:100vh}
+.top{background:var(--blue);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;font-weight:800;letter-spacing:.5px}
+.wrap{max-width:980px;margin:auto;padding:22px 16px 40px}.hero{text-align:center}.badge{display:inline-block;background:var(--gold);color:#fff;border-radius:99px;padding:7px 14px;font-size:12px;font-weight:800}
+h1{font-size:clamp(30px,7vw,48px);color:var(--blue);margin:10px 0 4px}.sub{color:#61758a;margin-bottom:18px}
+.panel{background:#fff;border:2px solid #e2e9f3;border-radius:24px;padding:20px;box-shadow:0 14px 35px #153b7a18}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:var(--soft);border-radius:15px;text-align:center;padding:10px}.stat b{display:block;font-size:22px;color:var(--blue)}.stat span{font-size:12px;color:#687c91}
+.progress{height:9px;background:#e8edf4;border-radius:99px;margin:15px 0;overflow:hidden}.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--purple),var(--gold));transition:.35s}
+.stage{text-align:center}.roundTitle{font-weight:900;color:var(--purple);font-size:18px}.instruction{color:#687c91;font-size:14px;margin:5px 0 14px}
+.numberBank{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;background:#f8fbff;border:2px dashed #b9cbe0;border-radius:18px;padding:16px;margin:15px auto;max-width:850px}
+.number{background:#fff;border:2px solid #dbe5ef;border-radius:14px;padding:13px 17px;font-size:20px;font-weight:900;color:var(--blue);cursor:grab;transition:.18s;box-shadow:0 4px 10px #153b7a10;user-select:none}
+.number:hover{transform:translateY(-2px);border-color:var(--purple)}.number.used{opacity:.35;cursor:default}
+.bins{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px auto;max-width:900px}
+.bin{min-height:150px;background:#f8fbff;border:3px dashed #aebfd2;border-radius:20px;padding:12px;transition:.2s}
+.bin.over{border-color:var(--gold);background:#fff9e5;transform:scale(1.02)}
+.bin h3{margin:3px;color:var(--purple);font-size:18px}.bin p{font-size:12px;color:#71869b}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px}.chip{background:#eaf1fb;border-radius:99px;padding:6px 10px;font-weight:800;color:var(--blue);font-size:13px}
+.feedback{min-height:50px;text-align:center;font-weight:800;padding:9px}.explain{font-size:13px;color:#687c91;font-weight:500;margin-top:3px}
+button{border:0;border-radius:14px;padding:13px 18px;font-weight:800;font-size:15px;cursor:pointer}.next{background:var(--blue);color:#fff}.restart{background:#eef3f9;color:var(--blue)}
+.hidden{display:none}.vennChip{background:#fff;border:1px solid #dbe5ef;border-radius:99px;padding:5px 9px;font-size:12px;font-weight:800;color:#153B7A}.hintPulse{animation:pulseHint .5s}@keyframes pulseHint{50%{transform:scale(1.03)}}.end{text-align:center;padding:25px}.trophy{font-size:70px}.end h2{color:var(--purple)}
+.celebrate{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10}.conf{position:absolute;top:-20px;width:9px;height:17px;animation:fall 2.3s linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.1}}
+.footer{text-align:center;color:#71869b;font-size:12px;margin-top:15px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)}.bins{grid-template-columns:1fr}.number{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="top"><span>TEMMY SMART GAMES</span><span>GRADE 3 • MATHEMATICS</span></div>
+<main class="wrap">
+<section class="hero"><span class="badge">SEGMENT 4 • MULTIPLES</span>
+<h1>🔢 Multiple Sorter</h1>
+<p class="sub">Sort numbers by their multiplication patterns. Can you spot multiples of 2, 5 and 10?</p></section>
+<section class="panel">
+<div class="stats">
+<div class="stat"><b id="score">0</b><span>Score</span></div><div class="stat"><b id="streak">0</b><span>Streak</span></div>
+<div class="stat"><b id="round">1/6</b><span>Round</span></div><div class="stat"><b id="accuracy">0%</b><span>Accuracy</span></div>
+</div>
+<div class="progress"><div id="bar"></div></div>
+<div id="game" class="stage">
+<div class="roundTitle" id="title">Sort the Multiples</div>
+<div class="instruction" id="instruction">Drag or tap each number into the correct group. A number may belong in more than one group.</div>
+<div id="hintBox" style="display:none;background:#fff9e5;border:2px solid #ead58a;border-radius:15px;padding:12px;margin:10px auto;max-width:760px;color:#755700;font-weight:700"></div>
+<div class="numberBank" id="bank"></div>
+<div id="vennChallenge" class="hidden" style="margin:18px auto;max-width:760px">
+  <div style="font-weight:900;color:#5B3A9D;font-size:18px;margin-bottom:10px">🧠 Final Overlap Challenge</div>
+  <p style="color:#687c91;font-size:14px">Drag each number into every circle it belongs to. The centre overlap is for numbers that are multiples of both 2 and 5.</p>
+  <div style="position:relative;max-width:620px;height:260px;margin:auto;background:#f8fbff;border-radius:22px;border:2px dashed #b9cbe0;overflow:hidden">
+    <div class="vennCircle" data-v="2" style="position:absolute;width:190px;height:190px;border:3px solid #153B7A;border-radius:50%;left:12%;top:30px;background:#153B7A10">
+      <b style="position:absolute;left:18px;top:12px;color:#153B7A">Multiples of 2</b>
+      <div class="vennItems" style="padding:48px 15px 10px;display:flex;flex-wrap:wrap;gap:5px;justify-content:center"></div>
+    </div>
+    <div class="vennCircle" data-v="5" style="position:absolute;width:190px;height:190px;border:3px solid #5B3A9D;border-radius:50%;right:12%;top:30px;background:#5B3A9D10">
+      <b style="position:absolute;right:18px;top:12px;color:#5B3A9D">Multiples of 5</b>
+      <div class="vennItems" style="padding:48px 15px 10px;display:flex;flex-wrap:wrap;gap:5px;justify-content:center"></div>
+    </div>
+  </div>
+  <div id="vennBank" class="numberBank" style="margin-top:12px"></div>
+  <button id="vennCheck" class="next">CHECK OVERLAP</button>
+</div>
+<div class="bins">
+<div class="bin" data-type="2"><h3>2️⃣ Multiples of 2</h3><p>Numbers divisible by 2</p><div class="chips"></div></div>
+<div class="bin" data-type="5"><h3>5️⃣ Multiples of 5</h3><p>Numbers divisible by 5</p><div class="chips"></div></div>
+<div class="bin" data-type="10"><h3>🔟 Multiples of 10</h3><p>Numbers divisible by 10</p><div class="chips"></div></div>
+</div>
+<div class="feedback" id="feedback"></div>
+<button class="restart" id="hintBtn" style="margin-right:8px">💡 HINT</button><button class="next hidden" id="check">CHECK MY SORT</button>
+<button class="next hidden" id="next">NEXT ROUND →</button>
+</div>
+<div id="end" class="end hidden"><div class="trophy">🏆</div><h2 id="endTitle">MULTIPLE SORTER MASTER!</h2><p id="result"></p><button class="restart" onclick="restart()">PLAY AGAIN</button></div>
+</section>
+<div class="footer">Temmy Smart Games • Interactive Mathematics • Think like a mathematician!</div>
+</main>
+<div class="celebrate" id="celebrate"></div>
+<script>
+const rounds=[
+ {nums:[2,5,10,12,15,20,21,25],focus:"Sort by multiples of 2, 5 and 10."},
+ {nums:[4,8,10,14,18,20,30,35],focus:"Look for numbers that can be divided by 2, 5 or 10 exactly."},
+ {nums:[6,10,15,22,25,40,45,50],focus:"Some numbers can belong to more than one group."},
+ {nums:[12,20,25,30,32,35,40,55],focus:"Check the last digit to help you."},
+ {nums:[14,20,35,42,50,60,65,70],focus:"Find every correct group for each number."},
+ {nums:[18,25,40,44,55,70,80,95],focus:"Final sorting challenge: think carefully."}
+];
+let r=0,score=0,streak=0,correct=0,attempts=0,placed={},checked=false;
+const $=x=>document.getElementById(x);
+
+function sound(type){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);let n=c.currentTime;o.frequency.setValueAtTime(type==="good"?560:220,n);o.frequency.exponentialRampToValueAtTime(type==="good"?820:150,n+.14);g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(.09,n+.02);g.gain.exponentialRampToValueAtTime(.0001,n+.28);o.start(n);o.stop(n+.3)}catch(e){}}
+function valid(n,t){return n%Number(t)===0}
+function update(){
+ $("score").textContent=score;$("streak").textContent=streak;$("round").textContent=`${r+1}/${rounds.length}`;
+ $("accuracy").textContent=attempts?`${Math.round(correct/attempts*100)}%`:"0%";
+ $("bar").style.width=(r/rounds.length*100)+"%";
+}
+function render(){
+ placed={};checked=false;$("feedback").innerHTML="";$("check").classList.remove("hidden");$("next").classList.add("hidden");
+ $("vennChallenge").classList.add("hidden");$("hintBox").style.display="none";$("hintBox").textContent="";
+ $("title").textContent=r<2?"Sort the Multiples":r<4?"Find the Patterns":"Final Sorting Challenge";
+ $("instruction").textContent=rounds[r].focus;update();
+ document.querySelectorAll(".chips").forEach(x=>x.innerHTML="");
+ const bank=$("bank");bank.innerHTML="";
+ rounds[r].nums.forEach(n=>{
+  const b=document.createElement("div");b.className="number";b.textContent=n;b.draggable=true;b.dataset.n=n;
+  b.onclick=()=>tapNumber(b);b.ondragstart=e=>e.dataTransfer.setData("text/plain",n);bank.appendChild(b);
+ });
+ document.querySelectorAll(".bin").forEach(bin=>{
+  bin.ondragover=e=>{e.preventDefault();bin.classList.add("over")};
+  bin.ondragleave=()=>bin.classList.remove("over");
+  bin.ondrop=e=>{e.preventDefault();bin.classList.remove("over");place(Number(e.dataTransfer.getData("text/plain")),bin.dataset.type)};
+ });
+}
+function tapNumber(b){
+ if(b.classList.contains("used")||checked)return;
+ const n=Number(b.dataset.n),possible=["2","5","10"].filter(t=>valid(n,t));
+ if(possible.length===1)place(n,possible[0]);
+ else{
+  $("feedback").innerHTML=`🔎 <b>${n}</b> can belong to more than one group. Choose a group.`;
+  document.querySelectorAll(".bin").forEach(bin=>bin.onclick=()=>{place(n,bin.dataset.type);clearBinClicks()});
+ }
+}
+function clearBinClicks(){document.querySelectorAll(".bin").forEach(b=>b.onclick=null)}
+function place(n,t){
+ if(!valid(n,t)){ $("feedback").innerHTML=`💡 ${n} is not a multiple of ${t}. Try another group.`;sound("bad");return; }
+ const key=n+"-"+t;if(placed[key])return;placed[key]=true;
+ const bin=document.querySelector(`.bin[data-type="${t}"] .chips`);
+ const chip=document.createElement("span");chip.className="chip";chip.textContent=n;chip.dataset.key=key;bin.appendChild(chip);
+ document.querySelectorAll(".number").forEach(x=>{if(Number(x.dataset.n)===n)x.classList.add("used")});
+ $("feedback").innerHTML=`✅ ${n} is a multiple of ${t}.`;sound("good");clearBinClicks();
+}
+$("hintBtn").onclick=()=>{
+ const text=`Remember: multiples of 2 end in 0, 2, 4, 6 or 8. Multiples of 5 end in 0 or 5. Multiples of 10 end in 0.`;
+ $("hintBox").textContent=text;$("hintBox").style.display="block";$("hintBox").classList.remove("hintPulse");void $("hintBox").offsetWidth;$("hintBox").classList.add("hintPulse");
+};
+$("check").onclick=check;
+function check(){
+ checked=true;attempts++;let expected=0,bad=0;
+ rounds[r].nums.forEach(n=>["2","5","10"].forEach(t=>{
+  const should=valid(n,t),has=!!placed[n+"-"+t];if(should){expected++;if(has)correct++;else bad++}else if(has)bad++;
+ }));
+ if(bad===0){
+  streak++;const pts=15+Math.min(streak-1,5)*3;score+=pts;sound("good");
+  $("feedback").innerHTML=`🎉 Perfect sort! <b>+${pts} points</b><div class="explain">Great pattern spotting. Multiples of 10 are also multiples of 2 and 5.</div>`;
+ }else{
+  streak=0;sound("bad");$("feedback").innerHTML=`💡 You have <b>${bad}</b> sorting mistake${bad>1?"s":""}. Check which numbers divide exactly.`;
+ }
+ update();$("check").classList.add("hidden");$("next").classList.remove("hidden");
+ if(r===rounds.length-1){setTimeout(showVenn,350)}
+}
+function showVenn(){
+ $("next").classList.add("hidden");$("vennChallenge").classList.remove("hidden");
+ $("feedback").innerHTML=`🧠 <b>Final Overlap Challenge</b><div class="explain">Put each number into every circle it belongs to. Numbers in the overlap are multiples of both 2 and 5.</div>`;
+ const bank=$("vennBank");bank.innerHTML="";
+ [10,20,25,30,35,40].sort(()=>Math.random()-.5).forEach(n=>{
+  const b=document.createElement("div");b.className="number";b.textContent=n;b.draggable=true;b.dataset.n=n;
+  b.onclick=()=>vennTap(b);b.ondragstart=e=>e.dataTransfer.setData("text/plain",n);bank.appendChild(b);
+ });
+ document.querySelectorAll(".vennCircle").forEach(c=>{
+  c.ondragover=e=>e.preventDefault();
+  c.ondrop=e=>{e.preventDefault();vennPlace(Number(e.dataTransfer.getData("text/plain")),c.dataset.v)}
+ });
+}
+let vennPlaced={};
+function vennTap(b){
+ const n=Number(b.dataset.n);const choices=["2","5"].filter(t=>valid(n,t));
+ if(choices.length===1)vennPlace(n,choices[0]);
+ else $("feedback").innerHTML=`🔎 ${n} belongs to both circles. Tap either circle to place it.`;
+}
+function vennPlace(n,t){
+ const key=n+"-"+t;if(vennPlaced[key])return;vennPlaced[key]=true;
+ const circle=document.querySelector(`.vennCircle[data-v="${t}"] .vennItems`);
+ const c=document.createElement("span");c.className="vennChip";c.textContent=n;circle.appendChild(c);
+ document.querySelectorAll("#vennBank .number").forEach(b=>{if(Number(b.dataset.n)===n)b.classList.add("used")});
+}
+$("vennCheck").onclick=()=>{
+ const expected=[];[10,20,25,30,35,40].forEach(n=>["2","5"].forEach(t=>{if(valid(n,t))expected.push(n+"-"+t)}));
+ const ok=expected.every(k=>vennPlaced[k])&&Object.keys(vennPlaced).length===expected.length;
+ if(ok){
+  score+=30;sound("good");$("feedback").innerHTML=`🏆 Excellent! You found the overlap.<div class="explain">Numbers ending in 0 are multiples of both 2 and 5.</div>`;
+  setTimeout(finish,800);
+ }else{sound("bad");$("feedback").innerHTML=`💡 Not quite. Check every number: a number may belong to both circles.`}
+ update();
+};
+$("next").onclick=()=>{r++;if(r>=rounds.length)finish();else render()};
+function finish(){
+ $("game").classList.add("hidden");$("end").classList.remove("hidden");$("bar").style.width="100%";
+ $("endTitle").textContent=streak>=4?"🏆 MULTIPLE SORTER MASTER!":"🌟 PATTERN SPOTTER!";
+ $("result").innerHTML=`You completed <b>${rounds.length}</b> sorting rounds.<br>Score: <b>${score}</b><br><br><b>Key idea:</b> Multiples of 10 are also multiples of 2 and 5.`;
+ if(streak>=4)confetti();
+}
+function restart(){r=0;score=0;streak=0;correct=0;attempts=0;vennPlaced={};$("game").classList.remove("hidden");$("end").classList.add("hidden");render()}
+function confetti(){let b=$("celebrate");for(let n=0;n<70;n++){let x=document.createElement("div");x.className="conf";x.style.left=Math.random()*100+"%";x.style.animationDelay=Math.random()*.6+"s";x.style.background=["#153B7A","#C99700","#5B3A9D","#0B8FA3","#E85D75"][Math.floor(Math.random()*5)];b.appendChild(x)}setTimeout(()=>b.innerHTML="",2500);sound("good")}
+render();
+</script>
+</body></html>

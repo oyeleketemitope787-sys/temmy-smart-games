@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games | Grade 3 | Fact Family Match</title>
+<style>
+:root{--blue:#153B7A;--gold:#C99700;--purple:#5B3A9D;--teal:#0B8FA3;--ink:#17324D;--soft:#F5F8FC;--green:#198754;--red:#C83E4D}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:linear-gradient(135deg,#eef5ff,#fbf8ff 55%,#fff9ea);min-height:100vh}
+.top{background:var(--blue);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;font-weight:800;letter-spacing:.5px}
+.wrap{max-width:940px;margin:auto;padding:22px 16px 40px}.hero{text-align:center}.badge{display:inline-block;background:var(--gold);color:#fff;border-radius:99px;padding:7px 14px;font-size:12px;font-weight:800}
+h1{font-size:clamp(30px,7vw,48px);color:var(--blue);margin:10px 0 4px}.sub{color:#61758a;margin-bottom:18px}
+.panel{background:#fff;border:2px solid #e2e9f3;border-radius:24px;padding:20px;box-shadow:0 14px 35px #153b7a18}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:var(--soft);border-radius:15px;text-align:center;padding:10px}.stat b{display:block;font-size:22px;color:var(--blue)}.stat span{font-size:12px;color:#687c91}
+.progress{height:9px;background:#e8edf4;border-radius:99px;margin:15px 0;overflow:hidden}.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--purple),var(--gold));transition:.35s}
+.stage{text-align:center}.roundTitle{font-weight:900;color:var(--purple);font-size:18px}.instruction{color:#687c91;font-size:14px;margin:5px 0 14px}
+.target{background:#f8fbff;border:2px dashed #b9cbe0;border-radius:18px;padding:15px;max-width:640px;margin:auto}.target b{font-size:28px;color:var(--blue)}
+.board{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:18px auto;max-width:760px}
+.col{background:#f8fbff;border-radius:18px;padding:12px}.col h3{margin:3px 0 10px;color:var(--purple)}
+.tile{background:#fff;border:2px solid #dbe5ef;border-radius:14px;padding:13px;margin:9px 0;font-size:18px;font-weight:800;color:var(--blue);cursor:pointer;transition:.18s;box-shadow:0 4px 10px #153b7a10}
+.tile:hover{transform:translateY(-2px);border-color:var(--purple)}.tile.selected{border-color:var(--gold);background:#fff8df;transform:scale(1.02)}
+.tile.matched{background:#e9f7ef;border-color:var(--green);color:var(--green);cursor:default}.tile.wrong{background:#fff0f2;border-color:var(--red);animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.feedback{min-height:45px;text-align:center;font-weight:800;padding:9px}.explain{font-size:13px;color:#687c91;font-weight:500;margin-top:3px}
+button{border:0;border-radius:14px;padding:13px 18px;font-weight:800;font-size:15px;cursor:pointer}.next{background:var(--blue);color:#fff}.restart{background:#eef3f9;color:var(--blue)}
+.hidden{display:none}.end{text-align:center;padding:25px}.trophy{font-size:70px}.end h2{color:var(--purple)}
+.celebrate{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10}.conf{position:absolute;top:-20px;width:9px;height:17px;animation:fall 2.3s linear forwards}@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.1}}
+.footer{text-align:center;color:#71869b;font-size:12px;margin-top:15px}
+@media(max-width:650px){.stats{grid-template-columns:repeat(2,1fr)}.board{grid-template-columns:1fr}.tile{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="top"><span>TEMMY SMART GAMES</span><span>GRADE 3 • MATHEMATICS</span></div>
+<main class="wrap">
+<section class="hero"><span class="badge">SEGMENT 3 • FACT FAMILIES</span>
+<h1>🧩 Fact Family Match</h1>
+<p class="sub">Connect multiplication and division facts that belong together.</p></section>
+<section class="panel">
+<div class="stats">
+<div class="stat"><b id="score">0</b><span>Score</span></div><div class="stat"><b id="streak">0</b><span>Streak</span></div>
+<div class="stat"><b id="round">1/6</b><span>Round</span></div><div class="stat"><b id="accuracy">0%</b><span>Accuracy</span></div>
+</div>
+<div class="progress"><div id="bar"></div></div>
+<div id="game" class="stage">
+<div class="roundTitle" id="title">Match the Fact Family</div>
+<div class="instruction" id="instruction">Choose one multiplication fact and its matching division fact.</div>
+<div class="target">Fact family numbers: <b id="numbers"></b></div>
+<div class="board" id="board"></div>
+<div class="feedback" id="feedback"></div>
+<button class="next hidden" id="next">NEXT FAMILY →</button>
+</div>
+<div id="end" class="end hidden"><div class="trophy">🏆</div><h2 id="endTitle">FACT FAMILY MASTER!</h2><p id="result"></p><button class="restart" onclick="restart()">PLAY AGAIN</button>
+<button id="bonusBtn" class="restart hidden" style="margin-left:8px;background:#fff0c7;color:#755700">🕵️ BONUS DETECTIVE</button></div>
+</section>
+<div class="footer">Temmy Smart Games • Interactive Mathematics • Think like a mathematician!</div>
+</main>
+<div class="celebrate" id="celebrate"></div>
+<script>
+const families=[
+ {nums:"3, 5, 15", facts:["3 × 5 = 15","5 × 3 = 15","15 ÷ 3 = 5","15 ÷ 5 = 3"], odd:"15 ÷ 5 = 2"},
+ {nums:"2, 10, 20", facts:["2 × 10 = 20","10 × 2 = 20","20 ÷ 2 = 10","20 ÷ 10 = 2"], odd:"20 ÷ 2 = 5"},
+ {nums:"4, 5, 20", facts:["4 × 5 = 20","5 × 4 = 20","20 ÷ 4 = 5","20 ÷ 5 = 4"], odd:"20 ÷ 4 = 4"},
+ {nums:"5, 6, 30", facts:["5 × 6 = 30","6 × 5 = 30","30 ÷ 5 = 6","30 ÷ 6 = 5"], odd:"30 ÷ 5 = 5"},
+ {nums:"7, 10, 70", facts:["7 × 10 = 70","10 × 7 = 70","70 ÷ 7 = 10","70 ÷ 10 = 7"], odd:"70 ÷ 7 = 7"},
+ {nums:"4, 6, 24", facts:["4 × 6 = 24","6 × 4 = 24","24 ÷ 4 = 6","24 ÷ 6 = 4"], odd:"24 ÷ 4 = 4"}
+];
+let round=0,score=0,streak=0,correct=0,attempts=0,selected=null,matched=0,locked=false,phase="match";
+
+const $=x=>document.getElementById(x);
+function sound(type){try{const C=window.AudioContext||window.webkitAudioContext;if(!C)return;const c=new C(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);let n=c.currentTime;o.frequency.setValueAtTime(type==="good"?560:220,n);o.frequency.exponentialRampToValueAtTime(type==="good"?820:150,n+.14);g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(.09,n+.02);g.gain.exponentialRampToValueAtTime(.0001,n+.28);o.start(n);o.stop(n+.3)}catch(e){}}
+function update(){ $("score").textContent=score;$("streak").textContent=streak;$("accuracy").textContent=attempts?`${Math.round(correct/attempts*100)}%`:"0%";$("round").textContent=`${round+1}/${families.length}`;$("bar").style.width=(round/families.length*100)+"%"; }
+function render(){
+ phase="match";selected=null;matched=0;locked=false;$("feedback").innerHTML="";$("next").classList.add("hidden");
+ const f=families[round];$("numbers").textContent=f.nums;$("title").textContent=round<2?"Match the Fact Family":round<4?"Build the Connections":"Complete the Family";
+ $("instruction").textContent="Match all four facts that use the same three numbers.";
+ update(); const box=$("board");box.innerHTML="";
+ const items=f.facts.map((x,i)=>({text:x,key:i})).sort(()=>Math.random()-.5);
+ items.forEach(item=>{const b=document.createElement("div");b.className="tile";b.textContent=item.text;b.dataset.key=item.key;b.onclick=()=>pick(b);box.appendChild(b)});
+}
+function pick(tile){
+ if(locked||tile.classList.contains("matched"))return;
+ if(tile.classList.contains("selected")){tile.classList.remove("selected");selected=null;return}
+ if(!selected){selected=tile;tile.classList.add("selected");return}
+ attempts++;
+ if(selected.dataset.key===tile.dataset.key){
+   locked=true;selected.classList.add("matched");tile.classList.add("matched");matched++;correct++;streak++;
+   const pts=10+Math.min(streak-1,5)*2;score+=pts;sound("good");
+   $("feedback").innerHTML=`✅ Correct connection! <b>+${pts}</b>${streak>=3?` 🔥 ${streak} in a row!`:""}`;
+   update();
+   setTimeout(()=>{selected=null;locked=false;if(matched===4)completeFamily()},450);
+ }else{
+   streak=0;sound("bad");selected.classList.add("wrong");tile.classList.add("wrong");
+   $("feedback").innerHTML="❌ These two facts are not the same family. Look at the three numbers.";
+   const a=selected,b=tile;setTimeout(()=>{a.classList.remove("wrong","selected");b.classList.remove("wrong");selected=null},550);update();
+ }
+}
+function completeFamily(){
+ $("feedback").innerHTML=`🎉 <b>Complete Fact Family!</b><div class="explain">The same three numbers create two multiplication and two division facts.</div>`;
+ $("next").classList.remove("hidden");
+}
+function next(){round++;if(round>=families.length)finish();else render()}
+$("next").onclick=next;
+function finish(){
+ phase="odd";$("game").classList.add("hidden");$("end").classList.remove("hidden");$("bar").style.width="100%";
+ const acc=attempts?Math.round(correct/attempts*100):0;
+ $("endTitle").textContent=acc>=90?"🏆 FACT FAMILY MASTER!":acc>=75?"🌟 CONNECTION BUILDER!":"💪 KEEP PRACTISING!";
+ $("result").innerHTML=`You completed <b>${families.length}</b> fact families.<br>Score: <b>${score}</b> • Accuracy: <b>${acc}%</b><br><br><b>Bonus challenge unlocked:</b> Find the fact that does NOT belong.`;
+ $("bonusBtn").classList.remove("hidden");if(acc>=90)confetti();
+}
+function bonus(){
+ $("end").classList.add("hidden");$("game").classList.remove("hidden");
+ const f=families[Math.floor(Math.random()*families.length)];$("title").textContent="🕵️ Which Fact Does NOT Belong?";
+ $("instruction").textContent="Choose the one fact that does not use the same three numbers.";
+ $("numbers").textContent=f.nums;$("board").innerHTML="";
+ const arr=[...f.facts,f.odd].sort(()=>Math.random()-.5);
+ arr.forEach((x,i)=>{const b=document.createElement("div");b.className="tile";b.textContent=x;b.onclick=()=>bonusPick(b,x===f.odd);$("board").appendChild(b)});
+ $("next").classList.add("hidden");$("feedback").innerHTML="";$("round").textContent="BONUS";$("bar").style.width="100%";
+}
+function bonusPick(b,good){
+ if(b.classList.contains("matched")||b.classList.contains("wrong"))return;
+ if(good){b.classList.add("matched");sound("good");$("feedback").innerHTML="🎯 Correct! That fact uses a different relationship."}
+ else{b.classList.add("wrong");sound("bad");$("feedback").innerHTML="💡 Check the three numbers again."}
+}
+function restart(){round=0;score=0;streak=0;correct=0;attempts=0;$("game").classList.remove("hidden");$("end").classList.add("hidden");$("bonusBtn").classList.add("hidden");render()}
+function confetti(){let b=$("celebrate");for(let n=0;n<70;n++){let x=document.createElement("div");x.className="conf";x.style.left=Math.random()*100+"%";x.style.animationDelay=Math.random()*.6+"s";x.style.background=["#153B7A","#C99700","#5B3A9D","#0B8FA3","#E85D75"][Math.floor(Math.random()*5)];b.appendChild(x)}setTimeout(()=>b.innerHTML="",2500);sound("good")}
+$("bonusBtn").onclick=bonus;
+render();
+</script>
+</body></html>
