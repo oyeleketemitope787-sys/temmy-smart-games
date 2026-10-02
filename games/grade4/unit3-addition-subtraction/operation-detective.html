@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temmy Smart Games — Operation Detective</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#edf5ff,#faf4ff);color:#17233c}
+header{background:linear-gradient(135deg,#153b7a,#4b2b82);color:#fff;text-align:center;padding:18px 14px}
+.brand{display:inline-block;background:#c99700;padding:7px 13px;border-radius:20px;font-size:.78rem;font-weight:900;letter-spacing:.7px}
+h1{margin:9px 0 4px;font-size:clamp(1.7rem,6vw,2.6rem)}
+header p{margin:0;font-weight:700}
+.wrap{max-width:950px;margin:auto;padding:16px 14px 35px}
+.panel{background:#fff;border-radius:22px;padding:18px;margin-bottom:15px;box-shadow:0 10px 28px rgba(21,59,122,.1)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:#f2f6ff;border-radius:14px;padding:9px;text-align:center;font-size:.82rem}
+.stat b{display:block;color:#153b7a;font-size:1.18rem;margin-top:3px}
+.progress{height:10px;background:#e5eaf2;border-radius:20px;margin-top:12px;overflow:hidden}
+.bar{height:100%;width:0;background:#c99700;transition:.35s}
+.case{text-align:center;color:#4b2b82;font-weight:900;margin:12px 0 3px}
+.focus{text-align:center;color:#69768b;font-weight:700;font-size:.9rem}
+.badges{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:11px 0}
+.pill{background:#eef2ff;color:#153b7a;padding:6px 10px;border-radius:20px;font-size:.78rem;font-weight:800}
+.scene{max-width:760px;margin:17px auto;background:linear-gradient(145deg,#f8fbff,#f4effb);border:3px solid #4b2b82;border-radius:22px;padding:19px}
+.clue{font-size:.8rem;color:#c99700;font-weight:900;letter-spacing:1px}
+.equation{font-size:clamp(2.1rem,8vw,4rem);font-weight:900;color:#153b7a;text-align:center;margin:16px 0}
+.question{text-align:center;font-weight:800;margin:12px 0}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:700px;margin:auto}
+button{border:0;border-radius:14px;padding:13px 15px;font-size:1rem;font-weight:800;cursor:pointer;background:#153b7a;color:#fff;touch-action:manipulation}
+button.gold{background:#c99700}
+button.soft{background:#eeeaf8;color:#4b2b82}
+button:disabled{opacity:.45;cursor:not-allowed}
+.answer-btn.wrong{background:#b42318!important}
+.answer-btn.correct{background:#18794e!important}
+.feedback{text-align:center;min-height:45px;font-weight:800;margin:12px 0}
+.evidence{display:none;background:#f7f8fc;border-left:5px solid #4b2b82;border-radius:14px;padding:13px;line-height:1.5}
+.center{text-align:center}
+.hidden{display:none}
+.trophy{font-size:4.5rem}
+.finalscore{font-size:2rem;font-weight:900;color:#153b7a}
+.badge-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.choices{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<div class="brand">TEMMY SMART GAMES • GRADE 4</div>
+<h1>🧩 Operation Detective</h1>
+<p>Investigate • Test • Substitute • Prove</p>
+</header>
+
+<div class="wrap">
+<section class="panel">
+<div class="stats">
+<div class="stat">🔎 Evidence<b id="score">0</b></div>
+<div class="stat">🔥 Streak<b id="streak">0</b></div>
+<div class="stat">🎯 Accuracy<b id="accuracy">100%</b></div>
+<div class="stat">📁 Case<b id="round">1/10</b></div>
+</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+</section>
+
+<section class="panel" id="game">
+<div class="case" id="case"></div>
+<div class="focus" id="focus"></div>
+<div class="badges"><span class="pill" id="skill"></span><span class="pill">SUBSTITUTE & CHECK</span></div>
+
+<div class="scene">
+<div class="clue">🕵️ CASE EVIDENCE</div>
+<div class="equation" id="equation"></div>
+<div class="question" id="question"></div>
+</div>
+
+<div class="choices" id="choices"></div>
+<div class="feedback" id="feedback"></div>
+<div class="evidence" id="evidence"></div>
+
+<div class="center" style="margin-top:13px">
+<button id="hintBtn" class="soft">💡 Detective Hint</button>
+<button id="next" class="gold" disabled>Next Case →</button>
+</div>
+</section>
+
+<section class="panel center hidden" id="finish">
+<div class="trophy">🏆</div>
+<h2 id="resultTitle"></h2>
+<div class="finalscore" id="finalScore"></div>
+<p id="finalText"></p>
+<div class="badge-row">
+<span class="pill">Missing Operations</span>
+<span class="pill">Substitution</span>
+<span class="pill">Checking</span>
+<span class="pill">Reasoning</span>
+</div>
+<br>
+<button onclick="restart()">Investigate Again</button>
+</section>
+</div>
+
+<script>
+const cases=[
+["CASE 1 • THE SIMPLE SUM","A number sentence has lost its operation sign.","MISSING OPERATION","28 □ 72 = 100","Which sign makes the statement true?",["+","−","×","÷"],"+","Think: which operation combines 28 and 72 to make 100?","28 + 72 = 100, so + is the correct sign."],
+["CASE 2 • THE HIDDEN DIFFERENCE","The sign disappeared from the middle of the sentence.","MISSING OPERATION","55 = 70 □ 15","Which sign makes the statement true?",["+","−","×","÷"],"−","70 must become 55 after the operation.","70 − 15 = 55, so − is the correct sign."],
+["CASE 3 • CHECK THE SUSPECT","A proposed sign must be tested, not guessed.","SUBSTITUTE & CHECK","46 □ 14 = 32","Which sign works?",["+","−","×","÷"],"−","Try the sign in the sentence and calculate.","46 − 14 = 32. Substitution confirms the sign."],
+["CASE 4 • THE 100 CLUE","Use the target number as your evidence.","MISSING OPERATION","65 □ 35 = 100","Which operation is missing?",["+","−","×","÷"],"+","Ask: what operation takes 65 and 35 to 100?","65 + 35 = 100."],
+["CASE 5 • REVERSE THE CLUE","The result is known; identify the operation.","LOGIC","90 □ 30 = 60","Which sign makes the sentence true?",["+","−","×","÷"],"−","Which operation changes 90 into 60 using 30?","90 − 30 = 60."],
+["CASE 6 • TWO POSSIBILITIES?","Test each candidate instead of choosing by appearance.","CHECKING","8 □ 4 = 32","Which operation is correct?",["+","−","×","÷"],"×","Only one of the four basic operations gives 32 here.","8 × 4 = 32."],
+["CASE 7 • EQUALS ON THE OTHER SIDE","The operation sign can appear after the equals sign.","MISSING OPERATION","55 = 70 □ 15","What belongs in the box?",["+","−","×","÷"],"−","Think about the relationship between 70, 15 and 55.","70 − 15 = 55."],
+["CASE 8 • DETECT THE FALSE SIGN","A detective must reject a sign that does not work.","ERROR DETECTION","28 − 72 = 100","What should replace −?",["+","×","÷","−"],"+","Substitute the possible signs. Which one produces 100?","28 + 72 = 100. The subtraction sign is false."],
+["CASE 9 • EXPLAIN YOUR EVIDENCE","Finding the sign is only half the job.","REASONING","63 □ 27 = 90","Which sign is correct, and why?",["+","−","×","÷"],"+","After choosing, substitute it and check the total.","63 + 27 = 90. The substitution proves that + is correct."],
+["CASE 10 • MASTER CASE","Final investigation — choose the sign and prove it.","MASTER","100 □ 25 = 75","Which complete conclusion is correct?",["+","−","×","÷"],"−","Choose the sign, then substitute it back into the sentence.","100 − 25 = 75. The sign is −, and substitution confirms it."]
+];
+
+let i=0,score=0,streak=0,right=0,attempted=0,locked=false,hint=false;
+const $=id=>document.getElementById(id);
+
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+
+function render(){
+ const c=cases[i];
+ locked=false;hint=false;
+ $("case").textContent=c[0];$("focus").textContent=c[1];$("skill").textContent=c[2];
+ $("equation").textContent=c[3];$("question").textContent=c[4];
+ $("choices").innerHTML=shuffle(c[5]).map(x=>`<button type="button" class="answer-btn">${x}</button>`).join("");
+ document.querySelectorAll(".answer-btn").forEach(btn=>{
+   btn.addEventListener("click",()=>answer(btn,btn.textContent));
+ });
+ $("feedback").textContent="";
+ $("evidence").style.display="none";
+ $("hintBtn").disabled=false;
+ $("next").disabled=true;
+ $("next").textContent=i===cases.length-1?"Finish Investigation →":"Next Case →";
+ $("round").textContent=`${i+1}/${cases.length}`;
+ $("bar").style.width=(i/cases.length*100)+"%";
+ update();
+}
+
+function update(){
+ $("score").textContent=score;
+ $("streak").textContent=streak;
+ $("accuracy").textContent=attempted?Math.round(right/attempted*100)+"%":"100%";
+}
+
+$("hintBtn").onclick=()=>{
+ if(hint)return;
+ hint=true;
+ $("feedback").textContent="💡 Hint activated — investigate before choosing.";
+ $("feedback").style.color="#4b2b82";
+ $("evidence").style.display="block";
+ $("evidence").innerHTML="<b>Detective hint:</b> "+cases[i][6];
+ $("hintBtn").disabled=true;
+};
+
+function answer(btn,x){
+ if(locked)return;
+ const c=cases[i],ok=x===c[6];
+ attempted++;
+ if(ok){
+   locked=true;right++;streak++;score+=12+(hint?0:3)+Math.min(streak-1,5);
+   btn.classList.add("correct");
+   document.querySelectorAll(".answer-btn").forEach(b=>b.disabled=true);
+   $("feedback").textContent=hint?"✅ Case solved!":"🕵️ Excellent detective work! Case solved!";
+   $("feedback").style.color="#18794e";
+   $("evidence").style.display="block";
+   $("evidence").innerHTML="<b>Proof:</b> "+c[7];
+   $("next").disabled=false;
+ }else{
+   streak=0;
+   btn.classList.add("wrong");
+   btn.disabled=true;
+   $("feedback").textContent="❌ That sign does not solve the case. Test another one.";
+   $("feedback").style.color="#b42318";
+   $("evidence").style.display="block";
+   $("evidence").innerHTML="<b>Detective clue:</b> "+c[7];
+ }
+ update();
+}
+
+$("next").onclick=()=>{
+ if($("next").disabled)return;
+ if(i<cases.length-1){i++;render();window.scrollTo({top:0,behavior:"smooth"});}
+ else finish();
+};
+
+function finish(){
+ $("game").classList.add("hidden");
+ $("finish").classList.remove("hidden");
+ $("bar").style.width="100%";
+ const a=Math.round(right/cases.length*100);
+ $("finalScore").textContent=`${score} evidence points • ${a}% accuracy`;
+ if(a===100){
+   $("resultTitle").textContent="💎 PERFECT OPERATION DETECTIVE!";
+   $("finalText").textContent="Every case solved! You found the missing operations and proved your choices by substitution.";
+ }else if(a>=80){
+   $("resultTitle").textContent="🏆 OPERATION DETECTIVE MASTER!";
+   $("finalText").textContent="Excellent investigation! You showed strong operation and checking skills.";
+ }else{
+   $("resultTitle").textContent="🌟 JUNIOR DETECTIVE!";
+   $("finalText").textContent="Good investigation. Try again and test each operation carefully before deciding.";
+ }
+}
+
+function restart(){
+ i=0;score=0;streak=0;right=0;attempted=0;
+ $("game").classList.remove("hidden");
+ $("finish").classList.add("hidden");
+ render();
+}
+render();
+</script>
+</body>
+</html>

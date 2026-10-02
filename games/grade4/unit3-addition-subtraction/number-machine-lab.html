@@ -1,0 +1,75 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Temmy Smart Games — Number Machine Lab</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#edf5ff,#faf4ff);color:#17233c}header{background:linear-gradient(135deg,#153b7a,#4b2b82);color:#fff;text-align:center;padding:18px 14px}.brand{display:inline-block;background:#c99700;padding:7px 13px;border-radius:20px;font-size:.78rem;font-weight:900}h1{margin:9px 0 4px;font-size:clamp(1.7rem,6vw,2.6rem)}header p{margin:0;font-weight:700}.wrap{max-width:950px;margin:auto;padding:16px 14px 35px}.panel{background:#fff;border-radius:22px;padding:18px;margin-bottom:15px;box-shadow:0 10px 28px #153b7a18}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{background:#f2f6ff;border-radius:14px;padding:9px;text-align:center;font-size:.82rem}.stat b{display:block;color:#153b7a;font-size:1.18rem;margin-top:3px}.progress{height:10px;background:#e5eaf2;border-radius:20px;margin-top:12px;overflow:hidden}.bar{height:100%;width:0;background:#c99700;transition:.35s}.stage{text-align:center;color:#4b2b82;font-weight:900;margin:12px 0 3px}.focus{text-align:center;color:#69768b;font-weight:700;font-size:.9rem}.machine{max-width:760px;margin:18px auto;background:linear-gradient(145deg,#f8fbff,#f4effb);border:3px solid #153b7a;border-radius:22px;padding:17px}.machine-title{text-align:center;font-weight:900;color:#153b7a;font-size:1.15rem}.flow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:17px 0}.box{min-width:105px;padding:15px 12px;border-radius:16px;text-align:center;background:#fff;border:2px solid #d9e1ef;font-weight:900}.input{border-color:#c99700}.rule{background:#153b7a;color:#fff;border-color:#153b7a}.output{border-color:#4b2b82}.arrow{font-size:1.7rem;font-weight:900;color:#c99700}.ruleline{text-align:center;font-size:1.15rem;color:#4b2b82;font-weight:900;margin:10px}.question{text-align:center;font-weight:800;margin:13px 0}.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:700px;margin:auto}button{border:0;border-radius:14px;padding:13px 15px;font-size:1rem;font-weight:800;cursor:pointer;background:#153b7a;color:#fff}button.gold{background:#c99700}button.soft{background:#eeeaf8;color:#4b2b82}button:disabled{opacity:.45;cursor:not-allowed}.answer-btn{touch-action:manipulation;-webkit-tap-highlight-color:transparent}.answer-btn:not(:disabled):hover{transform:translateY(-1px)}.feedback{text-align:center;min-height:44px;font-weight:800;margin:12px 0}.evidence{display:none;background:#f7f8fc;border-left:5px solid #4b2b82;border-radius:14px;padding:13px;line-height:1.5}.tools{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:10px 0}.pill{background:#eef2ff;color:#153b7a;padding:6px 10px;border-radius:20px;font-size:.78rem;font-weight:800}.center{text-align:center}.hidden{display:none}.trophy{font-size:4.5rem}.finalscore{font-size:2rem;font-weight:900;color:#153b7a}@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.choices{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}}
+</style></head><body>
+<header><div class="brand">TEMMY SMART GAMES • GRADE 4</div><h1>⚙️ Number Machine Lab</h1><p>Operate • Discover • Repair • Reverse</p></header>
+<div class="wrap">
+<section class="panel"><div class="stats"><div class="stat">⚡ Energy<b id="score">0</b></div><div class="stat">🔥 Streak<b id="streak">0</b></div><div class="stat">🎯 Accuracy<b id="accuracy">100%</b></div><div class="stat">🧪 Lab<b id="round">1/10</b></div></div><div class="progress"><div class="bar" id="bar"></div></div></section>
+<section class="panel" id="game"><div class="stage" id="stage"></div><div class="focus" id="focus"></div><div class="tools"><span class="pill" id="skill"></span><span class="pill" id="mode"></span></div>
+<div class="machine"><div class="machine-title">⚙️ TEMMY NUMBER MACHINE</div><div class="flow"><div class="box input">Input<br><span id="input"></span></div><div class="arrow">→</div><div class="box rule">Rule<br><span id="rule"></span></div><div class="arrow">→</div><div class="box output">Output<br><span id="output">?</span></div></div><div class="ruleline" id="ruleline"></div></div>
+<div class="question" id="question"></div><div class="choices" id="choices"></div><div class="feedback" id="feedback"></div><div class="evidence" id="evidence"></div>
+<div class="center" style="margin-top:13px"><button id="hintBtn" class="soft">💡 Lab Hint</button> <button id="next" class="gold" disabled>Next Machine →</button></div></section>
+<section class="panel center hidden" id="finish"><div class="trophy">🏆</div><h2 id="resultTitle"></h2><div class="finalscore" id="finalScore"></div><p id="finalText"></p><button onclick="restart()">Run the Lab Again</button></section>
+</div>
+<script>
+const machines=[
+["LAB 1 • START THE MACHINE","Apply the rule in the correct order.","SEQUENCE RULES","OPERATE","25","× 2, then + 5","25 × 2 + 5 = ?","What is the output?",["55","60","50","35"],"55","Double 25 first. Then add 5.","25 × 2 = 50. Then 50 + 5 = 55."],
+["LAB 2 • RUN IT AGAIN","Follow both parts of the machine rule.","SEQUENCE RULES","OPERATE","10","× 3, then + 4","10 × 3 + 4 = ?","What is the output?",["34","40","36","30"],"34","Multiply first, then add.","10 × 3 = 30. Then 30 + 4 = 34."],
+["LAB 3 • FIND THE MISSING OUTPUT","Complete the machine.","MISSING NUMBER","OPERATE","15","× 2, then + 5","15 × 2 + 5 = ?","What output belongs in the machine?",["35","40","30","25"],"35","15 × 2 = 30. What happens next?","15 × 2 = 30; 30 + 5 = 35."],
+["LAB 4 • REPAIR THE RULE","Which rule transforms the input into the output?","DISCOVER THE RULE","DETECT","20","? → 45","20 → 45","Which rule could make this machine?",["+ 25","× 2 + 5","+ 20","× 3"],"+ 25","Ask what must be added to 20 to make 45.","20 + 25 = 45. Therefore +25 is a valid rule."],
+["LAB 5 • REVERSE ENGINEER","Work backwards from the output.","REVERSE THE MACHINE","REVERSE","?","× 2, then + 5","? × 2 + 5 = 45","What input produces 45?",["20","25","15","40"],"20","Undo +5 first, then undo ×2.","45 − 5 = 40. Then 40 ÷ 2 = 20."],
+["LAB 6 • SPOT THE ORDER","The order of operations matters.","SEQUENCE","DETECT","8","+ 4, then × 2","(8 + 4) × 2 = ?","What is the output?",["24","16","20","28"],"24","Do +4 first because it is the first machine step.","8 + 4 = 12. Then 12 × 2 = 24."],
+["LAB 7 • WHICH MACHINE?","Choose the machine that gives the target output.","MACHINE MATCH","MATCH","12","Target = 29","12 → 29","Which rule produces 29?",["+ 17","× 2 + 5","+ 20","× 3 − 5"],"+ 17","Test each rule with input 12.","12 + 17 = 29. The other choices do not give 29."],
+["LAB 8 • MISSING PART","Find the missing step in the rule.","MISSING STEP","REPAIR","18","× 2, then ?","18 × 2 → 42","What is the missing second step?",["+ 6","+ 4","+ 8","− 6"],"+ 6","18 × 2 = 36. What takes 36 to 42?","18 × 2 = 36. Then 36 + 6 = 42."],
+["LAB 9 • TWO-WAY MACHINE","Use the inverse to recover the input.","INVERSE THINKING","REVERSE","?","+ 15","? + 15 = 63","What input enters the machine?",["48","78","58","45"],"48","Undo +15 with subtraction.","63 − 15 = 48. Therefore the input is 48."],
+["LAB 10 • MASTER LAB","Final challenge — operate, reason and check.","MASTER","MASTER","?","× 2, then + 5","? × 2 + 5 = 55","Which complete statement is correct?",["Input 25 because 25 × 2 + 5 = 55","Input 30 because 30 × 2 + 5 = 55","Input 20 because 20 × 2 + 5 = 55","Input 50 because 50 × 2 + 5 = 55"],"Input 25 because 25 × 2 + 5 = 55","Undo +5 first, then divide by 2.","55 − 5 = 50. Then 50 ÷ 2 = 25. Check: 25 × 2 + 5 = 55."]
+];
+let i=0,score=0,streak=0,right=0,attempted=0,locked=false,hint=false;
+const $=x=>document.getElementById(x);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function render(){
+ const m=machines[i];locked=false;hint=false;
+ ["stage","focus","skill","mode"].forEach((id,n)=>$(id).textContent=m[n]);
+ $("input").textContent=m[4];$("rule").textContent=m[5];$("output").textContent="?";$("ruleline").textContent=m[6];$("question").textContent=m[7];
+ $("choices").innerHTML=shuffle(m[8]).map(x=>`<button type="button" class="answer-btn">${x}</button>`).join("");
+ document.querySelectorAll(".answer-btn").forEach(btn=>{
+   btn.addEventListener("click",()=>answer(btn,btn.textContent));
+ });
+ $("feedback").textContent="";$("evidence").style.display="none";$("hintBtn").disabled=false;$("next").disabled=true;
+ $("next").textContent=i===machines.length-1?"Finish Lab →":"Next Machine →";$("round").textContent=`${i+1}/${machines.length}`;$("bar").style.width=(i/machines.length*100)+"%";update();
+}
+function update(){$("score").textContent=score;$("streak").textContent=streak;$("accuracy").textContent=attempted?Math.round(right/attempted*100)+"%":"100%"}
+$("hintBtn").onclick=()=>{hint=true;$("feedback").textContent="💡 Hint activated — inspect the machine carefully.";$("feedback").style.color="#4b2b82";$("evidence").style.display="block";$("evidence").innerHTML="<b>Lab hint:</b> "+machines[i][10];$("hintBtn").disabled=true};
+function answer(btn,x){
+if(locked)return;
+locked=true;
+attempted++;
+document.querySelectorAll("#choices button").forEach(b=>b.disabled=true);
+btn.style.outline="4px solid #c99700";
+btn.style.outlineOffset="2px";const m=machines[i],ok=x===m[9];
+if(ok){
+ right++;streak++;score+=12+(hint?0:3)+Math.min(streak-1,5);
+ $("feedback").textContent=hint?"✅ Correct! Machine repaired.":"⚙️ Correct! Machine running perfectly!";
+ $("feedback").style.color="#18794e";
+ $("output").textContent=m[9];
+}else{
+ streak=0;
+ $("feedback").textContent="🔎 Not quite. Inspect the machine evidence.";
+ $("feedback").style.color="#b42318";
+ $("output").textContent=m[9];
+}
+$("evidence").style.display="block";$("evidence").innerHTML="<b>Machine evidence:</b> "+m[11];$("next").disabled=false;update()}
+$("next").onclick=()=>{
+ if($("next").disabled)return;
+ if(i<machines.length-1){
+   i++;
+   render();
+   window.scrollTo({top:0,behavior:"smooth"});
+ }else{
+   finish();
+   window.scrollTo({top:0,behavior:"smooth"});
+ }
+};
+function finish(){$("game").classList.add("hidden");$("finish").classList.remove("hidden");$("bar").style.width="100%";let a=Math.round(right/machines.length*100);$("finalScore").textContent=`${score} energy • ${a}% accuracy`;if(a===100){$("resultTitle").textContent="💎 PERFECT MACHINE MASTER!";$("finalText").textContent="Every machine was solved! You operated, discovered, repaired and reversed number machines."}else if(a>=80){$("resultTitle").textContent="🏆 NUMBER MACHINE MASTER!";$("finalText").textContent="Excellent lab work! You showed strong sequence and inverse-operation thinking."}else{$("resultTitle").textContent="🌟 NUMBER MACHINE EXPLORER!";$("finalText").textContent="Good investigation. Run the lab again and strengthen your machine strategies."}}
+function restart(){i=0;score=0;streak=0;right=0;attempted=0;$("game").classList.remove("hidden");$("finish").classList.add("hidden");render()}render();
+</script></body></html>

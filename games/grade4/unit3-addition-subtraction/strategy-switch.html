@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temmy Smart Games – Strategy Switch</title>
+<style>
+:root{--b:#153B7A;--g:#C99700;--p:#6A3FA0;--ink:#172033;--good:#16834a;--bad:#c62828}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef3fb,#fbf8ef);color:var(--ink)}
+header{background:linear-gradient(135deg,var(--b),#244f96,var(--p));color:#fff;text-align:center;padding:22px 14px}
+h1{margin:0;font-size:clamp(25px,6vw,38px)}header p{margin:7px 0}
+.wrap{max-width:1000px;margin:auto;padding:18px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.stat,.card{background:#fff;border-radius:18px;box-shadow:0 7px 24px #0001}.stat{text-align:center;padding:10px}.stat b{display:block;color:var(--b);font-size:20px}.stat small{color:#667}
+.bar{height:10px;background:#dfe4ee;border-radius:10px;margin:10px 0 18px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--p));transition:.3s}
+.card{padding:20px}.badge{display:inline-block;background:#eee8f8;color:var(--p);padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+h2{color:var(--b);margin:10px 0 5px}.sub{color:#606b7b;margin-top:0}
+.problem{background:#f6f8fc;border:2px solid #dbe2ed;border-radius:18px;padding:22px;text-align:center;margin:18px 0}
+.question{font-size:clamp(28px,7vw,48px);font-weight:900;color:var(--b);margin:10px}
+.context{font-size:16px;line-height:1.5;color:#505b6b;max-width:700px;margin:auto}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+.choice{background:#fff;border:2px solid #d2d9e5;color:var(--ink);font:inherit;font-weight:700;border-radius:14px;padding:16px;cursor:pointer}
+.choice:hover:not(:disabled){border-color:var(--g);transform:translateY(-2px)}
+.choice.correct{background:#e8f7ef;border-color:var(--good);color:var(--good)}
+.choice.wrong{background:#fdecec;border-color:var(--bad);color:var(--bad)}
+.choice small{display:block;font-weight:normal;margin-top:5px;color:#687385}
+.feedback{min-height:65px;background:#f7f8fb;border-radius:12px;padding:12px;margin-top:15px}
+.feedback strong{color:var(--b)}.explain{display:none;background:#fff8df;border-left:5px solid var(--g);padding:12px;margin-top:10px;border-radius:9px;text-align:left}
+.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+button{font:inherit;font-weight:700;border-radius:12px;padding:12px 15px;cursor:pointer}.primary{background:var(--b);color:#fff;border:0}.secondary{background:#eee8f8;color:var(--p);border:0}.primary:disabled{opacity:.45;cursor:not-allowed}
+.summary{display:none;text-align:center}.big{font-size:42px;font-weight:900;color:var(--g)}footer{text-align:center;padding:18px;color:#687385;font-size:12px}
+@media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}.choices{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>🚦 STRATEGY SWITCH</h1><p>Choose the method • Solve efficiently • Explain your thinking</p></header>
+<div class="wrap">
+<div class="stats">
+<div class="stat"><b id="round">1/10</b><small>Decision</small></div>
+<div class="stat"><b id="score">0</b><small>Points</small></div>
+<div class="stat"><b id="streak">0</b><small>Streak</small></div>
+<div class="stat"><b id="acc">0%</b><small>Accuracy</small></div>
+</div>
+<div class="bar"><div class="fill" id="fill"></div></div>
+
+<section class="card" id="game">
+<span class="badge">GRADE 4 • UNIT 3</span>
+<h2 id="title"></h2>
+<p class="sub">A mathematician chooses a method that is accurate, efficient and easy to explain.</p>
+<div class="problem">
+<div class="context" id="context"></div>
+<div class="question" id="question"></div>
+<p><strong>Which strategy would you choose?</strong></p>
+<div class="choices" id="choices"></div>
+</div>
+<div class="feedback" id="feedback">Choose a strategy before solving.</div>
+<div class="explain" id="explain"></div>
+<div class="actions">
+<button class="primary" id="next" disabled>Next Decision →</button>
+<button class="secondary" id="hint">💡 Strategy Hint</button>
+</div>
+</section>
+
+<section class="card summary" id="summary">
+<h2 id="result"></h2><div class="big" id="final"></div>
+<p id="summaryText"></p><button class="primary" id="restart">🚦 Switch Strategies Again</button>
+</section>
+</div>
+<footer>Temmy Smart Games • Interactive Mathematics • Grade 4</footer>
+
+<script>
+const Q=[
+{title:"Friendly Numbers",context:"You need to calculate 500 + 300 mentally. No regrouping is needed.",question:"500 + 300",choices:["Mental","Number Line","Written"],answer:"Mental",why:"Mental calculation is quick and efficient for simple friendly numbers."},
+{title:"Counting On",context:"You know 350 and need to find how much more is needed to reach 400.",question:"350 → 400",choices:["Mental","Number Line","Written"],answer:"Number Line",why:"A number line makes counting on from 350 to 400 clear and easy to explain."},
+{title:"A Larger Calculation",context:"You need to calculate a three-digit addition that requires regrouping.",question:"278 + 146",choices:["Mental","Number Line","Written"],answer:"Written",why:"A written method is useful for larger calculations involving regrouping."},
+{title:"Easy Difference",context:"Find the difference between 70 and 50.",question:"70 − 50",choices:["Mental","Number Line","Written"],answer:"Mental",why:"These are friendly numbers, so mental calculation is efficient."},
+{title:"Counting Back",context:"A learner wants to show how to subtract 7 from 43 by counting backwards.",question:"43 − 7",choices:["Mental","Number Line","Written"],answer:"Number Line",why:"A number line clearly shows seven steps backwards from 43."},
+{title:"Regrouping Required",context:"The subtraction involves several place values and regrouping.",question:"424 − 179",choices:["Mental","Number Line","Written"],answer:"Written",why:"A written method keeps the place values aligned and makes regrouping easier to manage."},
+{title:"Quick Addition",context:"You are adding two multiples of 100 during a timed mental warm-up.",question:"600 + 200",choices:["Mental","Number Line","Written"],answer:"Mental",why:"Mental calculation is the fastest sensible method for this simple addition."},
+{title:"Explain the Journey",context:"A learner wants to demonstrate each step when finding 267 − 25.",question:"267 − 25",choices:["Mental","Number Line","Written"],answer:"Number Line",why:"A number line can show counting back 20 and then 5, making the steps easy to explain."},
+{title:"Three-Digit Addition",context:"You need an accurate method for a larger calculation with regrouping.",question:"469 + 137",choices:["Mental","Number Line","Written"],answer:"Written",why:"The written method helps align hundreds, tens and ones and manage regrouping accurately."},
+{title:"Choose Like a Mathematician",context:"There is no single method that must always be used. Choose the method that is accurate, efficient and easy to explain for this calculation.",question:"90 − 40",choices:["Mental","Number Line","Written"],answer:"Mental",why:"90 − 40 is a friendly-number calculation, so mental calculation is efficient and easy to explain."}
+];
+
+let i=0,score=0,streak=0,attempts=0,correct=0,locked=false,hint=false;
+const $=x=>document.getElementById(x);
+
+function render(){
+ const q=Q[i];locked=false;hint=false;
+ $("round").textContent=`${i+1}/${Q.length}`;
+ $("score").textContent=score;$("streak").textContent=streak;
+ $("acc").textContent=attempts?Math.round(correct/attempts*100)+"%":"0%";
+ $("fill").style.width=(i/Q.length*100)+"%";
+ $("title").textContent=q.title;$("context").textContent=q.context;$("question").textContent=q.question;
+ $("feedback").innerHTML="<strong>Decision point:</strong> Choose the strategy you think fits best.";
+ $("explain").style.display="none";$("next").disabled=true;$("hint").disabled=false;
+ $("choices").innerHTML="";
+ q.choices.forEach((c,n)=>{
+   const b=document.createElement("button");b.className="choice";
+   b.innerHTML=(c==="Mental"?"🧠 ":c==="Number Line"?"📏 ":"✍️ ")+c+
+     `<small>${c==="Mental"?"Fast thinking":c==="Number Line"?"Count on or back":"Align place values"}</small>`;
+   b.addEventListener("click",()=>check(b,c,q));$("choices").appendChild(b);
+ });
+}
+function check(btn,c,q){
+ if(locked)return;attempts++;
+ if(c===q.answer){
+   locked=true;correct++;streak++;score+=hint?8:10;btn.classList.add("correct");
+   document.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+   $("feedback").innerHTML="<strong>🚦 Strategy selected!</strong> That is a suitable method for this problem.";
+   $("explain").textContent=q.why;$("explain").style.display="block";
+   $("next").disabled=false;$("hint").disabled=true;
+ }else{
+   streak=0;btn.classList.add("wrong");btn.disabled=true;
+   $("feedback").innerHTML="<strong>Try another strategy.</strong> Think about the size of the numbers, regrouping and how easy the method is to explain.";
+ }
+ $("score").textContent=score;$("streak").textContent=streak;$("acc").textContent=Math.round(correct/attempts*100)+"%";
+}
+const hints=[
+"Ask: Is this a friendly-number calculation that can be done quickly in your head?",
+"Think about counting forward from the first number.",
+"For a larger calculation with regrouping, think about keeping place values aligned.",
+"Friendly numbers often work well mentally.",
+"A number line can make each backward step visible.",
+"Several place values and regrouping suggest a written method.",
+"Look for an efficient mental calculation.",
+"Think about which method would make the counting steps easiest to show.",
+"Align hundreds, tens and ones carefully.",
+"Choose the method that is accurate, efficient and easy to explain."
+];
+$("hint").addEventListener("click",()=>{if(locked)return;hint=true;$("hint").disabled=true;$("feedback").innerHTML=`<strong>💡 Strategy Hint:</strong> ${hints[i]}`});
+$("next").addEventListener("click",()=>{if(i<Q.length-1){i++;render()}else finish()});
+function finish(){
+ const pct=Math.round(correct/attempts*100);
+ $("game").style.display="none";$("summary").style.display="block";$("fill").style.width="100%";
+ $("final").textContent=score+" POINTS";
+ $("result").textContent=pct===100?"🏆 STRATEGY MASTER!":pct>=90?"🌟 SMART STRATEGIST!":pct>=75?"👏 SKILLED THINKER!":"🧠 KEEP PRACTISING!";
+ $("summaryText").textContent=`You completed all 10 strategy decisions. Accuracy: ${pct}%. Remember: the best method is the one that is accurate, efficient and easy to explain.`;
+}
+$("restart").addEventListener("click",()=>{i=0;score=0;streak=0;attempts=0;correct=0;$("game").style.display="block";$("summary").style.display="none";render()});
+render();
+</script>
+</body></html>

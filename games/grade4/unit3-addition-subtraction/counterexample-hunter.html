@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temmy Smart Games – Counterexample Hunter</title>
+<style>
+:root{--b:#153B7A;--g:#C99700;--p:#6A3FA0;--ink:#172033;--good:#16834a;--bad:#c62828}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef3fb,#fbf8ef);color:var(--ink)}
+header{background:linear-gradient(135deg,var(--b),#244f96,var(--p));color:#fff;text-align:center;padding:22px 14px}
+h1{margin:0;font-size:clamp(24px,6vw,38px)}header p{margin:7px 0}
+.wrap{max-width:1000px;margin:auto;padding:18px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.stat,.card{background:#fff;border-radius:18px;box-shadow:0 7px 24px #0001}.stat{text-align:center;padding:10px}.stat b{display:block;color:var(--b);font-size:20px}.stat small{color:#667}
+.bar{height:10px;background:#dfe4ee;border-radius:10px;margin:10px 0 18px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--p));transition:.3s}
+.card{padding:20px}.badge{display:inline-block;background:#eee8f8;color:var(--p);padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+h2{color:var(--b);margin:10px 0 5px}.sub{color:#606b7b;margin-top:0}
+.case{background:#f6f8fc;border:2px solid #dbe2ed;border-radius:18px;padding:20px;margin:18px 0}
+.caseTag{color:var(--p);font-weight:800}.statement{font-size:clamp(23px,6vw,37px);font-weight:900;color:var(--b);text-align:center;margin:16px 0;line-height:1.25}
+.instruction{text-align:center;font-weight:700;color:#505b6b}
+.examples{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0}.example{background:#fff;border:2px solid #d9dfeb;border-radius:12px;padding:12px;text-align:center;font-weight:700}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:14px}
+.choice{background:#fff;border:2px solid #d2d9e5;color:var(--ink);font:inherit;font-weight:800;border-radius:14px;padding:16px;cursor:pointer}
+.choice:hover:not(:disabled){border-color:var(--g);transform:translateY(-2px)}.choice.correct{background:#e8f7ef;border-color:var(--good);color:var(--good)}.choice.wrong{background:#fdecec;border-color:var(--bad);color:var(--bad)}
+.feedback{min-height:65px;background:#f7f8fb;border-radius:12px;padding:12px;margin-top:15px}.feedback strong{color:var(--b)}
+.proof{display:none;background:#fff8df;border-left:5px solid var(--g);padding:13px;margin-top:10px;border-radius:9px;line-height:1.5}
+.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}button{font:inherit;font-weight:700;border-radius:12px;padding:12px 15px;cursor:pointer}
+.primary{background:var(--b);color:#fff;border:0}.secondary{background:#eee8f8;color:var(--p);border:0}.primary:disabled{opacity:.45;cursor:not-allowed}
+.summary{display:none;text-align:center}.big{font-size:42px;font-weight:900;color:var(--g)}footer{text-align:center;padding:18px;color:#687385;font-size:12px}
+@media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}.examples{grid-template-columns:1fr}.choices{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>🕵️ COUNTEREXAMPLE HUNTER</h1><p>Challenge “always” statements • Find one case that breaks the rule</p></header>
+<div class="wrap">
+<div class="stats">
+<div class="stat"><b id="round">1/10</b><small>Case</small></div>
+<div class="stat"><b id="score">0</b><small>Points</small></div>
+<div class="stat"><b id="streak">0</b><small>Streak</small></div>
+<div class="stat"><b id="acc">0%</b><small>Accuracy</small></div>
+</div>
+<div class="bar"><div class="fill" id="fill"></div></div>
+
+<section class="card" id="game">
+<span class="badge">GRADE 4 • UNIT 3</span>
+<h2 id="title"></h2>
+<p class="sub">A single valid counterexample can disprove an “always” statement.</p>
+<div class="case">
+<div class="caseTag">CLAIM</div>
+<div class="statement" id="statement"></div>
+<p class="instruction" id="instruction"></p>
+<div class="examples" id="examples"></div>
+<div class="instruction">Which example is the counterexample?</div>
+<div class="choices" id="choices"></div>
+</div>
+<div class="feedback" id="feedback"><strong>Detective task:</strong> Find the example that breaks the claim.</div>
+<div class="proof" id="proof"></div>
+<div class="actions">
+<button class="primary" id="next" disabled>Next Case →</button>
+<button class="secondary" id="hint">💡 Hunter Hint</button>
+</div>
+</section>
+
+<section class="card summary" id="summary">
+<h2 id="result"></h2><div class="big" id="final"></div>
+<p id="summaryText"></p><button class="primary" id="restart">🕵️ Hunt Again</button>
+</section>
+</div>
+<footer>Temmy Smart Games • Interactive Mathematics • Grade 4</footer>
+
+<script>
+const Q=[
+{title:"Case 1 — The Odd Claim",statement:"“When you add 5 to any number, the answer will be odd.”",instruction:"Find one example that proves the claim is not always true.",examples:["8 + 5 = 13","9 + 5 = 14","7 + 5 = 12"],answer:"9 + 5 = 14",proof:"9 is odd, but 9 + 5 = 14, which is even. One valid counterexample is enough to disprove an “always” statement."},
+{title:"Case 2 — Three Odds",statement:"“Odd + Odd + Odd is always even.”",instruction:"Find the example that breaks the claim.",examples:["1 + 3 + 5 = 9","3 + 5 + 7 = 15","5 + 7 + 9 = 21"],answer:"1 + 3 + 5 = 9",proof:"9 is odd, so this example directly breaks the claim that three odd numbers always have an even total."},
+{title:"Case 3 — Even Addition",statement:"“Even + Even can be odd.”",instruction:"Look for an example that breaks this statement.",examples:["2 + 4 = 6","8 + 10 = 18","12 + 14 = 26"],answer:"No counterexample shown",proof:"All three examples give even totals. The supplied evidence does not contain a counterexample; this claim is contradicted by the pattern shown."},
+{title:"Case 4 — Odd + Odd",statement:"“Odd + Odd is always odd.”",instruction:"Find the counterexample.",examples:["3 + 5 = 8","7 + 9 = 16","11 + 13 = 24"],answer:"3 + 5 = 8",proof:"3 and 5 are both odd, but their sum is 8, an even number. Therefore the “always odd” claim is false."},
+{title:"Case 5 — Subtraction",statement:"“Odd − Odd is always odd.”",instruction:"Find one result that breaks the claim.",examples:["9 − 3 = 6","15 − 7 = 8","21 − 9 = 12"],answer:"9 − 3 = 6",proof:"9 and 3 are odd, but 9 − 3 = 6, which is even. This is a counterexample."},
+{title:"Case 6 — Three Evens",statement:"“Three even numbers can have an odd total.”",instruction:"Choose the example that acts as evidence against the claim.",examples:["2 + 4 + 6 = 12","8 + 10 + 12 = 30","14 + 16 + 18 = 48"],answer:"2 + 4 + 6 = 12",proof:"2, 4 and 6 are all even, and their total is 12, which is even. This example supports the opposite pattern rather than the claim."},
+{title:"Case 7 — Odd Minus Even",statement:"“Odd − Even is always even.”",instruction:"Find the counterexample.",examples:["9 − 4 = 5","15 − 6 = 9","21 − 8 = 13"],answer:"9 − 4 = 5",proof:"9 is odd and 4 is even, but the result is 5, which is odd. So the “always even” claim is false."},
+{title:"Case 8 — Adding 2",statement:"“Adding 2 to an even number always makes it odd.”",instruction:"Find the example that breaks the claim.",examples:["4 + 2 = 6","10 + 2 = 12","20 + 2 = 22"],answer:"4 + 2 = 6",proof:"4 is even and 4 + 2 = 6 is also even. This single example disproves the claim."},
+{title:"Case 9 — Adding 1",statement:"“Adding 1 to an odd number always makes it odd.”",instruction:"Find the counterexample.",examples:["3 + 1 = 4","7 + 1 = 8","11 + 1 = 12"],answer:"3 + 1 = 4",proof:"3 is odd, but 3 + 1 = 4, which is even. Therefore the claim is false."},
+{title:"Case 10 — Final Hunt",statement:"“Odd + Even is always even.”",instruction:"Find the counterexample.",examples:["3 + 4 = 7","9 + 2 = 11","15 + 6 = 21"],answer:"3 + 4 = 7",proof:"3 is odd and 4 is even, but their sum is 7, which is odd. This is a clear counterexample."}
+];
+
+let i=0,score=0,streak=0,attempts=0,correct=0,locked=false,hint=false;
+const $=x=>document.getElementById(x);
+function render(){
+ const q=Q[i];locked=false;hint=false;
+ $("round").textContent=`${i+1}/${Q.length}`;$("score").textContent=score;$("streak").textContent=streak;
+ $("acc").textContent=attempts?Math.round(correct/attempts*100)+"%":"0%";$("fill").style.width=(i/Q.length*100)+"%";
+ $("title").textContent=q.title;$("statement").textContent=q.statement;$("instruction").textContent=q.instruction;
+ $("examples").innerHTML="";q.examples.forEach(x=>{let d=document.createElement("div");d.className="example";d.textContent=x;$("examples").appendChild(d)});
+ $("feedback").innerHTML="<strong>Detective task:</strong> Find the example that breaks the claim.";
+ $("proof").style.display="none";$("next").disabled=true;$("hint").disabled=false;$("choices").innerHTML="";
+ q.examples.forEach(x=>{let b=document.createElement("button");b.className="choice";b.textContent=x;b.addEventListener("click",()=>check(b,x,q));$("choices").appendChild(b)});
+}
+function check(btn,c,q){
+ if(locked)return;attempts++;
+ if(c===q.answer){
+   locked=true;correct++;streak++;score+=hint?8:10;btn.classList.add("correct");
+   document.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+   $("feedback").innerHTML="<strong>🕵️ Counterexample found!</strong> You identified the case that challenges the claim.";
+   $("proof").innerHTML="<strong>Evidence:</strong> "+q.proof;$("proof").style.display="block";
+   $("next").disabled=false;$("hint").disabled=true;
+ }else{
+   streak=0;btn.classList.add("wrong");btn.disabled=true;
+   $("feedback").innerHTML="<strong>Keep hunting.</strong> Check whether the result really breaks the word “always.”";
+ }
+ $("score").textContent=score;$("streak").textContent=streak;$("acc").textContent=Math.round(correct/attempts*100)+"%";
+}
+const hints=[
+"Look for a result whose parity is different from what the claim promises.",
+"Three odd numbers have an odd total. Which example shows that?",
+"Check the final digit of each result. Do you actually see an odd total?",
+"Odd + odd gives an even result. Find one.",
+"Odd − odd gives an even result. Find one.",
+"Check whether the total of three even numbers is odd or even.",
+"Odd − even gives an odd result. Find one.",
+"Adding 2 keeps the parity the same. Find an even result.",
+"Adding 1 changes an odd number to the next even number.",
+"Odd + even gives an odd result. Find one."
+];
+$("hint").addEventListener("click",()=>{if(locked)return;hint=true;$("hint").disabled=true;$("feedback").innerHTML=`<strong>💡 Hunter Hint:</strong> ${hints[i]}`});
+$("next").addEventListener("click",()=>{if(i<Q.length-1){i++;render()}else finish()});
+function finish(){
+ const pct=Math.round(correct/attempts*100);$("game").style.display="none";$("summary").style.display="block";$("fill").style.width="100%";
+ $("final").textContent=score+" POINTS";$("result").textContent=pct===100?"🏆 COUNTEREXAMPLE MASTER!":pct>=90?"🌟 PROOF HUNTER!":pct>=75?"👏 SKILLED HUNTER!":"🕵️ KEEP HUNTING!";
+ $("summaryText").textContent=`You investigated all 10 claims. Accuracy: ${pct}%. Remember: one valid counterexample can disprove an “always” statement.`;
+}
+$("restart").addEventListener("click",()=>{i=0;score=0;streak=0;attempts=0;correct=0;$("game").style.display="block";$("summary").style.display="none";render()});
+render();
+</script>
+</body></html>

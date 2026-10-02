@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temmy Smart Games – Grade 4 Mathematics Master</title>
+<style>
+:root{--b:#153B7A;--g:#C99700;--p:#6A3FA0;--ink:#172033;--good:#16834a;--bad:#c62828}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef3fb,#fbf8ef);color:var(--ink)}
+header{background:linear-gradient(135deg,var(--b),#244f96,var(--p));color:#fff;text-align:center;padding:22px 14px}
+h1{margin:0;font-size:clamp(24px,6vw,38px)}header p{margin:7px 0}
+.wrap{max-width:1000px;margin:auto;padding:18px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px}
+.stat,.card{background:#fff;border-radius:18px;box-shadow:0 7px 24px #0001}.stat{text-align:center;padding:10px}.stat b{display:block;color:var(--b);font-size:20px}.stat small{color:#667}
+.bar{height:10px;background:#dfe4ee;border-radius:10px;margin:10px 0 18px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--g),var(--p));transition:.3s}
+.card{padding:20px}.badge{display:inline-block;background:#eee8f8;color:var(--p);padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold}
+h2{color:var(--b);margin:10px 0 5px}.sub{color:#606b7b;margin-top:0}.mission{background:#f6f8fc;border:2px solid #dbe2ed;border-radius:18px;padding:18px;margin:18px 0}
+.tag{display:inline-block;background:#fff;border:2px solid #d9dfeb;border-radius:20px;padding:6px 10px;font-weight:800;color:var(--p)}
+.question{font-size:clamp(25px,6vw,42px);font-weight:900;color:var(--b);text-align:center;margin:18px 0 8px;line-height:1.25}
+.context{text-align:center;color:#596476;line-height:1.5}.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:15px}
+.choice{background:#fff;border:2px solid #d2d9e5;color:var(--ink);font:inherit;font-weight:800;border-radius:14px;padding:15px;cursor:pointer}
+.choice:hover:not(:disabled){border-color:var(--g);transform:translateY(-2px)}.choice.correct{background:#e8f7ef;border-color:var(--good);color:var(--good)}.choice.wrong{background:#fdecec;border-color:var(--bad);color:var(--bad)}
+.feedback{min-height:65px;background:#f7f8fb;border-radius:12px;padding:12px;margin-top:14px}.feedback strong{color:var(--b)}
+.evidence{display:none;background:#fff8df;border-left:5px solid var(--g);padding:13px;margin-top:10px;border-radius:9px;line-height:1.5}
+.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}button{font:inherit;font-weight:700;border-radius:12px;padding:12px 15px;cursor:pointer}
+.primary{background:var(--b);color:#fff;border:0}.secondary{background:#eee8f8;color:var(--p);border:0}.primary:disabled{opacity:.45;cursor:not-allowed}
+.summary{display:none;text-align:center}.big{font-size:44px;font-weight:900;color:var(--g)}.medal{font-size:58px}
+footer{text-align:center;padding:18px;color:#687385;font-size:12px}
+@media(max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}.choices{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>👑 GRADE 4 MATHEMATICS MASTER</h1>
+<p>Think • Calculate • Check • Prove • Master Unit 3</p>
+</header>
+<div class="wrap">
+<div class="stats">
+<div class="stat"><b id="round">1/12</b><small>Mastery Round</small></div>
+<div class="stat"><b id="score">0</b><small>Points</small></div>
+<div class="stat"><b id="streak">0</b><small>Streak</small></div>
+<div class="stat"><b id="acc">0%</b><small>Accuracy</small></div>
+</div>
+<div class="bar"><div class="fill" id="fill"></div></div>
+
+<section class="card" id="game">
+<span class="badge">GRADE 4 • UNIT 3 • FINAL CHALLENGE</span>
+<h2 id="title"></h2>
+<p class="sub" id="instruction"></p>
+<div class="mission">
+<div class="tag" id="tag"></div>
+<div class="context" id="context"></div>
+<div class="question" id="question"></div>
+<div class="choices" id="choices"></div>
+</div>
+<div class="feedback" id="feedback"><strong>Mastery task:</strong> Choose the best answer and explain your thinking.</div>
+<div class="evidence" id="evidence"></div>
+<div class="actions">
+<button class="primary" id="next" disabled>Next Mastery Round →</button>
+<button class="secondary" id="hint">💡 Mastery Hint</button>
+</div>
+</section>
+
+<section class="card summary" id="summary">
+<div class="medal">👑</div><h2 id="result"></h2>
+<div class="big" id="final"></div>
+<p id="summaryText"></p>
+<button class="primary" id="restart">🏆 Master the Unit Again</button>
+</section>
+</div>
+<footer>Temmy Smart Games • Interactive Mathematics • Grade 4</footer>
+
+<script>
+const Q=[
+{title:"Round 1 — Written Addition",tag:"CALCULATE",instruction:"Choose the correct result.",context:"Use place value and regrouping where needed.",question:"376 + 219 = ?",choices:["595","585","605","495"],answer:"595",evidence:"376 + 219 = 595. Ones: 6+9=15, regroup 1 ten. Tens: 7+1+1=9. Hundreds: 3+2=5."},
+{title:"Round 2 — Written Subtraction",tag:"CALCULATE",instruction:"Choose the correct result.",context:"Regroup carefully across place values.",question:"607 − 391 = ?",choices:["216","226","206","316"],answer:"216",evidence:"607 − 391 = 216. The place values must be regrouped carefully before subtracting."},
+{title:"Round 3 — Missing Number",tag:"THINK",instruction:"Find the missing number.",context:"Use the inverse relationship between addition and subtraction.",question:"650 + □ = 1000",choices:["250","350","450","650"],answer:"350",evidence:"Use the inverse: 1000 − 650 = 350. So 650 + 350 = 1000."},
+{title:"Round 4 — Missing Operation",tag:"DETECT",instruction:"Choose the operation that makes the statement true.",context:"Substitute the operation back into the sentence to check.",question:"28 □ 72 = 100",choices:["+","−","×","÷"],answer:"+",evidence:"28 + 72 = 100. The operation is addition."},
+{title:"Round 5 — Difference",tag:"SOLVE",instruction:"Find the difference.",context:"Subtract the smaller number from the larger number.",question:"What is the difference between 677 and 345?",choices:["332","322","342","432"],answer:"332",evidence:"677 − 345 = 332."},
+{title:"Round 6 — Estimate First",tag:"ESTIMATE",instruction:"Choose the sensible estimate.",context:"Round to friendly tens before calculating.",question:"Estimate 439 + 326.",choices:["700","760","800","600"],answer:"760",evidence:"439 rounds to 440 and 326 rounds to 320. 440 + 320 = 760."},
+{title:"Round 7 — Check the Estimate",tag:"CHECK",instruction:"Which statement makes sense?",context:"Compare an estimate with the exact answer.",question:"If 424 − 179 = 245, which estimate is sensible?",choices:["About 100","About 200","About 300","About 500"],answer:"About 200",evidence:"400 − 200 is about 200, and 245 is reasonably close to that estimate."},
+{title:"Round 8 — Odd & Even",tag:"GENERALISE",instruction:"Decide whether the statement is always true.",context:"Use examples and the odd/even pattern.",question:"Odd + Odd = Even",choices:["Always true","Always false","Sometimes true","Cannot tell"],answer:"Always true",evidence:"The Unit 3 generalisation states that odd + odd gives an even result."},
+{title:"Round 9 — Counterexample",tag:"PROVE",instruction:"Find the counterexample.",context:"One valid counterexample can disprove an “always” statement.",question:"Which breaks “Odd + Odd is always odd”?",choices:["3 + 5 = 8","7 + 9 = 16","11 + 13 = 24","All of these"],answer:"All of these",evidence:"Each example has two odd addends but an even total. Any one is enough to disprove the claim; all three are counterexamples."},
+{title:"Round 10 — Method Choice",tag:"STRATEGY",instruction:"Choose the most suitable method.",context:"A larger calculation requires careful place-value alignment and regrouping.",question:"Best method for 469 + 137?",choices:["Mental","Number Line","Written","Guess"],answer:"Written",evidence:"A written method helps align hundreds, tens and ones and manage regrouping accurately."},
+{title:"Round 11 — Word Problem",tag:"APPLY",instruction:"Solve the real-life problem.",context:"A school has 355 chairs. 269 are already in the hall. How many more chairs are needed?",question:"355 − 269 = ?",choices:["86","96","76","116"],answer:"86",evidence:"355 − 269 = 86. The problem asks how many more are needed, so subtraction is appropriate."},
+{title:"Round 12 — MASTER CHALLENGE",tag:"MASTER",instruction:"Use the complete strategy: understand → plan → calculate → check → explain.",context:"A final mixed challenge combines calculation, estimation and reasoning.",question:"Which statement is correct?",choices:["607 − 391 = 226","376 + 219 = 595","Odd + Odd = Odd","28 − 72 = 100"],answer:"376 + 219 = 595",evidence:"376 + 219 = 595. The other statements are incorrect: 607−391=216; odd+odd=even; and 28−72 is not 100."}
+];
+
+let i=0,score=0,streak=0,attempts=0,correct=0,locked=false,hint=false;
+const $=x=>document.getElementById(x);
+function render(){
+ const q=Q[i];locked=false;hint=false;
+ $("round").textContent=`${i+1}/${Q.length}`;$("score").textContent=score;$("streak").textContent=streak;
+ $("acc").textContent=attempts?Math.round(correct/attempts*100)+"%":"0%";$("fill").style.width=(i/Q.length*100)+"%";
+ $("title").textContent=q.title;$("tag").textContent=q.tag;$("instruction").textContent=q.instruction;$("context").textContent=q.context;$("question").textContent=q.question;
+ $("feedback").innerHTML="<strong>Mastery task:</strong> Choose the best answer and explain your thinking.";
+ $("evidence").style.display="none";$("next").disabled=true;$("hint").disabled=false;$("choices").innerHTML="";
+ q.choices.forEach(c=>{let b=document.createElement("button");b.className="choice";b.textContent=c;b.addEventListener("click",()=>check(b,c,q));$("choices").appendChild(b)});
+}
+function check(btn,c,q){
+ if(locked)return;attempts++;
+ if(c===q.answer){
+  locked=true;correct++;streak++;score+=hint?8:10;btn.classList.add("correct");
+  document.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+  $("feedback").innerHTML="<strong>👑 Correct!</strong> Mastery point secured.";
+  $("evidence").innerHTML="<strong>Mathematical Evidence:</strong> "+q.evidence;$("evidence").style.display="block";
+  $("next").disabled=false;$("hint").disabled=true;
+ }else{
+  streak=0;btn.classList.add("wrong");btn.disabled=true;
+  $("feedback").innerHTML="<strong>Not quite.</strong> Re-read the problem, choose a strategy and try again.";
+ }
+ $("score").textContent=score;$("streak").textContent=streak;$("acc").textContent=Math.round(correct/attempts*100)+"%";
+}
+const hints=[
+"Align hundreds, tens and ones and remember to regroup the ones.",
+"Estimate first: 600 − 400 is about 200.",
+"Use the inverse operation: subtract 650 from 1000.",
+"Put each operation into the sentence and check which makes 100.",
+"Difference means subtract the smaller number from the larger.",
+"Round 439 and 326 to nearby tens, then add.",
+"Round 424 to about 400 and 179 to about 200.",
+"Test a few odd numbers. What happens when two odd numbers are added?",
+"Check whether the result is odd or even. One valid breaking example is enough.",
+"Large calculations with regrouping are often easier with a written method.",
+"“How many more?” tells you to find a difference.",
+"Check each option against the exact facts from the unit."
+];
+$("hint").addEventListener("click",()=>{if(locked)return;hint=true;$("hint").disabled=true;$("feedback").innerHTML=`<strong>💡 Mastery Hint:</strong> ${hints[i]}`});
+$("next").addEventListener("click",()=>{if(i<Q.length-1){i++;render()}else finish()});
+function finish(){
+ const pct=Math.round(correct/attempts*100);$("game").style.display="none";$("summary").style.display="block";$("fill").style.width="100%";
+ $("final").textContent=score+" POINTS";
+ $("result").textContent=pct===100?"MATHEMATICS MASTER!":pct>=90?"MASTER-LEVEL THINKER!":pct>=75?"STRONG UNIT MASTERY!":"KEEP BUILDING YOUR MASTERY!";
+ $("summaryText").textContent=`You completed all 12 Grade 4 Unit 3 mastery rounds. Accuracy: ${pct}%. You practised missing numbers, written methods, estimation, strategy choice, odd/even reasoning and counterexamples.`;
+}
+$("restart").addEventListener("click",()=>{i=0;score=0;streak=0;attempts=0;correct=0;$("game").style.display="block";$("summary").style.display="none";render()});
+render();
+</script>
+</body></html>

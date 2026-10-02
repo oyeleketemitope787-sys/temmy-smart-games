@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games — Missing Number Vault</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef5ff,#fbf5ff);color:#17233c}
+header{background:linear-gradient(135deg,#153b7a,#4b2b82);color:white;text-align:center;padding:18px 14px}
+.logo{font-size:.78rem;font-weight:900;letter-spacing:1px;background:#c99700;padding:7px 13px;border-radius:20px;display:inline-block}
+h1{margin:9px 0 4px;font-size:clamp(1.7rem,6vw,2.6rem)}
+header p{margin:0;font-weight:700}
+.wrap{max-width:920px;margin:auto;padding:16px 14px 35px}
+.panel{background:#fff;border-radius:22px;padding:18px;margin-bottom:15px;box-shadow:0 10px 28px rgba(21,59,122,.10)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{background:#f2f6ff;border-radius:14px;padding:9px;text-align:center;font-size:.82rem}
+.stat b{display:block;font-size:1.2rem;color:#153b7a;margin-top:3px}
+.progress{height:10px;background:#e5eaf2;border-radius:20px;margin-top:12px;overflow:hidden}
+.bar{height:100%;width:0;background:#c99700;transition:.35s}
+.stage{text-align:center;color:#4b2b82;font-weight:900;margin:13px 0 3px}
+.focus{text-align:center;color:#68758b;font-size:.9rem;font-weight:700}
+.vault{margin:17px auto;text-align:center;max-width:650px;background:linear-gradient(145deg,#f8faff,#f3eefc);border:3px solid #c99700;border-radius:20px;padding:18px}
+.lock{font-size:3rem}
+.equation{font-size:clamp(2.2rem,8vw,4rem);font-weight:900;margin:10px 0;color:#153b7a}
+.question{text-align:center;font-weight:800;margin:10px 0}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:680px;margin:auto}
+button{border:0;border-radius:14px;padding:13px 15px;font-size:1rem;font-weight:800;cursor:pointer;background:#153b7a;color:white}
+button.gold{background:#c99700}
+button.soft{background:#eeeafa;color:#4b2b82}
+button:disabled{opacity:.45;cursor:not-allowed}
+.feedback{text-align:center;min-height:45px;font-weight:800;margin:12px 0}
+.evidence{display:none;background:#f7f8fc;border-left:5px solid #4b2b82;border-radius:14px;padding:13px;line-height:1.5}
+.method{display:none;margin-top:10px;background:#fff9e7;border-radius:13px;padding:12px;font-size:.92rem}
+.hints{display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:10px 0}
+.pill{background:#eef2ff;color:#153b7a;padding:6px 10px;border-radius:20px;font-size:.78rem;font-weight:800}
+.center{text-align:center}
+.hidden{display:none}
+.trophy{font-size:4.5rem}
+.finalscore{font-size:2rem;font-weight:900;color:#153b7a}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}.choices{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">TEMMY SMART GAMES • GRADE 4</div>
+<h1>🔐 Missing Number Vault</h1>
+<p>Think • Unlock • Prove</p>
+</header>
+
+<div class="wrap">
+<section class="panel">
+<div class="stats">
+<div class="stat">🔑 Keys<b id="score">0</b></div>
+<div class="stat">🔥 Streak<b id="streak">0</b></div>
+<div class="stat">🎯 Accuracy<b id="accuracy">100%</b></div>
+<div class="stat">🔐 Vault<b id="round">1/10</b></div>
+</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+</section>
+
+<section class="panel" id="game">
+<div class="stage" id="stage">VAULT 1 • THE FIRST LOCK</div>
+<div class="focus" id="focus">Find the unknown number.</div>
+<div class="hints"><span class="pill" id="skill">MISSING NUMBER</span><span class="pill" id="strategy">INVERSE OPERATION</span></div>
+<div class="vault">
+<div class="lock" id="lock">🔒</div>
+<div class="equation" id="equation">650 + □ = 1000</div>
+<div class="question" id="question">What number opens the vault?</div>
+</div>
+<div class="choices" id="choices"></div>
+<div class="feedback" id="feedback"></div>
+<div class="evidence" id="evidence"></div>
+<div class="method" id="method"></div>
+<div class="center" style="margin-top:13px">
+<button id="hintBtn" class="soft">💡 Show Hint</button>
+<button id="next" class="gold" disabled>Next Vault →</button>
+</div>
+</section>
+
+<section class="panel center hidden" id="finish">
+<div class="trophy">🏆</div>
+<h2 id="resultTitle">VAULT MASTER!</h2>
+<div class="finalscore" id="finalScore"></div>
+<p id="finalText"></p>
+<button onclick="restart()">Unlock Again</button>
+</section>
+</div>
+
+<script>
+const levels=[
+{stage:"VAULT 1 • THE FIRST LOCK",focus:"Find the unknown number.",skill:"MISSING NUMBER",strategy:"INVERSE OPERATION",eq:"650 + □ = 1000",q:"What number opens the vault?",opts:["350","250","450","300"],ans:"350",hint:"Think: 1000 − 650 = ?",ex:"Addition and subtraction are inverse operations. Rewrite 650 + □ = 1000 as 1000 − 650 = □.",method:"1000 − 650 = 350, so □ = 350."},
+{stage:"VAULT 2 • SECRET CODE",focus:"Use the inverse operation.",skill:"MISSING NUMBER",strategy:"INVERSE OPERATION",eq:"57 + □ = 120",q:"Find □.",opts:["63","73","53","67"],ans:"63",hint:"Subtract the known number from the total.",ex:"57 + □ = 120 becomes 120 − 57 = □.",method:"120 − 57 = 63, so □ = 63."},
+{stage:"VAULT 3 • BACKWARDS LOCK",focus:"The missing number is being subtracted.",skill:"MISSING NUMBER",strategy:"THINK BACKWARDS",eq:"50 − □ = 41",q:"Find □.",opts:["9","8","11","10"],ans:"9",hint:"Ask: 50 minus what gives 41?",ex:"The difference between 50 and 41 is 9.",method:"50 − 41 = 9, so □ = 9."},
+{stage:"VAULT 4 • OPERATION LOCK",focus:"Find the missing operation sign.",skill:"MISSING OPERATION",strategy:"SUBSTITUTE & CHECK",eq:"28 □ 72 = 100",q:"Which operation makes the statement true?",opts:["+","−","×","÷"],ans:"+",hint:"Which operation combines 28 and 72 to make 100?",ex:"28 + 72 = 100. Substitute the sign back into the sentence to check it.",method:"The missing operation is +."},
+{stage:"VAULT 5 • OPERATION LOCK",focus:"Find the missing operation sign.",skill:"MISSING OPERATION",strategy:"SUBSTITUTE & CHECK",eq:"55 = 70 □ 15",q:"Which operation makes the statement true?",opts:["+","−","×","÷"],ans:"−",hint:"70 must become 55.",ex:"70 − 15 = 55. Therefore the missing operation is subtraction.",method:"The missing operation is −."},
+{stage:"VAULT 6 • DOUBLE METHOD",focus:"There can be more than one way to solve.",skill:"MULTIPLE METHODS",strategy:"COUNT ON / INVERSE",eq:"650 + □ = 1000",q:"Which method is valid?",opts:["1000 − 650","650 + 100","650 − 350","1000 + 650"],ans:"1000 − 650",hint:"Use the inverse operation.",ex:"One valid method is the inverse: 1000 − 650 = 350. Counting on also works: 650 → 700 → 1000.",method:"Both methods lead to □ = 350. Different methods can lead to the same correct answer."},
+{stage:"VAULT 7 • THINK LIKE A MATHEMATICIAN",focus:"Choose the best explanation.",skill:"REASONING",strategy:"EXPLAIN",eq:"□ + 35 = 80",q:"Why can subtraction help you find □?",opts:["Because subtraction undoes addition","Because subtraction always gives a smaller number","Because addition cannot solve it","Because 35 is an even number"],ans:"Because subtraction undoes addition",hint:"Think about inverse operations.",ex:"Addition and subtraction are inverse operations. They undo each other.",method:"80 − 35 = 45, so □ = 45."},
+{stage:"VAULT 8 • NUMBER MACHINE",focus:"Work backwards through a rule.",skill:"NUMBER MACHINE",strategy:"REVERSE THE RULE",eq:"25 × 2 + □ = 100",q:"What number completes the machine?",opts:["50","25","75","40"],ans:"50",hint:"First calculate 25 × 2.",ex:"25 × 2 = 50. Then 50 + □ = 100, so □ = 50.",method:"25 × 2 = 50; 100 − 50 = 50."},
+{stage:"VAULT 9 • CREATE THE LOCK",focus:"Which sentence has the correct missing number?",skill:"MISSING NUMBER",strategy:"CHECK",eq:"□ + 6 = 30",q:"Choose the value that makes the sentence true.",opts:["24","26","36","16"],ans:"24",hint:"What number plus 6 makes 30?",ex:"24 + 6 = 30. Substitute the answer to check it.",method:"30 − 6 = 24, so □ = 24."},
+{stage:"VAULT 10 • MASTER LOCK",focus:"Final challenge — choose, calculate and check.",skill:"MASTER",strategy:"UNDERSTAND → PLAN → CHECK",eq:"30 − □ = 18",q:"Which complete statement is correct?",opts:["□ = 12 because 30 − 12 = 18","□ = 48 because 30 − 48 = 18","□ = 18 because 30 − 18 = 12","□ = 8 because 30 − 8 = 22"],ans:"□ = 12 because 30 − 12 = 18",hint:"Use the inverse operation: 30 − 18.",ex:"To find the missing subtrahend, subtract the result from the starting number: 30 − 18 = 12.",method:"□ = 12. Check: 30 − 12 = 18 ✓"}
+];
+
+let i=0,score=0,streak=0,right=0,attempted=0,locked=false,hintUsed=false;
+const $=id=>document.getElementById(id);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function render(){
+ const l=levels[i];locked=false;hintUsed=false;
+ $("stage").textContent=l.stage;$("focus").textContent=l.focus;
+ $("skill").textContent=l.skill;$("strategy").textContent=l.strategy;
+ $("equation").textContent=l.eq;$("question").textContent=l.q;
+ $("choices").innerHTML=shuffle(l.opts).map(x=>`<button onclick="answer(this,'${x.replace(/'/g,"\\'")}')">${x}</button>`).join("");
+ $("feedback").textContent="";$("evidence").style.display="none";$("method").style.display="none";
+ $("hintBtn").disabled=false;$("next").disabled=true;
+ $("next").textContent=i===levels.length-1?"Open Master Vault →":"Next Vault →";
+ $("round").textContent=`${i+1}/${levels.length}`;
+ $("bar").style.width=(i/levels.length*100)+"%";
+ update();
+}
+function update(){
+ $("score").textContent=score;$("streak").textContent=streak;
+ $("accuracy").textContent=attempted?Math.round(right/attempted*100)+"%":"100%";
+}
+$("hintBtn").onclick=()=>{
+ if(hintUsed)return;
+ hintUsed=true;$("feedback").textContent="💡 Hint unlocked — think before choosing.";
+ $("feedback").style.color="#4b2b82";$("evidence").style.display="block";
+ $("evidence").innerHTML="<b>Hint:</b> "+levels[i].hint;$("hintBtn").disabled=true;
+};
+function answer(btn,x){
+ if(locked)return;
+ locked=true;attempted++;
+ document.querySelectorAll("#choices button").forEach(b=>b.disabled=true);
+ const l=levels[i],ok=x===l.ans;
+ if(ok){
+  right++;streak++;score+=10+(hintUsed?0:3)+Math.min(streak-1,5);
+  $("lock").textContent="🔓";$("feedback").textContent=hintUsed?"✅ Correct! Vault unlocked.":"🔓 Correct! Perfect unlock!";
+  $("feedback").style.color="#18794e";
+ }else{
+  streak=0;$("lock").textContent="🧭";$("feedback").textContent="🔎 The lock resisted. Study the evidence.";
+  $("feedback").style.color="#b42318";
+ }
+ $("evidence").style.display="block";$("evidence").innerHTML="<b>Vault evidence:</b> "+l.ex;
+ $("method").style.display="block";$("method").innerHTML="<b>Solution:</b> "+l.method;
+ $("next").disabled=false;update();
+}
+$("next").onclick=()=>{if(i<levels.length-1){i++;render()}else finish()};
+function finish(){
+ $("game").classList.add("hidden");$("finish").classList.remove("hidden");$("bar").style.width="100%";
+ const acc=Math.round(right/levels.length*100);
+ $("finalScore").textContent=`${score} keys • ${acc}% accuracy`;
+ if(acc===100){$("resultTitle").textContent="💎 PERFECT VAULT MASTER!";$("finalText").innerHTML="Every lock opened! You used missing numbers, inverse operations, missing signs, number-machine thinking and mathematical explanations."}
+ else if(acc>=80){$("resultTitle").textContent="🏆 VAULT MASTER!";$("finalText").innerHTML="Excellent mathematical thinking! You successfully opened most of the Grade 4 locks."}
+ else{$("resultTitle").textContent="🌟 MATHEMATICAL EXPLORER!";$("finalText").innerHTML="Good investigation. Replay the vaults and strengthen your missing-number strategies."}
+}
+function restart(){i=0;score=0;streak=0;right=0;attempted=0;$("game").classList.remove("hidden");$("finish").classList.add("hidden");render()}
+render();
+</script>
+</body>
+</html>
