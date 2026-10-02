@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Game 1 – Multiples Mission | Temmy Smart Games</title>
+<style>
+:root{
+ --blue:#1d4687; --gold:#d3a10b; --purple:#60358d; --teal:#1596a5;
+ --ink:#19304f; --muted:#65758b; --bg:#f4f8fc; --green:#2e9b63; --red:#d94b4b;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef5ff,#fffdf4);color:var(--ink)}
+.wrap{max-width:920px;margin:auto;padding:18px}
+header{background:linear-gradient(135deg,#173f7a,#245aa2);color:white;border-radius:0 0 28px 28px;padding:24px 18px;text-align:center;box-shadow:0 8px 22px rgba(29,70,135,.16)}
+.brand{font-weight:900;letter-spacing:2px;font-size:14px}
+h1{margin:8px 0 4px;font-size:clamp(28px,6vw,48px)}
+.sub{opacity:.9;font-size:17px}
+.badge{display:inline-block;margin:14px 0 0;background:var(--gold);color:white;font-weight:800;padding:10px 18px;border-radius:999px}
+.stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.stat{background:white;border:2px solid #dbe5f2;border-radius:14px;padding:9px 15px;font-weight:800}
+.sound{cursor:pointer;border:0;background:var(--purple);color:white;border-radius:12px;padding:10px 15px;font-weight:800}
+.card{background:white;border:2px solid #dce6f2;border-radius:22px;padding:24px;box-shadow:0 10px 28px rgba(29,70,135,.08)}
+.qnum{color:var(--teal);font-weight:900;text-transform:uppercase;letter-spacing:1px}
+.question{font-size:clamp(25px,5.4vw,40px);line-height:1.25;font-weight:900;text-align:center;margin:20px 0;color:#183552}
+.small{color:var(--muted);text-align:center}
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:18px}
+.opt{border:2px solid #cbd8e8;background:#f8fbff;border-radius:16px;padding:16px;font-size:20px;font-weight:800;cursor:pointer;min-height:66px;transition:.15s;box-shadow:0 3px 8px rgba(25,48,79,.04)}
+.opt:hover{transform:translateY(-1px);border-color:var(--teal)}
+.opt.wrong{background:#ffe9e9;border-color:var(--red);color:#a72828}
+.opt.correct{background:#e5f8ed;border-color:var(--green);color:#17683e}
+.opt:disabled{cursor:not-allowed;opacity:.9}
+.controls{display:flex;justify-content:center;gap:12px;margin-top:20px}
+button.next,.play{border:0;background:var(--blue);color:white;padding:13px 25px;border-radius:14px;font-size:17px;font-weight:900;cursor:pointer}
+button.next:disabled{opacity:.4;cursor:not-allowed}
+.hint{margin-top:15px;text-align:center}
+.hint button{border:2px solid var(--gold);background:#fff8dc;color:#725600;border-radius:12px;padding:9px 14px;font-weight:800;cursor:pointer}
+.feedback{text-align:center;min-height:28px;font-weight:800;margin-top:12px}
+.explain{background:#f4f1fb;border-left:5px solid var(--purple);padding:12px;border-radius:10px;margin-top:12px;display:none}
+.final{text-align:center;padding:30px}
+.bigscore{font-size:clamp(55px,13vw,100px);font-weight:1000;color:var(--blue);margin:8px 0}
+.perfect{color:var(--purple);font-size:32px;font-weight:1000}
+.celebrate{font-size:42px;animation:pulse .9s infinite alternate}
+@keyframes pulse{to{transform:scale(1.08)}}
+.bar{height:12px;background:#e6edf6;border-radius:99px;overflow:hidden;margin:14px 0 18px;border:1px solid #d9e3ef}
+.bar>div{height:100%;background:linear-gradient(90deg,var(--gold),#f0c83d);width:0;transition:.35s}
+.footer{text-align:center;color:var(--muted);font-size:13px;padding:18px}
+@media(max-width:600px){.options{grid-template-columns:1fr}.card{padding:18px}.wrap{padding:10px}}
+</style>
+<style id="tsg-approved-header-refinement">
+.tsg-approved-stats{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin:14px auto 10px;
+  max-width:900px;
+}
+.tsg-stat{
+  background:#f4f7fc;
+  border:1px solid #d9e2f0;
+  border-radius:16px;
+  padding:10px 8px;
+  text-align:center;
+  box-shadow:0 2px 8px rgba(21,59,122,.06);
+}
+.tsg-stat .value{
+  display:block;
+  font-size:1.15rem;
+  font-weight:800;
+  color:#153b7a;
+  line-height:1.15;
+}
+.tsg-stat .label{
+  display:block;
+  margin-top:3px;
+  font-size:.72rem;
+  font-weight:700;
+  color:#6b7890;
+  letter-spacing:.03em;
+}
+.tsg-sound{
+  cursor:pointer;
+  border:1px solid #c8d5e8;
+  background:#fff;
+  color:#153b7a;
+  font-weight:800;
+  border-radius:14px;
+  padding:9px 10px;
+  min-height:44px;
+  width:100%;
+}
+.tsg-sound:hover{transform:translateY(-1px)}
+@media(max-width:620px){
+  .tsg-approved-stats{grid-template-columns:repeat(2,1fr);gap:8px}
+  .tsg-stat{padding:9px 6px}
+  .tsg-stat .value{font-size:1rem}
+}
+</style>
+
+<style>
+
+/* FINAL GRADE 3 UNIT 3 HEADER REFINEMENT */
+.stats{
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  gap:10px !important;
+  align-items:stretch !important;
+  margin:14px auto 12px !important;
+  max-width:920px !important;
+}
+.stats .stat{
+  min-height:48px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-sizing:border-box;
+  background:#f4f7fc !important;
+  border:1px solid #d9e2f0 !important;
+  border-radius:16px !important;
+  padding:10px 8px !important;
+  font-weight:800 !important;
+  color:#153b7a !important;
+  text-align:center;
+  box-shadow:0 2px 8px rgba(21,59,122,.06);
+}
+.stats .sound{
+  width:100% !important;
+  min-height:48px;
+  box-sizing:border-box;
+  border:1px solid #c8d5e8 !important;
+  border-radius:16px !important;
+  padding:10px 8px !important;
+  font-weight:800 !important;
+  background:#fff !important;
+  color:#153b7a !important;
+}
+.stats .sound:active{transform:scale(.98)}
+.bar{
+  height:9px !important;
+  border-radius:999px !important;
+  overflow:hidden !important;
+  margin:6px auto 14px !important;
+}
+@media(max-width:680px){
+  .stats{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:8px !important;
+    padding:0 4px;
+  }
+  .stats .stat,.stats .sound{
+    min-height:46px;
+    font-size:.92rem;
+  }
+}
+@media(max-width:380px){
+  .stats .stat,.stats .sound{
+    font-size:.82rem;
+    padding:8px 5px !important;
+  }
+}
+
+</style>
+</head>
+<body>
+<header><div class="brand">TEMMY SMART GAMES • MATHEMATICS</div>
+<div class="badge">UNIT 3 • MULTIPLES</div><h1>Game 1 – Multiples Mission</h1>
+<div class="sub">Recognise and reason about multiples of 2, 5 and 10</div></header>
+<div class="wrap">
+<div class="stats">
+<div class="stat">⭐ SCORE: <span id="score">0</span>/10</div>
+<div class="stat">🔥 Streak: <span id="streak">0</span></div>
+<div class="stat">🎯 ACCURACY: <span id="acc">0%</span></div>
+<button class="sound" id="soundBtn">🔊 Sound ON</button>
+</div>
+<div class="bar"><div id="bar"></div></div>
+<div id="game" class="card"></div>
+<div class="footer">First-attempt correct = 1 point. Wrong first attempt = 0 points. Retries are for learning only.</div>
+</div>
+<script>
+const QUESTIONS=[{"q": "Which number is a multiple of 2?", "options": ["76", "95", "127", "641"], "answer": 0, "hint": "A multiple of 2 is even.", "explain": "76 is even, so it is a multiple of 2."}, {"q": "Which number is a multiple of 5?", "options": ["38", "95", "127", "433"], "answer": 1, "hint": "Look at the last digit.", "explain": "95 ends in 5, so it is a multiple of 5."}, {"q": "Which number is a multiple of 10?", "options": ["210", "239", "532", "784"], "answer": 0, "hint": "Multiples of 10 end in zero.", "explain": "210 ends in 0, so it is a multiple of 10."}, {"q": "Which number is a multiple of both 2 and 5?", "options": ["340", "433", "127", "239"], "answer": 0, "hint": "It must be even and end in 0 or 5.", "explain": "340 is even and ends in 0, so it is a multiple of both 2 and 5."}, {"q": "Which set contains only multiples of 5?", "options": ["25, 40, 75", "24, 40, 75", "25, 42, 70", "15, 33, 55"], "answer": 0, "hint": "Check the final digit of every number.", "explain": "25, 40 and 75 all end in 0 or 5."}, {"q": "Which number belongs in the overlap of multiples of 5 and 10?", "options": ["95", "120", "125", "135"], "answer": 1, "hint": "Every multiple of 10 is also a multiple of 5.", "explain": "120 is a multiple of 10, so it is also a multiple of 5."}, {"q": "Which number is NOT a multiple of 2?", "options": ["532", "670", "641", "784"], "answer": 2, "hint": "Check whether the number is odd or even.", "explain": "641 is odd, so it is not a multiple of 2."}, {"q": "Which number is a multiple of 10?", "options": ["700", "95", "456", "924"], "answer": 0, "hint": "Think about the last digit.", "explain": "700 ends in 0, so it is a multiple of 10."}, {"q": "A number is a multiple of 10. What must its last digit be?", "options": ["0", "2", "5", "9"], "answer": 0, "hint": "Think of 10, 20, 30, 40…", "explain": "Every multiple of 10 ends in 0."}, {"q": "Which statement is true?", "options": ["Every multiple of 10 is a multiple of 5.", "Every multiple of 5 is a multiple of 10.", "Every odd number is a multiple of 2.", "Every multiple of 2 ends in 5."], "answer": 0, "hint": "Use the ending-digit patterns.", "explain": "Multiples of 10 end in 0, and numbers ending in 0 are also multiples of 5."}];
+let i=0,score=0,streak=0,attempted=0,firstCorrect=0,locked=false,soundOn=true;
+const $=id=>document.getElementById(id);
+function shuffle(a){for(let j=a.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[a[j],a[k]]=[a[k],a[j]]}return a}
+function speak(text){if(!soundOn||!('speechSynthesis' in window))return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text);u.rate=.95;speechSynthesis.speak(u)}
+function beep(ok=true){if(!soundOn)return; try{const c=new (window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.frequency.value=ok?720:180;o.type='sine';g.gain.value=.04;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+(ok?.12:.16))}catch(e){}}
+function render(){
+ locked=false;
+ const q=QUESTIONS[i], opts=shuffle(q.options.map((text,idx)=>({text,idx})));
+ $('bar').style.width=((i)/QUESTIONS.length*100)+'%';
+ $('game').innerHTML=`<div class="qnum">Challenge ${i+1} of 10</div>
+ <div class="question">${q.q}</div><div class="small">${q.note||'Choose the best answer.'}</div>
+ <div class="options" id="opts"></div>
+ <div class="hint"><button id="hintBtn">💡 Hint</button></div>
+ <div class="feedback" id="feedback"></div>
+ <div class="explain" id="explain"></div>
+ <div class="controls"><button class="next" id="next" disabled>${i===QUESTIONS.length-1?'Finish':'Next →'}</button></div>`;
+ opts.forEach(o=>{
+   const b=document.createElement('button');b.className='opt';b.textContent=o.text;
+   b.addEventListener('click',()=>answer(o.idx,b));
+   $('opts').appendChild(b);
+ });
+ $('hintBtn').addEventListener('click',()=>{
+   $('feedback').textContent='💡 '+q.hint;
+   $('feedback').style.color='#725600';
+ });
+ $('next').addEventListener('click',()=>{if(i<QUESTIONS.length-1){i++;render()}else finish()});
+}
+function answer(idx,btn){
+ if(locked)return;
+ const q=QUESTIONS[i], fb=$('feedback');
+ if(idx===q.answer){
+   locked=true; btn.classList.add('correct'); document.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+   if(!q.seenWrong){score++;firstCorrect++;}
+   streak++;
+   fb.textContent=q.seenWrong?'✅ Correct on retry — completed for learning. No extra point.':'✅ Correct on the first attempt! +1 actual point.';
+   fb.style.color='#17683e'; beep(true);
+   $('explain').style.display='block'; $('explain').textContent='Why: '+q.explain;
+   $('next').disabled=false;
+ }else{
+   q.seenWrong=true; streak=0; attempted++;
+   btn.classList.add('wrong'); btn.disabled=true;
+   fb.textContent='❌ Not quite. That choice is locked. Try another choice.';
+   fb.style.color='#a72828'; beep(false);
+ }
+ updateStats();
+}
+function updateStats(){
+ $('score').textContent=score;$('streak').textContent=streak;
+ $('acc').textContent=Math.round((firstCorrect/Math.max(1,i+1))*100)+'%';
+}
+function finish(){
+ $('bar').style.width='100%';
+ const pct=Math.round(score/QUESTIONS.length*100);
+ let msg=pct===100?'PERFECT!':pct>=80?'Excellent work!':pct>=60?'Great effort!':'Keep practising!';
+ let icon=pct===100?'🏆':pct>=80?'🌟':'💪';
+ $('game').innerHTML=`<div class="final"><div class="celebrate">${icon} ⭐ ⭐ ⭐</div><p class="small">Challenge complete — your score is based on first-attempt mastery.</p>
+ <div class="perfect">${msg}</div><div class="bigscore">${score} / 10</div>
+ <h2>SCORE: ${score} / 10</h2>
+ <p>ACCURACY: <b>${pct}%</b></p>
+ <p>First-attempt correct = 1 point. Wrong first attempt = 0 points. Retries are for learning only.</p>
+ <button class="play" onclick="location.reload()">PLAY AGAIN</button></div>`;
+ if(soundOn){speak(pct===100?'Perfect score! Every answer was correct!':msg)}
+}
+$('soundBtn').addEventListener('click',()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'🔊 Sound ON':'🔇 Sound OFF';});
+render(); updateStats();
+</script></body></html>
