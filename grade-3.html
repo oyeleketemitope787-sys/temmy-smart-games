@@ -1,25 +1,414 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Temmy Smart Games | Grade 3 Mathematics</title><style>
-:root{--blue:#153B7A;--purple:#6B46A8;--gold:#C99700;--ink:#172033;--muted:#687386;--soft:#F4F7FB}
-*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--soft);color:var(--ink)}
-.hero{background:linear-gradient(135deg,var(--blue),#2454A5,var(--purple));color:#fff;text-align:center;padding:42px 18px 70px}
-.brand{display:inline-block;border:1px solid #ffffff66;border-radius:999px;padding:7px 14px;font-size:.75rem;font-weight:800;letter-spacing:.12em}
-h1{font-size:clamp(2.2rem,6vw,4rem);margin:18px 0 8px}.hero p{margin:0;font-size:1.08rem}
-.container{max-width:900px;margin:-34px auto 0;padding:0 18px 55px;position:relative}.card{background:#fff;border-radius:24px;padding:28px;box-shadow:0 16px 45px #153b7a1f}
-.back{display:inline-block;text-decoration:none;color:var(--blue);font-weight:800;margin-bottom:18px}
-.topic{border:1px solid #e3e8f0;border-radius:18px;padding:20px;margin-top:15px;background:#fff}
-.topic h2{margin:0;color:var(--purple)}.topic p{color:var(--muted);line-height:1.5}
-.play{display:inline-block;background:var(--purple);color:#fff;text-decoration:none;padding:13px 18px;border-radius:13px;font-weight:800}
-.soon{display:inline-block;background:#f1f3f6;color:#737b89;padding:10px 14px;border-radius:12px;font-weight:700}
-footer{text-align:center;color:#7a8495;padding:0 18px 28px;font-size:.85rem}
-</style></head>
-<body><header class="hero"><span class="brand">TEMMY SMART GAMES</span>
-<h1>Grade 3 Mathematics</h1><p>Comparing & Ordering Numbers</p></header>
-<main class="container"><section class="card">
-<a class="back" href="index.html">← Back to Mathematics</a><h2>Interactive Games</h2><div class="topic">
-<h2>Comparing & Ordering Numbers</h2>
-<p><strong>Temmy Number Challenge</strong> — an interactive mathematics game for Grade 3 learners.</p>
-<a class="play" href="games/temmy-number-challenge.html">🎮 Play Game</a>
+<title>Temmy Smart Games | Grade 3 Mathematics</title>
+
+<style>
+:root{
+  --blue:#153B7A;
+  --purple:#6B46A8;
+  --gold:#C99700;
+  --ink:#172033;
+  --muted:#687386;
+  --soft:#F4F7FB;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Segoe UI,Arial,sans-serif;
+  background:var(--soft);
+  color:var(--ink);
+}
+
+.hero{
+  background:linear-gradient(135deg,var(--blue),#2454A5,var(--purple));
+  color:#fff;
+  text-align:center;
+  padding:42px 18px 70px;
+}
+
+.brand{
+  display:inline-block;
+  border:1px solid #ffffff66;
+  border-radius:999px;
+  padding:8px 16px;
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:.12em;
+}
+
+h1{
+  font-size:clamp(2.2rem,6vw,4rem);
+  margin:18px 0 8px;
+}
+
+.hero p{
+  margin:0;
+  font-size:1.08rem;
+}
+
+.container{
+  max-width:1100px;
+  margin:-34px auto 0;
+  padding:0 18px 60px;
+  position:relative;
+}
+
+.card{
+  background:#fff;
+  border-radius:24px;
+  padding:28px;
+  box-shadow:0 16px 45px #153b7a1f;
+}
+
+.back{
+  display:inline-block;
+  text-decoration:none;
+  color:var(--blue);
+  font-weight:800;
+  margin-bottom:18px;
+}
+
+.intro{
+  text-align:center;
+  color:var(--muted);
+  margin:0 0 24px;
+}
+
+.count{
+  display:inline-block;
+  background:#f1f3f6;
+  color:#373b89;
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:800;
+}
+
+.topic{
+  margin-top:28px;
+}
+
+.topic h2{
+  margin:0;
+  color:var(--purple);
+}
+
+.topic p{
+  color:var(--muted);
+  line-height:1.5;
+}
+
+.games{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+
+.game{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  background:#fff;
+  border:1px solid #e3e8f0;
+  border-radius:18px;
+  padding:18px;
+  min-height:175px;
+  box-shadow:0 6px 18px #153b7a10;
+}
+
+.game h3{
+  margin:0 0 10px;
+  color:var(--blue);
+  font-size:1.05rem;
+}
+
+.game p{
+  margin:0 0 16px;
+  color:var(--muted);
+  font-size:.9rem;
+  line-height:1.45;
+}
+
+.play{
+  display:inline-block;
+  text-align:center;
+  text-decoration:none;
+  background:var(--blue);
+  color:#fff;
+  padding:10px 14px;
+  border-radius:10px;
+  font-weight:800;
+}
+
+.play:hover{
+  background:var(--purple);
+}
+
+footer{
+  text-align:center;
+  color:#7a8495;
+  padding:18px;
+  font-size:.85rem;
+}
+
+@media(max-width:850px){
+  .games{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:560px){
+  .games{
+    grid-template-columns:1fr;
+  }
+
+  .card{
+    padding:20px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="hero">
+  <span class="brand">TEMMY SMART GAMES</span>
+  <h1>Grade 3 Mathematics</h1>
+  <p>Interactive learning games for Grade 3 learners</p>
+</header>
+
+<main class="container">
+<section class="card">
+
+<a class="back" href="index.html">← Back to All Grades</a>
+
+<p class="intro">
+  Choose a topic and play interactive mathematics games designed to help you
+  learn, practise, think and achieve.
+</p>
+
+<div style="text-align:center">
+  <span class="count">20 Games Ready</span>
 </div>
-</section></main><footer>© 2026 Temmy Smart Games • Interactive Learning Games</footer></body></html>
+
+
+<!-- COMPARING & ORDERING -->
+
+<section class="topic">
+<h2>Comparing &amp; Ordering Numbers</h2>
+<p>Build confidence with comparing and ordering numbers.</p>
+
+<div class="games">
+
+<article class="game">
+  <div>
+    <h3>Temmy Number Challenge</h3>
+    <p>Compare and order numbers using mathematical thinking.</p>
+  </div>
+  <a class="play" href="games/grade3/comparing-ordering/temmy-number-challenge.html">🎮 Play Game</a>
+</article>
+
+</div>
+</section>
+
+
+<!-- MULTIPLICATION -->
+
+<section class="topic">
+<h2>Multiplication</h2>
+<p>Practise multiplication facts, patterns, arrays and problem-solving.</p>
+
+<div class="games">
+
+<article class="game">
+  <div>
+    <h3>Array Builder</h3>
+    <p>Build arrays to understand multiplication.</p>
+  </div>
+  <a class="play" href="games/grade3/multiplication/01-array-builder.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Multiplication Flip</h3>
+    <p>Strengthen multiplication fact recall.</p>
+  </div>
+  <a class="play" href="games/grade3/multiplication/02-multiplication-flip.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Fact Family Match</h3>
+    <p>Connect multiplication facts and related number facts.</p>
+  </div>
+  <a class="play" href="games/grade3/multiplication/03-fact-family-match.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Multiple Sorter</h3>
+    <p>Identify and sort multiples correctly.</p>
+  </div>
+  <a class="play" href="games/grade3/multiplication/04-multiple-sorter.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>×10 Rocket</h3>
+    <p>Practise multiplying numbers by 10.</p>
+  </div>
+  <a class="play" href="games/grade3/multiplication/05-x10-rocket.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Math Detective</h3>
+    <p>Use multiplication clues to solve mathematical challenges.</p>
+  </div>
+  <a class="play" href="games/grade3/multiplication/06-math-detective.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Multiplication Master</h3>
+    <p>Complete a multiplication challenge and test your mastery.</p>
+  </div>
+  <a class="play" href="games/grade3/multiplication/07-multiplication-master.html">🎮 Play Game</a>
+</article>
+
+</div>
+</section>
+
+
+<!-- ADDITION & SUBTRACTION -->
+
+<section class="topic">
+<h2>Unit 3 — Addition &amp; Subtraction</h2>
+<p>Practise place value, estimation, addition, subtraction and checking strategies.</p>
+
+<div class="games">
+
+<article class="game">
+  <div>
+    <h3>Place Value Builder</h3>
+    <p>Use place value to build and understand numbers.</p>
+  </div>
+  <a class="play" href="games/grade3/unit3-addition-subtraction/1_place_value_builder.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Estimate First</h3>
+    <p>Estimate answers before calculating.</p>
+  </div>
+  <a class="play" href="games/grade3/unit3-addition-subtraction/2_estimate_first.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Addition Mission</h3>
+    <p>Complete addition challenges accurately.</p>
+  </div>
+  <a class="play" href="games/grade3/unit3-addition-subtraction/3_addition_mission.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Subtraction Detective</h3>
+    <p>Solve subtraction problems and investigate the clues.</p>
+  </div>
+  <a class="play" href="games/grade3/unit3-addition-subtraction/4_subtraction_detective.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Estimate → Calculate → Check</h3>
+    <p>Use the complete estimation and calculation strategy.</p>
+  </div>
+  <a class="play" href="games/grade3/unit3-addition-subtraction/05-estimate-calculate-check.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Math Mistake Detective</h3>
+    <p>Find and correct mathematical mistakes.</p>
+  </div>
+  <a class="play" href="games/grade3/unit3-addition-subtraction/06-math-mistake-detective.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Addition &amp; Subtraction Master</h3>
+    <p>Take on a mixed addition and subtraction challenge.</p>
+  </div>
+  <a class="play" href="games/grade3/unit3-addition-subtraction/07-addition-subtraction-master.html">🎮 Play Game</a>
+</article>
+
+</div>
+</section>
+
+
+<!-- MULTIPLICATION & DIVISION -->
+
+<section class="topic">
+<h2>Unit 3 — Multiplication &amp; Division</h2>
+<p>Explore multiples, fact families, sequences and multiplication connections.</p>
+
+<div class="games">
+
+<article class="game">
+  <div>
+    <h3>Multiples Mission</h3>
+    <p>Identify multiples and complete multiplication challenges.</p>
+  </div>
+  <a class="play" href="games/grade3/unit3-multiplication-division/grade3-unit3-game1.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Fact Family Factory</h3>
+    <p>Build connected multiplication and division facts.</p>
+  </div>
+  <a class="play" href="games/grade3/unit3-multiplication-division/grade3-unit3-game2.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Ten Times &amp; Sequence Sprint</h3>
+    <p>Practise ×10 facts and number sequences.</p>
+  </div>
+  <a class="play" href="games/grade3/unit3-multiplication-division/grade3-unit3-game3.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>Doubling Bridge: 2, 4 &amp; 8</h3>
+    <p>Use doubling connections to work with 2, 4 and 8 times tables.</p>
+  </div>
+  <a class="play" href="games/grade3/unit3-multiplication-division/grade3-unit3-game4.html">🎮 Play Game</a>
+</article>
+
+<article class="game">
+  <div>
+    <h3>3, 6 &amp; 9 Connection Master</h3>
+    <p>Explore the connections between the 3, 6 and 9 times tables.</p>
+  </div>
+  <a class="play" href="games/grade3/unit3-multiplication-division/grade3-unit3-game5.html">🎮 Play Game</a>
+</article>
+
+</div>
+</section>
+
+</section>
+</main>
+
+<footer>
+© 2026 Temmy Smart Games • Interactive Learning Games
+</footer>
+
+</body>
+</html>
