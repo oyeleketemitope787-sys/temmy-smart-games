@@ -1,25 +1,398 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Temmy Smart Games | Grade 4 Mathematics</title><style>
-:root{--blue:#153B7A;--purple:#6B46A8;--gold:#C99700;--ink:#172033;--muted:#687386;--soft:#F4F7FB}
-*{box-sizing:border-box}body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--soft);color:var(--ink)}
-.hero{background:linear-gradient(135deg,var(--blue),#2454A5,var(--purple));color:#fff;text-align:center;padding:42px 18px 70px}
-.brand{display:inline-block;border:1px solid #ffffff66;border-radius:999px;padding:7px 14px;font-size:.75rem;font-weight:800;letter-spacing:.12em}
-h1{font-size:clamp(2.2rem,6vw,4rem);margin:18px 0 8px}.hero p{margin:0;font-size:1.08rem}
-.container{max-width:900px;margin:-34px auto 0;padding:0 18px 55px;position:relative}.card{background:#fff;border-radius:24px;padding:28px;box-shadow:0 16px 45px #153b7a1f}
-.back{display:inline-block;text-decoration:none;color:var(--blue);font-weight:800;margin-bottom:18px}
-.topic{border:1px solid #e3e8f0;border-radius:18px;padding:20px;margin-top:15px;background:#fff}
-.topic h2{margin:0;color:var(--purple)}.topic p{color:var(--muted);line-height:1.5}
-.play{display:inline-block;background:var(--purple);color:#fff;text-decoration:none;padding:13px 18px;border-radius:13px;font-weight:800}
-.soon{display:inline-block;background:#f1f3f6;color:#737b89;padding:10px 14px;border-radius:12px;font-weight:700}
-footer{text-align:center;color:#7a8495;padding:0 18px 28px;font-size:.85rem}
-</style></head>
-<body><header class="hero"><span class="brand">TEMMY SMART GAMES</span>
-<h1>Grade 4 Mathematics</h1><p>Positive & Negative Numbers</p></header>
-<main class="container"><section class="card">
-<a class="back" href="index.html">← Back to Mathematics</a><h2>Interactive Games</h2><div class="topic">
-<h2>Positive & Negative Numbers</h2>
-<p><strong>Positive & Negative Numbers Challenge</strong> — an interactive mathematics game for Grade 4 learners.</p>
-<a class="play" href="games/positive-negative-numbers.html">🎮 Play Game</a>
+<title>Temmy Smart Games | Grade 4 Mathematics</title>
+
+<style>
+:root{
+--blue:#153B7A;
+--purple:#6B46A8;
+--gold:#C99700;
+--ink:#172033;
+--muted:#687386;
+--soft:#F4F7FB
+}
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:Segoe UI,Arial,sans-serif;
+background:var(--soft);
+color:var(--ink)
+}
+
+.hero{
+background:linear-gradient(135deg,var(--blue),#2454A5,var(--purple));
+color:#fff;
+text-align:center;
+padding:42px 18px 70px
+}
+
+.brand{
+display:inline-block;
+border:1px solid #ffffff66;
+border-radius:999px;
+padding:7px 14px;
+font-size:.75rem;
+font-weight:800;
+letter-spacing:.12em
+}
+
+h1{
+font-size:clamp(2.2rem,6vw,4rem);
+margin:18px 0 8px
+}
+
+.hero p{
+margin:0;
+font-size:1.08rem
+}
+
+.container{
+max-width:980px;
+margin:-34px auto 0;
+padding:0 18px 55px;
+position:relative
+}
+
+.card{
+background:#fff;
+border-radius:24px;
+padding:28px;
+box-shadow:0 16px 45px #153b7a1f
+}
+
+.back{
+display:inline-block;
+text-decoration:none;
+color:var(--blue);
+font-weight:800;
+margin-bottom:18px
+}
+
+.summary{
+background:#f6f2ff;
+border-left:5px solid var(--gold);
+border-radius:14px;
+padding:14px 16px;
+margin-bottom:22px
+}
+
+.summary strong{
+color:var(--purple)
+}
+
+.topic{
+border:1px solid #e3e8f0;
+border-radius:18px;
+padding:20px;
+margin-top:18px;
+background:#fff
+}
+
+.topic h2{
+margin:0;
+color:var(--purple)
+}
+
+.topic p{
+color:var(--muted);
+line-height:1.5
+}
+
+.games{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:12px;
+margin-top:16px
+}
+
+.game{
+border:1px solid #e3e8f0;
+border-radius:14px;
+padding:15px;
+background:#fbfcfe
+}
+
+.game h3{
+margin:0 0 7px;
+color:var(--blue);
+font-size:1rem
+}
+
+.game p{
+margin:0 0 12px;
+font-size:.9rem;
+color:var(--muted);
+line-height:1.4
+}
+
+.play{
+display:inline-block;
+background:var(--purple);
+color:#fff;
+text-decoration:none;
+padding:10px 14px;
+border-radius:11px;
+font-weight:800
+}
+
+.count{
+display:inline-block;
+background:#eef3ff;
+color:var(--blue);
+padding:5px 9px;
+border-radius:999px;
+font-size:.75rem;
+font-weight:800;
+margin-left:7px
+}
+
+footer{
+text-align:center;
+color:#7a8495;
+padding:0 18px 28px;
+font-size:.85rem
+}
+
+@media(max-width:700px){
+.games{
+grid-template-columns:1fr
+}
+}
+</style>
+</head>
+
+<body>
+
+<header class="hero">
+<span class="brand">TEMMY SMART GAMES</span>
+<h1>Grade 4 Mathematics</h1>
+<p>Interactive Mathematics Games</p>
+</header>
+
+<main class="container">
+
+<section class="card">
+
+<a class="back" href="index.html">← Back to Mathematics</a>
+
+<div class="summary">
+<strong>14 Games Ready!</strong>
+Explore Grade 4 mathematics through interactive challenges, practice, and mastery games.
 </div>
-</section></main><footer>© 2026 Temmy Smart Games • Interactive Learning Games</footer></body></html>
+
+
+<!-- POSITIVE & NEGATIVE -->
+
+<div class="topic">
+
+<h2>
+Positive &amp; Negative Numbers
+<span class="count">1 Game</span>
+</h2>
+
+<p>
+Explore positive and negative numbers through an interactive challenge.
+</p>
+
+<div class="games">
+
+<div class="game">
+
+<h3>Positive &amp; Negative Numbers Challenge</h3>
+
+<p>
+Practise identifying and working with positive and negative numbers.
+</p>
+
+<a class="play"
+href="games/grade4/positive-negative/positive-negative-numbers.html">
+🎮 Play Game
+</a>
+
+</div>
+
+</div>
+</div>
+
+
+<!-- UNIT 3 -->
+
+<div class="topic">
+
+<h2>
+Unit 3 — Addition &amp; Subtraction
+<span class="count">8 Games</span>
+</h2>
+
+<p>
+Build fluency, reasoning, strategy, and mastery with addition and subtraction.
+</p>
+
+<div class="games">
+
+
+<div class="game">
+<h3>Missing Number Vault</h3>
+<p>Find missing numbers in addition and subtraction equations.</p>
+<a class="play"
+href="games/grade4/unit3-addition-subtraction/missing-number-vault.html">
+🎮 Play Game
+</a>
+</div>
+
+
+<div class="game">
+<h3>Number Machine Lab</h3>
+<p>Follow number-machine rules and calculate the correct output.</p>
+<a class="play"
+href="games/grade4/unit3-addition-subtraction/number-machine-lab.html">
+🎮 Play Game
+</a>
+</div>
+
+
+<div class="game">
+<h3>Operation Detective</h3>
+<p>Choose the correct operation for each mathematical situation.</p>
+<a class="play"
+href="games/grade4/unit3-addition-subtraction/operation-detective.html">
+🎮 Play Game
+</a>
+</div>
+
+
+<div class="game">
+<h3>Place Value Architect</h3>
+<p>Use place value and regrouping to solve calculations.</p>
+<a class="play"
+href="games/grade4/unit3-addition-subtraction/place-value-architect.html">
+🎮 Play Game
+</a>
+</div>
+
+
+<div class="game">
+<h3>Strategy Switch</h3>
+<p>Choose efficient strategies for addition and subtraction.</p>
+<a class="play"
+href="games/grade4/unit3-addition-subtraction/strategy-switch.html">
+🎮 Play Game
+</a>
+</div>
+
+
+<div class="game">
+<h3>Odd-Even Pattern Detective</h3>
+<p>Use odd and even rules to reason about results.</p>
+<a class="play"
+href="games/grade4/unit3-addition-subtraction/odd-even-pattern-detective.html">
+🎮 Play Game
+</a>
+</div>
+
+
+<div class="game">
+<h3>Counterexample Hunter</h3>
+<p>Test mathematical statements and identify when they hold.</p>
+<a class="play"
+href="games/grade4/unit3-addition-subtraction/counterexample-hunter.html">
+🎮 Play Game
+</a>
+</div>
+
+
+<div class="game">
+<h3>Mathematics Master</h3>
+<p>Complete a mixed Unit 3 mastery challenge.</p>
+<a class="play"
+href="games/grade4/unit3-addition-subtraction/mathematics-master.html">
+👑 Play Mastery
+</a>
+</div>
+
+</div>
+</div>
+
+
+<!-- UNIT 4 -->
+
+<div class="topic">
+
+<h2>
+Unit 4 — Probability
+<span class="count">5 Games</span>
+</h2>
+
+<p>
+Explore likelihood, chance experiments, data, and probability reasoning.
+</p>
+
+<div class="games">
+
+
+<div class="game">
+<h3>Likelihood Detective</h3>
+<p>Investigate events that are certain, likely, unlikely, or impossible.</p>
+<a class="play"
+href="games/grade4/unit4-probability/01-likelihood-detective.html">
+🎮 Play Game
+</a>
+</div>
+
+
+<div class="game">
+<h3>Spinner Showdown</h3>
+<p>Use spinners to explore outcomes and likelihood.</p>
+<a class="play"
+href="games/grade4/unit4-probability/02-spinner-showdown.html">
+🎮 Play Game
+</a>
+</div>
+
+
+<div class="game">
+<h3>Coin Experiment Lab</h3>
+<p>Run coin experiments and reason about possible outcomes.</p>
+<a class="play"
+href="games/grade4/unit4-probability/03-coin-experiment-lab.html">
+🎮 Play Game
+</a>
+</div>
+
+
+<div class="game">
+<h3>Dice Data Lab</h3>
+<p>Investigate dice outcomes and interpret experimental data.</p>
+<a class="play"
+href="games/grade4/unit4-probability/04-dice-data-lab.html">
+🎮 Play Game
+</a>
+</div>
+
+
+<div class="game">
+<h3>Probability Master</h3>
+<p>Complete a mixed probability challenge and demonstrate mastery.</p>
+<a class="play"
+href="games/grade4/unit4-probability/05-probability-master.html">
+👑 Play Mastery
+</a>
+</div>
+
+</div>
+</div>
+
+</section>
+</main>
+
+<footer>
+© 2026 Temmy Smart Games • Interactive Learning Games
+</footer>
+
+</body>
+</html>
