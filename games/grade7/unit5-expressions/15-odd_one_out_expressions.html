@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games — Odd One Out: Expressions</title>
+<style>
+:root{--blue:#153b7a;--gold:#c99700;--purple:#6a3fb5;--green:#198754;--red:#c62828}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef3ff,#fff);color:#17233d}
+.container{max-width:940px;margin:auto;padding:18px}
+header{background:linear-gradient(135deg,var(--blue),#315fa9);color:#fff;border-radius:20px;padding:22px;text-align:center;box-shadow:0 8px 24px #0002}
+header h1{margin:0;font-size:clamp(25px,5vw,40px)}
+header p{margin:8px 0 0}
+.top{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.badge{background:#fff;border:2px solid #dce4f5;border-radius:12px;padding:8px 13px;font-weight:800}
+.sound{border:0;background:#17233d;color:#fff;border-radius:10px;padding:9px 13px;font-weight:800;cursor:pointer}
+.card{background:#fff;border-radius:20px;padding:22px;margin-top:15px;box-shadow:0 6px 20px #0001}
+.progress{height:10px;background:#e5e9f2;border-radius:10px;overflow:hidden;margin:8px 0 20px}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple));transition:.3s}
+.tag{display:inline-block;background:#eee8ff;color:#56339c;padding:6px 10px;border-radius:20px;font-weight:800;font-size:13px}
+.rule{background:#eef7ff;border-left:5px solid var(--blue);padding:13px;border-radius:10px;margin:14px 0;text-align:center;font-weight:800}
+.question{text-align:center;font-size:20px;font-weight:800;margin:18px 0}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.choice{border:3px solid #d9e0ee;background:#fff;border-radius:16px;padding:18px;font-size:23px;font-weight:900;cursor:pointer;transition:.15s}
+.choice:hover:not(:disabled){transform:translateY(-2px);border-color:var(--blue)}
+.choice.correct{background:#e4f7eb;border-color:var(--green);color:#12633b}
+.choice.wrong{background:#ffe8e8;border-color:var(--red);color:#a51f1f}
+.choice:disabled{cursor:not-allowed}
+.feedback{min-height:42px;text-align:center;font-weight:800;margin:14px 0 4px}
+.explain{display:none;background:#eef7ff;border-left:5px solid var(--blue);padding:13px;border-radius:10px;margin-top:10px}
+.hint{display:none;background:#fff8dc;border-left:5px solid var(--gold);padding:13px;border-radius:10px;margin-top:10px}
+.actions{text-align:center;margin-top:15px}
+.action{border:0;border-radius:12px;padding:11px 18px;font-weight:800;cursor:pointer;margin:4px}
+.hintbtn{background:#f0e9ff;color:#56339c}.next{background:var(--blue);color:#fff;display:none}
+#final{display:none;text-align:center}
+.trophy{font-size:58px;animation:pulse .8s infinite alternate}
+@keyframes pulse{to{transform:scale(1.12)}}
+.finalscore{font-size:48px;font-weight:900;color:var(--blue);margin:12px}
+.result{font-size:20px;font-weight:800}
+.confetti{position:fixed;top:-15px;width:10px;height:18px;animation:fall 2.5s linear forwards;z-index:10}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+@media(max-width:600px){.choices{grid-template-columns:1fr}.card{padding:16px}}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>🧩 Odd One Out: Expressions</h1>
+<p>Find the expression that does not fit the stated mathematical pattern.</p>
+</header>
+
+<div class="top">
+<div class="badge">⭐ Actual Score: <span id="score">0</span>/10</div>
+<div class="badge">🔥 Streak: <span id="streak">0</span></div>
+<div class="badge">🎯 Round: <span id="num">1</span>/10</div>
+<button class="sound" id="sound">🔊 Sound ON</button>
+</div>
+
+<div class="card" id="game">
+<div class="progress"><div class="bar" id="bar"></div></div>
+<span class="tag">PATTERN DETECTIVE</span>
+<div class="rule" id="rule"></div>
+<div class="question">Which expression is the <b>ODD ONE OUT</b>?</div>
+<div class="choices" id="choices"></div>
+<div class="feedback" id="feedback"></div>
+<div class="explain" id="explain"></div>
+<div class="hint" id="hint"></div>
+<div class="actions">
+<button class="action hintbtn" id="hintBtn">💡 Hint</button>
+<button class="action next" id="nextBtn">Next →</button>
+</div>
+</div>
+
+<div class="card" id="final">
+<div class="trophy" id="trophy">🏆</div>
+<h2>Odd One Out Complete!</h2>
+<div class="finalscore" id="finalscore">0 / 10</div>
+<div class="result" id="result"></div>
+<p>Accuracy: <b id="accuracy"></b> &nbsp; | &nbsp; Best streak: <b id="best"></b></p>
+<button class="action next" style="display:inline-block" onclick="location.reload()">🔄 Play Again</button>
+</div>
+</div>
+
+<script>
+const qs=[
+{r:"Three expressions have a coefficient of 3. Find the one that does not.",a:"4x + 3",o:["3x + 5","3m + 2","4x + 3","3p + 7"],h:"Look at the number directly multiplying the variable.",x:"3x + 5, 3m + 2, and 3p + 7 all have coefficient 3. In 4x + 3, the coefficient of x is 4."},
+{r:"Three expressions have exactly two terms. Find the one that does not.",a:"7 + n + 2",o:["4x + 5","m − 3","7 + n + 2","2p + 9"],h:"Count the terms separated by + or −.",x:"4x + 5, m − 3, and 2p + 9 each have two terms. 7 + n + 2 has three terms."},
+{r:"Three expressions contain the variable x. Find the one that does not.",a:"5 + 2m",o:["3x + 4","7 − x","5 + 2m","x ÷ 3 + 1"],h:"Look for the letter x.",x:"3x + 4, 7 − x, and x ÷ 3 + 1 contain x. 5 + 2m contains m instead."},
+{r:"Three expressions have a constant term of 6. Find the one that does not.",a:"2x + 5",o:["x + 6","4m + 6","2x + 5","7p + 6"],h:"The constant term is the number without a variable.",x:"x + 6, 4m + 6, and 7p + 6 have constant term 6. The constant in 2x + 5 is 5."},
+{r:"Three expressions show multiplication by 5. Find the one that does not.",a:"5 + n",o:["5x","5p + 2","5(n + 1)","5 + n"],h:"A coefficient of 5, or a factor of 5 outside brackets, shows multiplication by 5.",x:"5x, 5p + 2, and 5(n + 1) all contain multiplication by 5. 5 + n shows addition, not multiplication."},
+{r:"Three expressions contain a variable with coefficient 2. Find the one that does not.",a:"3x + 2",o:["2a + 7","5 + 2m","3x + 2","2p − 4"],h:"Find the number multiplying the variable.",x:"2a + 7, 5 + 2m, and 2p − 4 have coefficient 2. In 3x + 2, the coefficient of x is 3."},
+{r:"Three expressions have a subtraction operation. Find the one that does not.",a:"4 + 2y",o:["9 − x","m − 5","4 + 2y","7p − 3"],h:"Look for the subtraction sign.",x:"9 − x, m − 5, and 7p − 3 use subtraction. 4 + 2y uses addition."},
+{r:"Three expressions have a single variable term plus a constant. Find the one that does not.",a:"2r + 3s",o:["4x + 7","m − 2","2r + 3s","6 + p"],h:"A variable term and a number are the two terms.",x:"4x + 7, m − 2, and 6 + p each have one variable term and one constant. 2r + 3s has two variable terms and no constant."},
+{r:"Three expressions have coefficient 4 and constant 2. Find the one that does not.",a:"2x + 4",o:["4x + 2","4m + 2","2x + 4","4p + 2"],h:"Check both the coefficient and the constant.",x:"4x + 2, 4m + 2, and 4p + 2 have coefficient 4 and constant 2. 2x + 4 reverses those numbers."},
+{r:"Three expressions contain exactly one variable. Find the one that does not.",a:"2r + 3s",o:["7x + 1","4 + m","2r + 3s","5p − 6"],h:"Count the different variable letters.",x:"7x + 1, 4 + m, and 5p − 6 each contain one variable. 2r + 3s contains two different variables: r and s."}
+];
+
+let i=0,score=0,streak=0,best=0,soundOn=true,answered=false,attempted=false;
+const $=id=>document.getElementById(id);
+
+function tone(f,d=.12,type="sine"){
+ if(!soundOn)return;
+ try{
+  const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();
+  o.type=type;o.frequency.value=f;g.gain.value=.045;o.connect(g);g.connect(c.destination);o.start();
+  g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.stop(c.currentTime+d)
+ }catch(e){}
+}
+function load(){
+ answered=false;attempted=false;
+ $("num").textContent=i+1;$("score").textContent=score;$("streak").textContent=streak;
+ $("bar").style.width=(i/10*100)+"%";$("rule").textContent=qs[i].r;
+ $("feedback").textContent="";$("explain").style.display="none";$("hint").style.display="none";
+ $("nextBtn").style.display="none";$("hintBtn").style.display="inline-block";
+ let data=[...qs[i].o].sort(()=>Math.random()-.5);$("choices").innerHTML="";
+ data.forEach(v=>{
+  const b=document.createElement("button");b.className="choice";b.textContent=v;
+  b.addEventListener("click",()=>answer(b,v));$("choices").appendChild(b)
+ });
+}
+function answer(btn,v){
+ if(answered)return;
+ const firstAttempt=!attempted;attempted=true;
+ if(v===qs[i].a){
+  answered=true;
+  if(firstAttempt){
+   score++;streak++;best=Math.max(best,streak);
+   $("feedback").textContent="✅ Correct on your first attempt! +1 point";
+  }else{
+   streak=0;
+   $("feedback").textContent="✅ Correct! Learning retry — no point added.";
+  }
+  btn.classList.add("correct");$("explain").textContent="🧠 "+qs[i].x;
+  $("explain").style.display="block";$("nextBtn").style.display="inline-block";$("hintBtn").style.display="none";
+  [...document.querySelectorAll(".choice")].forEach(b=>b.disabled=true);tone(660);
+ }else{
+  streak=0;btn.classList.add("wrong");btn.disabled=true;
+  $("feedback").textContent="❌ Not the odd one out. No point for this round. Try again to learn.";
+  tone(180,.16,"square");
+ }
+ $("score").textContent=score;$("streak").textContent=streak;
+}
+$("hintBtn").onclick=()=>{$("hint").textContent=qs[i].h;$("hint").style.display="block";tone(420,.08)};
+$("nextBtn").onclick=()=>{i++;if(i>=qs.length)finish();else load()};
+$("sound").onclick=()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Sound ON":"🔇 Sound OFF";if(soundOn)tone(520,.08)};
+
+function finish(){
+ $("game").style.display="none";$("final").style.display="block";
+ $("finalscore").textContent=score+" / 10";$("accuracy").textContent=(score*10)+"%";$("best").textContent=best;
+ if(score===10){
+  $("result").textContent="PERFECT SCORE! You spotted every mathematical pattern!";
+  $("trophy").textContent="🏆✨🧩";confetti(80);
+  tone(523,.18);setTimeout(()=>tone(659,.18),180);setTimeout(()=>tone(784,.3),360)
+ }else if(score>=8){
+  $("result").textContent="Excellent pattern thinking!";
+  $("trophy").textContent="🌟🧩"
+ }else if(score>=6){
+  $("result").textContent="Good work. Keep examining the structure of each expression.";
+  $("trophy").textContent="👏🔎"
+ }else{
+  $("result").textContent="Keep practising. Read the stated pattern before choosing.";
+  $("trophy").textContent="💪📚"
+ }
+}
+function confetti(n){
+ for(let j=0;j<n;j++){
+  const e=document.createElement("div");e.className="confetti";
+  e.style.left=Math.random()*100+"vw";e.style.animationDelay=Math.random()*1.2+"s";
+  document.body.appendChild(e);setTimeout(()=>e.remove(),3200)
+ }
+}
+load();
+</script>
+</body>
+</html>

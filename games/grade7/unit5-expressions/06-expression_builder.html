@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temmy Smart Games — Expression Builder</title>
+<style>
+:root{--blue:#153b7a;--gold:#c99700;--purple:#6b3fa0;--green:#16834b;--red:#c93636;--ink:#17233c}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef4ff,#fff9e9);color:var(--ink)}
+.app{max-width:1000px;margin:auto;padding:18px}.top{background:linear-gradient(135deg,var(--blue),#315ca8);color:#fff;border-radius:23px;padding:20px;box-shadow:0 10px 28px #153b7a24}.brand{font-size:25px;font-weight:900;letter-spacing:1px}.sub{margin-top:5px;opacity:.9}.bar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:16px}.pill{background:#ffffff20;border:1px solid #ffffff40;border-radius:999px;padding:8px 13px;font-weight:800}.sound{margin-left:auto;border:0;border-radius:12px;padding:9px 14px;font-weight:900;color:var(--blue);background:#fff;cursor:pointer}
+.card{background:#fff;border-radius:22px;padding:25px;margin-top:18px;box-shadow:0 8px 26px #253b5c18}.progress{height:10px;background:#e8edf5;border-radius:20px;overflow:hidden}.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--purple));transition:.35s}.round{color:var(--purple);font-weight:900;font-size:14px;margin:15px 0 7px}.mission{font-size:27px;font-weight:900;line-height:1.25;text-align:center;margin:10px 0 15px}.target{background:#f4f7fc;border:2px dashed #ccd6e7;border-radius:18px;padding:19px;text-align:center;font-size:20px;font-weight:850;line-height:1.45}.target b{color:var(--purple)}
+.builder{margin-top:18px}.label{text-align:center;font-weight:900;margin-bottom:9px}.expression{min-height:72px;border:3px solid #d8e0ec;border-radius:17px;background:#fafcff;padding:14px;text-align:center;font-size:35px;font-weight:1000;color:var(--blue);letter-spacing:1px}.placeholder{color:#98a3b6}.tokens{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:16px}.token{border:2px solid #dce3ee;background:#fff;border-radius:13px;padding:12px 16px;font-size:19px;font-weight:900;cursor:pointer;min-width:60px}.token:hover{border-color:var(--purple);background:#faf7ff;transform:translateY(-2px)}.token.used{opacity:.38;cursor:not-allowed;transform:none}.token.op{background:#eee7ff;border-color:#cbb9ed;color:#553080}.controls{display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap}.small{border:0;border-radius:11px;padding:10px 15px;font-weight:900;cursor:pointer}.clear{background:#fde4e4;color:#a31f1f}.undo{background:#eaf0fb;color:var(--blue)}.check{background:var(--blue);color:#fff}.check:disabled{opacity:.4;cursor:not-allowed}
+.feedback{min-height:58px;margin-top:17px;padding:13px 16px;background:#f5f7fb;border-radius:15px;font-weight:700;line-height:1.45}.hint{margin-top:12px;padding:11px;border-radius:12px;background:#fff7d9;border:1px solid #efd36a;color:#705600;font-weight:700}.actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px}.btn{border:0;border-radius:13px;padding:12px 18px;font-weight:900;cursor:pointer}.hintBtn{background:#fff2c5;color:#6d5300}.next{background:var(--blue);color:#fff;min-width:120px}.next:disabled{opacity:.4;cursor:not-allowed}
+.result{text-align:center;display:none;overflow:hidden}.result.show{display:block;animation:pop .6s ease}.trophy{font-size:74px;animation:bounce 1s infinite alternate}.celebrate{font-size:26px;font-weight:1000;color:var(--purple)}.final{font-size:54px;font-weight:1000;color:var(--blue);margin:8px}.stats{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:17px}.stat{background:#f3f6fb;border-radius:14px;padding:12px 18px;font-weight:900}.replay{background:var(--gold);color:#241c00}.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden}.piece{position:absolute;top:-20px;width:9px;height:16px;animation:fall 2.7s linear forwards}.footer{text-align:center;color:#667085;font-size:13px;padding:18px}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@media(max-width:680px){.mission{font-size:23px}.expression{font-size:29px}.sound{margin-left:0}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+<div class="brand">TEMMY SMART GAMES</div>
+<div class="sub">Grade 7 Mathematics • Unit 5: Expressions</div>
+<div class="bar">
+<span class="pill">🏗️ EXPRESSION BUILDER</span><span class="pill" id="score">⭐ Score: 0/10</span><span class="pill" id="streak">🔥 Streak: 0</span>
+<button class="sound" id="sound" title="Tap to turn game sounds on or off">🔊 Sound ON</button>
+</div>
+</header>
+
+<section class="card" id="game">
+<div class="progress"><div id="fill"></div></div>
+<div class="round" id="round"></div>
+<div class="mission">Build the expression from the clues.</div>
+<div class="target" id="target"></div>
+<div class="builder">
+<div class="label">YOUR EXPRESSION</div>
+<div class="expression" id="expression"><span class="placeholder">Tap the tiles below…</span></div>
+<div class="tokens" id="tokens"></div>
+<div class="controls">
+<button class="small undo" id="undo">↶ Undo</button>
+<button class="small clear" id="clear">✕ Clear</button>
+<button class="small check" id="check" disabled>✓ Check Expression</button>
+</div>
+</div>
+<div class="feedback" id="feedback">Choose tiles in the correct order. Build the expression, then check it.</div>
+<div id="hint"></div>
+<div class="actions"><button class="btn hintBtn" id="hintBtn">💡 Hint</button><button class="btn next" id="next" disabled>Next →</button></div>
+</section>
+
+<section class="card result" id="result">
+<div class="trophy" id="trophy">🏆</div><div class="celebrate" id="celebrate"></div>
+<div class="final" id="final"></div>
+<div class="stats"><div class="stat" id="accuracy"></div><div class="stat" id="best"></div></div>
+<p id="resultText"></p><button class="btn replay" id="replay">🔄 Build Again</button>
+</section>
+<div class="footer">Learn • Play • Think • Achieve</div><div class="confetti" id="confetti"></div>
+</div>
+
+<script>
+const sourceRounds=[
+{t:"A number plus 5",a:"n + 5",tokens:["n","+","5"],d:"Start with the variable n, then add 5.",h:"“Plus” tells you the operation."},
+{t:"3 times a number",a:"3n",tokens:["3","n"],d:"3 times n is 3 × n, written 3n.",h:"A number next to a variable means multiplication."},
+{t:"A number minus 7",a:"n − 7",tokens:["n","−","7"],d:"Start with n and subtract 7.",h:"Keep the variable first, then subtract 7."},
+{t:"Twice a number plus 4",a:"2n + 4",tokens:["2","n","+","4"],d:"Twice n is 2n; then add 4.",h:"Translate “twice” first."},
+{t:"5 more than x",a:"x + 5",tokens:["x","+","5"],d:"Start with x and add 5.",h:"“More than” means add."},
+{t:"4 less than p",a:"p − 4",tokens:["p","−","4"],d:"Start with p and subtract 4.",h:"“Less than p” means p − 4."},
+{t:"The sum of y and 9",a:"y + 9",tokens:["y","+","9"],d:"The sum means addition: y + 9.",h:"“Sum” means add."},
+{t:"6 multiplied by m",a:"6m",tokens:["6","m"],d:"6 multiplied by m is 6m.",h:"Multiplication can be written without × between a number and variable."},
+{t:"8 less than twice q",a:"2q − 8",tokens:["2","q","−","8"],d:"Twice q is 2q; 8 less gives 2q − 8.",h:"Build 2q first, then subtract 8."},
+{t:"The difference between 12 and r",a:"12 − r",tokens:["12","−","r"],d:"The first quantity stays first: 12 − r.",h:"Pay close attention to subtraction order."}
+];
+
+let rounds=[],i=0,score=0,streak=0,best=0,locked=false,soundOn=true,audioCtx=null,current=[];
+const $=id=>document.getElementById(id);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function ensureAudio(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();return audioCtx}catch(e){return null}}
+function beep(f,d=.12,type="sine"){if(!soundOn)return;const c=ensureAudio();if(!c)return;try{const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,c.currentTime);g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.16,c.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+d);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d+.03)}catch(e){}}
+function correctSound(){beep(660,.09);setTimeout(()=>beep(880,.12),90)}function wrongSound(){beep(180,.15,"square")}
+function render(){
+ const q=rounds[i];$("expression").innerHTML=current.length?current.map(x=>x).join(" "):'<span class="placeholder">Tap the tiles below…</span>';
+ $("check").disabled=current.length===0||locked;
+ [...$("tokens").children].forEach((b,n)=>{b.classList.toggle("used",b.dataset.used==="1")});
+}
+function load(){
+ const q=rounds[i];locked=false;current=[];$("fill").style.width=(i/rounds.length*100)+"%";$("round").textContent=`BUILD ${i+1} OF ${rounds.length}`;
+ $("target").innerHTML=`Build the expression for: <b>${q.t}</b>`;$("feedback").textContent="Choose tiles in the correct order. Build the expression, then check it.";
+ $("hint").innerHTML="";$("next").disabled=true;$("hintBtn").disabled=false;$("check").disabled=true;$("tokens").innerHTML="";
+ shuffle(q.tokens.map((x,n)=>({x,n}))).forEach(item=>{const b=document.createElement("button");b.className="token"+(["+","−","-"].includes(item.x)?" op":"");b.textContent=item.x;b.dataset.id=item.n;b.dataset.used="0";b.addEventListener("click",()=>addToken(b,item.x));$("tokens").appendChild(b)});
+ render()
+}
+function addToken(btn,x){if(locked||btn.dataset.used==="1")return;btn.dataset.used="1";current.push(x);beep(520,.06);render()}
+$("undo").onclick=()=>{if(locked||!current.length)return;const x=current.pop();const buttons=[...$("tokens").children];const b=buttons.find(b=>b.dataset.used==="1"&&b.textContent===x);if(b)b.dataset.used="0";beep(390,.06);render()};
+$("clear").onclick=()=>{if(locked)return;current=[];[...$("tokens").children].forEach(b=>b.dataset.used="0");beep(300,.06);render()};
+$("check").onclick=()=>{
+ if(locked||!current.length)return;
+ const q=rounds[i],built=current.join(" ");
+ if(built===q.a){locked=true;score++;streak++;best=Math.max(best,streak);correctSound();[...$("tokens").children].forEach(b=>b.classList.add("used"));$("feedback").innerHTML=`✅ <b>Expression built correctly!</b><br>${q.d}`;$("check").disabled=true;$("next").disabled=false;$("hintBtn").disabled=true}
+ else{streak=0;wrongSound();$("feedback").innerHTML="❌ <b>Not quite.</b> Check the order of the tiles and the operation. You can edit your expression and try again."}
+ update()
+};
+$("hintBtn").onclick=()=>{const q=rounds[i];$("hint").innerHTML=`<div class="hint">💡 Hint: ${q.h}</div>`;beep(440,.1)};
+$("next").onclick=()=>{i++;if(i<rounds.length)load();else finish()};
+$("sound").onclick=()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Sound ON":"🔇 Sound OFF";if(soundOn){ensureAudio();beep(660,.1);setTimeout(()=>beep(880,.12),110)}};
+function update(){$("score").textContent=`⭐ Score: ${score}/${rounds.length}`;$("streak").textContent=`🔥 Streak: ${streak}`}
+function confetti(){ $("confetti").innerHTML="";for(let n=0;n<90;n++){let p=document.createElement("i");p.className="piece";p.style.left=Math.random()*100+"%";p.style.background=["#153b7a","#c99700","#6b3fa0","#16834b","#e85d75"][Math.floor(Math.random()*5)];p.style.animationDelay=Math.random()*1.2+"s";$("confetti").appendChild(p)}setTimeout(()=>$("confetti").innerHTML="",3500)}
+function finish(){
+ $("game").style.display="none";$("result").classList.add("show");let pct=Math.round(score/rounds.length*100);$("final").textContent=`${score} / ${rounds.length} Base Points`;$("accuracy").textContent=`🎯 Accuracy: ${pct}%`;$("best").textContent=`🔥 Best Streak: ${best}`;
+ if(pct===100){$("trophy").textContent="🏆";$("celebrate").textContent="PERFECT BUILDER!";$("resultText").textContent="Every expression was constructed correctly. Algebra Master!";confetti()}
+ else if(pct>=90){$("trophy").textContent="🥇";$("celebrate").textContent="EXCELLENT BUILDING!";$("resultText").textContent="You constructed algebraic expressions with strong accuracy."}
+ else if(pct>=75){$("trophy").textContent="🥈";$("celebrate").textContent="STRONG WORK!";$("resultText").textContent="Good progress. Review the construction of missed expressions and try again."}
+ else{$("trophy").textContent="🏗️";$("celebrate").textContent="KEEP BUILDING!";$("resultText").textContent="Focus on the mathematical language and build each expression step by step."}
+ [523,659,784,1047].forEach((f,n)=>setTimeout(()=>beep(f,.16),n*100))
+}
+$("replay").onclick=()=>{rounds=shuffle(sourceRounds);i=0;score=0;streak=0;best=0;update();$("result").classList.remove("show");$("result").style.display="none";$("game").style.display="block";load()};
+rounds=shuffle(sourceRounds);update();load();
+</script>
+</body>
+</html>

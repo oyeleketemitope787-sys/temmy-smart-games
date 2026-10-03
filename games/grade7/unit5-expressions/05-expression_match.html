@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temmy Smart Games — Expression Match</title>
+<style>
+:root{--blue:#153b7a;--gold:#c99700;--purple:#6b3fa0;--green:#16834b;--red:#c93636;--ink:#17233c}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef4ff,#fff9e9);color:var(--ink)}
+.app{max-width:1000px;margin:auto;padding:18px}.top{background:linear-gradient(135deg,var(--blue),#315ca8);color:#fff;border-radius:23px;padding:20px;box-shadow:0 10px 28px #153b7a24}.brand{font-size:25px;font-weight:900;letter-spacing:1px}.sub{margin-top:5px;opacity:.9}.bar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:16px}.pill{background:#ffffff20;border:1px solid #ffffff40;border-radius:999px;padding:8px 13px;font-weight:800}.sound{margin-left:auto;border:0;border-radius:12px;padding:9px 14px;font-weight:900;color:var(--blue);background:#fff;cursor:pointer}
+.card{background:#fff;border-radius:22px;padding:25px;margin-top:18px;box-shadow:0 8px 26px #253b5c18}.progress{height:10px;background:#e8edf5;border-radius:20px;overflow:hidden}.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--purple));transition:.35s}.round{color:var(--purple);font-weight:900;font-size:14px;margin:15px 0 7px}.mission{font-size:27px;font-weight:900;line-height:1.25;text-align:center;margin:10px 0 17px}
+.expr{background:#f4f7fc;border:2px dashed #ccd6e7;border-radius:18px;padding:21px;text-align:center;font-size:43px;font-weight:1000;color:var(--blue);margin:15px 0}.instruction{text-align:center;font-size:18px;font-weight:900;margin:15px 0}.matches{display:grid;grid-template-columns:1fr 1fr;gap:16px}.matchCard{border:2px solid #dce3ee;background:#fff;border-radius:17px;padding:17px;font-size:17px;font-weight:850;cursor:pointer;min-height:82px;display:flex;align-items:center;justify-content:center;text-align:center;transition:.15s}.matchCard:hover{border-color:var(--purple);background:#faf7ff;transform:translateY(-2px)}.matchCard.selected{border-color:var(--purple);background:#eee7ff;box-shadow:0 0 0 3px #6b3fa022}.matchCard.wrong{border-color:var(--red);background:#ffe9e9;color:#a31f1f;cursor:not-allowed}.matchCard.correct{border-color:var(--green);background:#e8faef;color:#0d6738}.matchCard.disabled{pointer-events:none;opacity:.95}.feedback{min-height:58px;margin-top:16px;padding:13px 16px;background:#f5f7fb;border-radius:15px;font-weight:700;line-height:1.45}.hint{margin-top:12px;padding:11px;border-radius:12px;background:#fff7d9;border:1px solid #efd36a;color:#705600;font-weight:700}.actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px}.btn{border:0;border-radius:13px;padding:12px 18px;font-weight:900;cursor:pointer}.hintBtn{background:#fff2c5;color:#6d5300}.next{background:var(--blue);color:#fff;min-width:120px}.next:disabled{opacity:.4;cursor:not-allowed}
+.result{text-align:center;display:none;overflow:hidden}.result.show{display:block;animation:pop .6s ease}.trophy{font-size:74px;animation:bounce 1s infinite alternate}.celebrate{font-size:26px;font-weight:1000;color:var(--purple)}.final{font-size:54px;font-weight:1000;color:var(--blue);margin:8px}.stats{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:17px}.stat{background:#f3f6fb;border-radius:14px;padding:12px 18px;font-weight:900}.replay{background:var(--gold);color:#241c00}.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden}.piece{position:absolute;top:-20px;width:9px;height:16px;animation:fall 2.7s linear forwards}.footer{text-align:center;color:#667085;font-size:13px;padding:18px}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@media(max-width:680px){.matches{grid-template-columns:1fr}.mission{font-size:23px}.expr{font-size:34px}.sound{margin-left:0}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+<div class="brand">TEMMY SMART GAMES</div>
+<div class="sub">Grade 7 Mathematics • Unit 5: Expressions</div>
+<div class="bar">
+<span class="pill">🧩 EXPRESSION MATCH</span><span class="pill" id="score">⭐ Score: 0/10</span><span class="pill" id="streak">🔥 Streak: 0</span>
+<button class="sound" id="sound" title="Tap to turn game sounds on or off">🔊 Sound ON</button>
+</div>
+</header>
+
+<section class="card" id="game">
+<div class="progress"><div id="fill"></div></div>
+<div class="round" id="round"></div>
+<div class="mission">Find the matching mathematical meaning.</div>
+<div class="expr" id="expr"></div>
+<div class="instruction">Tap the correct meaning below.</div>
+<div class="matches" id="matches"></div>
+<div class="feedback" id="feedback">Study the expression and match its meaning.</div>
+<div id="hint"></div>
+<div class="actions"><button class="btn hintBtn" id="hintBtn">💡 Hint</button><button class="btn next" id="next" disabled>Next →</button></div>
+</section>
+
+<section class="card result" id="result">
+<div class="trophy" id="trophy">🏆</div><div class="celebrate" id="celebrate"></div>
+<div class="final" id="final"></div>
+<div class="stats"><div class="stat" id="accuracy"></div><div class="stat" id="best"></div></div>
+<p id="resultText"></p><button class="btn replay" id="replay">🔄 Play Again</button>
+</section>
+<div class="footer">Learn • Play • Think • Achieve</div><div class="confetti" id="confetti"></div>
+</div>
+
+<script>
+const sourceRounds=[
+{e:"4p",a:"4 times p",o:["p plus 4","4 times p","p minus 4","4 less than p"],x:"4p means 4 × p. A number beside a variable means multiplication.",h:"A number next to a letter means multiply."},
+{e:"n + 8",a:"8 more than a number",o:["8 less than a number","8 times a number","8 more than a number","the difference between n and 8"],x:"n + 8 means 8 more than n.",h:"The + sign means add."},
+{e:"x − 6",a:"6 less than x",o:["6 more than x","6 times x","6 less than x","the sum of x and 6"],x:"x − 6 means subtract 6 from x, so it is 6 less than x.",h:"The − sign means subtract."},
+{e:"2m + 5",a:"5 more than twice m",o:["5 less than twice m","twice m plus 5","5 more than twice m","2 more than 5m"],x:"2m is twice m; adding 5 gives 5 more than twice m.",h:"Read 2m first, then +5."},
+{e:"y + 9",a:"the sum of y and 9",o:["the difference between y and 9","the sum of y and 9","9 times y","9 less than y"],x:"The word “sum” describes addition: y + 9.",h:"Sum means add."},
+{e:"7q",a:"7 multiplied by q",o:["q divided by 7","q plus 7","7 multiplied by q","7 less than q"],x:"7q means 7 × q.",h:"Look for multiplication notation."},
+{e:"p − 3",a:"3 less than p",o:["3 more than p","3 times p","3 less than p","the sum of p and 3"],x:"p − 3 means 3 less than p.",h:"Subtracting 3 makes the result 3 less."},
+{e:"3r + 2",a:"2 more than three times r",o:["three times r minus 2","2 times r plus 3","2 more than three times r","3 more than twice r"],x:"3r is three times r; +2 makes it 2 more.",h:"Translate 3r first."},
+{e:"12 − k",a:"the difference between 12 and k",o:["the difference between k and 12","12 plus k","12 times k","the difference between 12 and k"],x:"12 − k keeps 12 first and subtracts k.",h:"Pay attention to the order of subtraction."},
+{e:"5a − 4",a:"4 less than five times a",o:["4 more than five times a","five times a plus 4","4 less than five times a","five less than four times a"],x:"5a means five times a; subtracting 4 makes it 4 less.",h:"Identify 5a before reading −4."}
+];
+
+let rounds=[],i=0,score=0,streak=0,best=0,locked=false,soundOn=true,audioCtx=null;
+const $=id=>document.getElementById(id);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function ensureAudio(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();return audioCtx}catch(e){return null}}
+function beep(f,d=.12,type="sine"){if(!soundOn)return;const c=ensureAudio();if(!c)return;try{const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,c.currentTime);g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.16,c.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+d);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d+.03)}catch(e){}}
+function correctSound(){beep(660,.09);setTimeout(()=>beep(880,.12),90)}function wrongSound(){beep(180,.15,"square")}
+function load(){
+ const q=rounds[i];locked=false;$("fill").style.width=(i/rounds.length*100)+"%";$("round").textContent=`MATCH ${i+1} OF ${rounds.length}`;$("expr").textContent=q.e;
+ $("feedback").textContent="Study the expression and match its meaning.";$("hint").innerHTML="";$("next").disabled=true;
+ const opts=shuffle(q.o);$("matches").innerHTML="";
+ opts.forEach(x=>{const b=document.createElement("button");b.className="matchCard";b.textContent=x;b.addEventListener("click",()=>choose(b,x,q));$("matches").appendChild(b)})
+}
+function choose(btn,x,q){
+ if(locked||btn.classList.contains("disabled"))return;
+ if(x===q.a){locked=true;score++;streak++;best=Math.max(best,streak);correctSound();btn.classList.add("correct");[...$("matches").children].forEach(b=>b.classList.add("disabled"));$("feedback").innerHTML=`✅ <b>Match found!</b><br>${q.x}`;$("next").disabled=false;$("hintBtn").disabled=true}
+ else{streak=0;wrongSound();btn.classList.add("wrong");btn.classList.add("disabled");$("feedback").textContent="❌ Not the match. Study the expression again and try another card."}
+ update()
+}
+function update(){$("score").textContent=`⭐ Score: ${score}/${rounds.length}`;$("streak").textContent=`🔥 Streak: ${streak}`}
+$("hintBtn").onclick=()=>{const q=rounds[i];$("hint").innerHTML=`<div class="hint">💡 Hint: ${q.h}</div>`;beep(440,.1)};
+$("next").onclick=()=>{i++;if(i<rounds.length)load();else finish()};
+$("sound").onclick=()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Sound ON":"🔇 Sound OFF";if(soundOn){ensureAudio();beep(660,.1);setTimeout(()=>beep(880,.12),110)}};
+function confetti(){ $("confetti").innerHTML="";for(let n=0;n<90;n++){let p=document.createElement("i");p.className="piece";p.style.left=Math.random()*100+"%";p.style.background=["#153b7a","#c99700","#6b3fa0","#16834b","#e85d75"][Math.floor(Math.random()*5)];p.style.animationDelay=Math.random()*1.2+"s";$("confetti").appendChild(p)}setTimeout(()=>$("confetti").innerHTML="",3500)}
+function finish(){
+ $("game").style.display="none";$("result").classList.add("show");let pct=Math.round(score/rounds.length*100);$("final").textContent=`${score} / ${rounds.length} Base Points`;$("accuracy").textContent=`🎯 Accuracy: ${pct}%`;$("best").textContent=`🔥 Best Streak: ${best}`;
+ if(pct===100){$("trophy").textContent="🏆";$("celebrate").textContent="PERFECT MATCH!";$("resultText").textContent="Every expression was matched with its correct mathematical meaning. Algebra Master!";confetti()}
+ else if(pct>=90){$("trophy").textContent="🥇";$("celebrate").textContent="EXCELLENT MATCHING!";$("resultText").textContent="You connected algebraic notation with mathematical language very accurately."}
+ else if(pct>=75){$("trophy").textContent="🥈";$("celebrate").textContent="STRONG WORK!";$("resultText").textContent="Good progress. Review any expressions you missed and play again."}
+ else{$("trophy").textContent="🧩";$("celebrate").textContent="KEEP MATCHING!";$("resultText").textContent="Focus on the operation signs and the order of subtraction, then try again."}
+ [523,659,784,1047].forEach((f,n)=>setTimeout(()=>beep(f,.16),n*100))
+}
+$("replay").onclick=()=>{rounds=shuffle(sourceRounds);i=0;score=0;streak=0;best=0;update();$("result").classList.remove("show");$("result").style.display="none";$("game").style.display="block";$("hintBtn").disabled=false;load()};
+rounds=shuffle(sourceRounds);update();load();
+</script>
+</body>
+</html>

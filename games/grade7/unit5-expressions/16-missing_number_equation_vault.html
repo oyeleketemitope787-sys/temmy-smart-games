@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games — Missing Number Equation Vault</title>
+<style>
+:root{--blue:#153b7a;--gold:#c99700;--purple:#6a3fb5;--green:#198754;--red:#c62828}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef3ff,#fff);color:#17233d}
+.container{max-width:940px;margin:auto;padding:18px}
+header{background:linear-gradient(135deg,var(--blue),#315fa9);color:#fff;border-radius:20px;padding:22px;text-align:center;box-shadow:0 8px 24px #0002}
+header h1{margin:0;font-size:clamp(25px,5vw,40px)} header p{margin:8px 0 0}
+.top{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.badge{background:#fff;border:2px solid #dce4f5;border-radius:12px;padding:8px 13px;font-weight:800}
+.sound{border:0;background:#17233d;color:#fff;border-radius:10px;padding:9px 13px;font-weight:800;cursor:pointer}
+.card{background:#fff;border-radius:20px;padding:22px;margin-top:15px;box-shadow:0 6px 20px #0001}
+.progress{height:10px;background:#e5e9f2;border-radius:10px;overflow:hidden;margin:8px 0 20px}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple));transition:.3s}
+.tag{display:inline-block;background:#eee8ff;color:#56339c;padding:6px 10px;border-radius:20px;font-weight:800;font-size:13px}
+.vault{font-size:clamp(28px,7vw,48px);font-weight:900;text-align:center;margin:28px 0 12px;letter-spacing:.5px}
+.question{text-align:center;font-size:20px;font-weight:800;margin-bottom:22px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.choice{border:3px solid #d9e0ee;background:#fff;border-radius:16px;padding:17px;font-size:22px;font-weight:900;cursor:pointer;transition:.15s}
+.choice:hover:not(:disabled){transform:translateY(-2px);border-color:var(--blue)}
+.choice.correct{background:#e4f7eb;border-color:var(--green);color:#12633b}
+.choice.wrong{background:#ffe8e8;border-color:var(--red);color:#a51f1f}
+.choice:disabled{cursor:not-allowed}
+.feedback{min-height:42px;text-align:center;font-weight:800;margin:14px 0 4px}
+.explain{display:none;background:#eef7ff;border-left:5px solid var(--blue);padding:13px;border-radius:10px;margin-top:10px}
+.hint{display:none;background:#fff8dc;border-left:5px solid var(--gold);padding:13px;border-radius:10px;margin-top:10px}
+.actions{text-align:center;margin-top:15px}
+.action{border:0;border-radius:12px;padding:11px 18px;font-weight:800;cursor:pointer;margin:4px}
+.hintbtn{background:#f0e9ff;color:#56339c}.next{background:var(--blue);color:#fff;display:none}
+#final{display:none;text-align:center}.trophy{font-size:58px;animation:pulse .8s infinite alternate}
+@keyframes pulse{to{transform:scale(1.12)}}
+.finalscore{font-size:48px;font-weight:900;color:var(--blue);margin:12px}.result{font-size:20px;font-weight:800}
+.confetti{position:fixed;top:-15px;width:10px;height:18px;animation:fall 2.5s linear forwards;z-index:10}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+@media(max-width:600px){.choices{grid-template-columns:1fr}.card{padding:16px}}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>🔓 Missing Number Equation Vault</h1>
+<p>Unlock each equation by finding the missing number.</p>
+</header>
+
+<div class="top">
+<div class="badge">⭐ Actual Score: <span id="score">0</span>/10</div>
+<div class="badge">🔥 Streak: <span id="streak">0</span></div>
+<div class="badge">🎯 Vault: <span id="num">1</span>/10</div>
+<button class="sound" id="sound">🔊 Sound ON</button>
+</div>
+
+<div class="card" id="game">
+<div class="progress"><div class="bar" id="bar"></div></div>
+<span class="tag">EQUATION REASONING</span>
+<div class="vault" id="expression"></div>
+<div class="question" id="question">What number unlocks the equation?</div>
+<div class="choices" id="choices"></div>
+<div class="feedback" id="feedback"></div>
+<div class="explain" id="explain"></div>
+<div class="hint" id="hint"></div>
+<div class="actions">
+<button class="action hintbtn" id="hintBtn">💡 Hint</button>
+<button class="action next" id="nextBtn">Next →</button>
+</div>
+</div>
+
+<div class="card" id="final">
+<div class="trophy" id="trophy">🏆</div>
+<h2>Equation Vault Complete!</h2>
+<div class="finalscore" id="finalscore">0 / 10</div>
+<div class="result" id="result"></div>
+<p>Accuracy: <b id="accuracy"></b> &nbsp; | &nbsp; Best streak: <b id="best"></b></p>
+<button class="action next" style="display:inline-block" onclick="location.reload()">🔄 Play Again</button>
+</div>
+</div>
+
+<script>
+const qs=[
+{e:"650 + □ = 1000",a:"350",o:["250","350","450","550"],h:"Think: what must be added to 650 to reach 1000?",x:"1000 − 650 = 350, so 650 + 350 = 1000."},
+{e:"57 + □ = 120",a:"63",o:["53","63","73","83"],h:"Use the inverse operation: subtract 57 from 120.",x:"120 − 57 = 63, so the missing number is 63."},
+{e:"50 − □ = 41",a:"9",o:["7","8","9","11"],h:"Ask: what number must be taken from 50 to leave 41?",x:"50 − 41 = 9, so the missing number is 9."},
+{e:"□ + 38 = 75",a:"37",o:["27","37","47","57"],h:"Use subtraction: 75 − 38.",x:"75 − 38 = 37, so 37 + 38 = 75."},
+{e:"92 − □ = 56",a:"36",o:["26","36","46","56"],h:"Find the difference between 92 and 56.",x:"92 − 56 = 36, so the missing number is 36."},
+{e:"□ − 24 = 31",a:"55",o:["45","55","65","75"],h:"Add 24 to 31 to reverse the subtraction.",x:"31 + 24 = 55, so 55 − 24 = 31."},
+{e:"4 × □ = 36",a:"9",o:["6","8","9","12"],h:"Think: 4 times what number gives 36?",x:"36 ÷ 4 = 9, so 4 × 9 = 36."},
+{e:"□ ÷ 5 = 7",a:"35",o:["25","30","35","40"],h:"Multiply 7 by 5 to reverse the division.",x:"7 × 5 = 35, so 35 ÷ 5 = 7."},
+{e:"3n = 21",a:"7",o:["5","6","7","8"],h:"The number beside n means multiplication.",x:"21 ÷ 3 = 7, so n = 7."},
+{e:"2x + 5 = 17",a:"6",o:["5","6","7","8"],h:"First subtract 5 from 17, then divide by 2.",x:"17 − 5 = 12 and 12 ÷ 2 = 6, so x = 6."}
+];
+
+let i=0,score=0,streak=0,best=0,soundOn=true,answered=false,attempted=false;
+const $=id=>document.getElementById(id);
+
+function tone(f,d=.12,type="sine"){
+ if(!soundOn)return;
+ try{
+  const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();
+  o.type=type;o.frequency.value=f;g.gain.value=.045;o.connect(g);g.connect(c.destination);o.start();
+  g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.stop(c.currentTime+d)
+ }catch(e){}
+}
+function load(){
+ answered=false;attempted=false;
+ $("num").textContent=i+1;$("score").textContent=score;$("streak").textContent=streak;
+ $("bar").style.width=(i/10*100)+"%";$("expression").textContent=qs[i].e;
+ $("feedback").textContent="";$("explain").style.display="none";$("hint").style.display="none";
+ $("nextBtn").style.display="none";$("hintBtn").style.display="inline-block";
+ const data=[...qs[i].o].sort(()=>Math.random()-.5);
+ $("choices").innerHTML="";
+ data.forEach(v=>{
+  const b=document.createElement("button");b.className="choice";b.textContent=v;
+  b.addEventListener("click",()=>answer(b,v));$("choices").appendChild(b)
+ });
+}
+function answer(btn,v){
+ if(answered)return;
+ const firstAttempt=!attempted;attempted=true;
+ if(v===qs[i].a){
+  answered=true;
+  if(firstAttempt){
+   score++;streak++;best=Math.max(best,streak);
+   $("feedback").textContent="✅ Correct on your first attempt! +1 point";
+  }else{
+   streak=0;$("feedback").textContent="✅ Correct! Learning retry — no point added.";
+  }
+  btn.classList.add("correct");$("explain").textContent="🧠 "+qs[i].x;
+  $("explain").style.display="block";$("nextBtn").style.display="inline-block";$("hintBtn").style.display="none";
+  [...document.querySelectorAll(".choice")].forEach(b=>b.disabled=true);tone(660);
+ }else{
+  streak=0;btn.classList.add("wrong");btn.disabled=true;
+  $("feedback").textContent="❌ Not correct. No point for this vault. Try again to learn.";
+  tone(180,.16,"square");
+ }
+ $("score").textContent=score;$("streak").textContent=streak;
+}
+$("hintBtn").onclick=()=>{$("hint").textContent=qs[i].h;$("hint").style.display="block";tone(420,.08)};
+$("nextBtn").onclick=()=>{i++;if(i>=qs.length)finish();else load()};
+$("sound").onclick=()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Sound ON":"🔇 Sound OFF";if(soundOn)tone(520,.08)};
+
+function finish(){
+ $("game").style.display="none";$("final").style.display="block";
+ $("finalscore").textContent=score+" / 10";$("accuracy").textContent=(score*10)+"%";$("best").textContent=best;
+ if(score===10){
+  $("result").textContent="PERFECT SCORE! Every equation unlocked!";
+  $("trophy").textContent="🏆✨🔓";confetti(80);
+  tone(523,.18);setTimeout(()=>tone(659,.18),180);setTimeout(()=>tone(784,.3),360)
+ }else if(score>=8){
+  $("result").textContent="Excellent equation reasoning!";
+  $("trophy").textContent="🌟🔓"
+ }else if(score>=6){
+  $("result").textContent="Good work. Keep using inverse operations carefully.";
+  $("trophy").textContent="👏🧠"
+ }else{
+  $("result").textContent="Keep practising. Think about the inverse operation that will reveal the missing number.";
+  $("trophy").textContent="💪📚"
+ }
+}
+function confetti(n){
+ for(let j=0;j<n;j++){
+  const e=document.createElement("div");e.className="confetti";
+  e.style.left=Math.random()*100+"vw";e.style.animationDelay=Math.random()*1.2+"s";
+  document.body.appendChild(e);setTimeout(()=>e.remove(),3200)
+ }
+}
+load();
+</script>
+</body>
+</html>

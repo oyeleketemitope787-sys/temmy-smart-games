@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games — Spreadsheet Formula Challenge</title>
+<style>
+:root{--blue:#153b7a;--gold:#c99700;--purple:#6a3fb5;--green:#198754;--red:#c62828}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef3ff,#fff);color:#17233d}
+.container{max-width:940px;margin:auto;padding:18px}
+header{background:linear-gradient(135deg,var(--blue),#315fa9);color:#fff;border-radius:20px;padding:22px;text-align:center;box-shadow:0 8px 24px #0002}
+header h1{margin:0;font-size:clamp(25px,5vw,40px)} header p{margin:8px 0 0}
+.top{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.badge{background:#fff;border:2px solid #dce4f5;border-radius:12px;padding:8px 13px;font-weight:800}
+.sound{border:0;background:#17233d;color:#fff;border-radius:10px;padding:9px 13px;font-weight:800;cursor:pointer}
+.card{background:#fff;border-radius:20px;padding:22px;margin-top:15px;box-shadow:0 6px 20px #0001}
+.progress{height:10px;background:#e5e9f2;border-radius:10px;overflow:hidden;margin:8px 0 20px}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple));transition:.3s}
+.tag{display:inline-block;background:#eee8ff;color:#56339c;padding:6px 10px;border-radius:20px;font-weight:800;font-size:13px}
+.sheet{border:2px solid #d6dce9;border-radius:14px;overflow:hidden;margin:20px auto;max-width:600px;background:#fff}
+.sheet-title{background:#eaf0fb;padding:10px;text-align:left;font-weight:900;color:var(--blue)}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #d6dce9;padding:12px;text-align:center;font-size:18px}
+th{background:#f5f7fb;font-weight:900}
+td.formula{font-weight:900;color:var(--purple);background:#fbf9ff}
+.question{text-align:center;font-size:20px;font-weight:800;margin:18px 0}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.choice{border:3px solid #d9e0ee;background:#fff;border-radius:16px;padding:17px;font-size:19px;font-weight:900;cursor:pointer;transition:.15s}
+.choice:hover:not(:disabled){transform:translateY(-2px);border-color:var(--blue)}
+.choice.correct{background:#e4f7eb;border-color:var(--green);color:#12633b}
+.choice.wrong{background:#ffe8e8;border-color:var(--red);color:#a51f1f}
+.choice:disabled{cursor:not-allowed}
+.feedback{min-height:42px;text-align:center;font-weight:800;margin:14px 0 4px}
+.explain{display:none;background:#eef7ff;border-left:5px solid var(--blue);padding:13px;border-radius:10px;margin-top:10px}
+.hint{display:none;background:#fff8dc;border-left:5px solid var(--gold);padding:13px;border-radius:10px;margin-top:10px}
+.actions{text-align:center;margin-top:15px}
+.action{border:0;border-radius:12px;padding:11px 18px;font-weight:800;cursor:pointer;margin:4px}
+.hintbtn{background:#f0e9ff;color:#56339c}.next{background:var(--blue);color:#fff;display:none}
+#final{display:none;text-align:center}.trophy{font-size:58px;animation:pulse .8s infinite alternate}
+@keyframes pulse{to{transform:scale(1.12)}}
+.finalscore{font-size:48px;font-weight:900;color:var(--blue);margin:12px}.result{font-size:20px;font-weight:800}
+.confetti{position:fixed;top:-15px;width:10px;height:18px;animation:fall 2.5s linear forwards;z-index:10}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+@media(max-width:600px){.choices{grid-template-columns:1fr}.card{padding:16px}th,td{font-size:16px;padding:9px}}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>📊 Spreadsheet Formula Challenge</h1>
+<p>Read the data, choose the correct formula, and think like a spreadsheet mathematician.</p>
+</header>
+
+<div class="top">
+<div class="badge">⭐ Actual Score: <span id="score">0</span>/10</div>
+<div class="badge">🔥 Streak: <span id="streak">0</span></div>
+<div class="badge">🎯 Task: <span id="num">1</span>/10</div>
+<button class="sound" id="sound">🔊 Sound ON</button>
+</div>
+
+<div class="card" id="game">
+<div class="progress"><div class="bar" id="bar"></div></div>
+<span class="tag">FORMULA THINKING</span>
+<div class="sheet" id="sheet"></div>
+<div class="question" id="question"></div>
+<div class="choices" id="choices"></div>
+<div class="feedback" id="feedback"></div>
+<div class="explain" id="explain"></div>
+<div class="hint" id="hint"></div>
+<div class="actions">
+<button class="action hintbtn" id="hintBtn">💡 Hint</button>
+<button class="action next" id="nextBtn">Next →</button>
+</div>
+</div>
+
+<div class="card" id="final">
+<div class="trophy" id="trophy">🏆</div>
+<h2>Spreadsheet Formula Challenge Complete!</h2>
+<div class="finalscore" id="finalscore">0 / 10</div>
+<div class="result" id="result"></div>
+<p>Accuracy: <b id="accuracy"></b> &nbsp; | &nbsp; Best streak: <b id="best"></b></p>
+<button class="action next" style="display:inline-block" onclick="location.reload()">🔄 Play Again</button>
+</div>
+</div>
+
+<script>
+const qs=[
+{rows:[["Item","Price (OMR)","Quantity"],["Notebook","2", "3"],["Pen","1","5"]],q:"Which expression calculates the total cost of the notebooks?",a:"2 × 3",o:["2 + 3","2 × 3","2 − 3","3 ÷ 2"],h:"Total cost = price × quantity.",x:"The notebook costs 2 OMR each and there are 3, so 2 × 3 = 6 OMR."},
+{rows:[["Item","Price (OMR)","Quantity"],["Book","6","4"],["Pencil","1","2"]],q:"Which expression calculates the total cost of the books?",a:"6 × 4",o:["6 + 4","6 × 4","4 − 6","6 ÷ 4"],h:"Multiply the price by the number of books.",x:"6 × 4 = 24 OMR."},
+{rows:[["Student","Math","English"],["A","14","16"],["B","12","18"]],q:"Which expression finds Student A's combined score?",a:"14 + 16",o:["14 − 16","14 + 16","14 × 16","16 ÷ 14"],h:"A combined score means add the two scores.",x:"14 + 16 = 30."},
+{rows:[["Day","Morning","Afternoon"],["Mon","12","18"],["Tue","15","20"]],q:"Which expression finds the total number of cars on Monday?",a:"12 + 18",o:["12 × 18","18 − 12","12 + 18","18 ÷ 12"],h:"Total means combine the two counts.",x:"12 + 18 = 30 cars."},
+{rows:[["Item","Old Price","New Price"],["Bag","25","20"],["Shoes","40","35"]],q:"Which expression finds the decrease in the bag's price?",a:"25 − 20",o:["25 + 20","20 − 25","25 − 20","25 ÷ 20"],h:"Decrease = old value − new value.",x:"25 − 20 = 5 OMR."},
+{rows:[["Name","Hours","Rate (OMR)"],["Ali","4","3"],["Sara","5","3"]],q:"Which expression finds Ali's pay?",a:"4 × 3",o:["4 + 3","4 × 3","4 − 3","3 ÷ 4"],h:"Pay = hours × rate.",x:"4 × 3 = 12 OMR."},
+{rows:[["Box","Length","Width"],["A","8","5"],["B","6","4"]],q:"Which expression finds the area of Box A?",a:"8 × 5",o:["8 + 5","8 − 5","8 × 5","8 ÷ 5"],h:"Area of a rectangle = length × width.",x:"8 × 5 = 40 square units."},
+{rows:[["Test","Correct","Total"],["A","18","20"],["B","15","20"]],q:"Which expression finds the number of incorrect answers in Test A?",a:"20 − 18",o:["18 + 20","18 − 20","20 − 18","20 ÷ 18"],h:"Incorrect = total − correct.",x:"20 − 18 = 2 incorrect answers."},
+{rows:[["Product","Price","Discount"],["A","30","5"],["B","45","10"]],q:"Which expression finds the price after the discount for Product A?",a:"30 − 5",o:["30 + 5","30 − 5","5 − 30","30 × 5"],h:"A discount is subtracted from the original price.",x:"30 − 5 = 25 OMR."},
+{rows:[["Team","Round 1","Round 2"],["Red","12","15"],["Blue","14","13"]],q:"Which expression finds the Red team's total score?",a:"12 + 15",o:["12 × 15","15 − 12","12 + 15","15 ÷ 12"],h:"A total score combines Round 1 and Round 2.",x:"12 + 15 = 27 points."}
+];
+
+let i=0,score=0,streak=0,best=0,soundOn=true,answered=false,attempted=false;
+const $=id=>document.getElementById(id);
+function tone(f,d=.12,type="sine"){if(!soundOn)return;try{const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;g.gain.value=.045;o.connect(g);g.connect(c.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.stop(c.currentTime+d)}catch(e){}}
+function renderTable(rows){
+ let h="<div class='sheet-title'>Data Sheet</div><table><tbody>";
+ rows.forEach((r,ri)=>{h+="<tr>";r.forEach(c=>{h+=(ri===0?"<th>":"<td>")+c+(ri===0?"</th>":"</td>")});h+="</tr>"});
+ return h+"</tbody></table>";
+}
+function load(){
+ answered=false;attempted=false;$("num").textContent=i+1;$("score").textContent=score;$("streak").textContent=streak;
+ $("bar").style.width=(i/10*100)+"%";$("sheet").innerHTML=renderTable(qs[i].rows);$("question").textContent=qs[i].q;
+ $("feedback").textContent="";$("explain").style.display="none";$("hint").style.display="none";$("nextBtn").style.display="none";$("hintBtn").style.display="inline-block";
+ const data=[...qs[i].o].sort(()=>Math.random()-.5);$("choices").innerHTML="";
+ data.forEach(v=>{const b=document.createElement("button");b.className="choice";b.textContent=v;b.addEventListener("click",()=>answer(b,v));$("choices").appendChild(b)});
+}
+function answer(btn,v){
+ if(answered)return;const firstAttempt=!attempted;attempted=true;
+ if(v===qs[i].a){
+  answered=true;
+  if(firstAttempt){score++;streak++;best=Math.max(best,streak);$("feedback").textContent="✅ Correct on your first attempt! +1 point"}
+  else{streak=0;$("feedback").textContent="✅ Correct! Learning retry — no point added."}
+  btn.classList.add("correct");$("explain").textContent="🧠 "+qs[i].x;$("explain").style.display="block";$("nextBtn").style.display="inline-block";$("hintBtn").style.display="none";
+  [...document.querySelectorAll(".choice")].forEach(b=>b.disabled=true);tone(660)
+ }else{
+  streak=0;btn.classList.add("wrong");btn.disabled=true;$("feedback").textContent="❌ Not the best formula. No point for this task. Try again to learn.";tone(180,.16,"square")
+ }
+ $("score").textContent=score;$("streak").textContent=streak;
+}
+$("hintBtn").onclick=()=>{$("hint").textContent=qs[i].h;$("hint").style.display="block";tone(420,.08)};
+$("nextBtn").onclick=()=>{i++;if(i>=qs.length)finish();else load()};
+$("sound").onclick=()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Sound ON":"🔇 Sound OFF";if(soundOn)tone(520,.08)};
+function finish(){
+ $("game").style.display="none";$("final").style.display="block";$("finalscore").textContent=score+" / 10";$("accuracy").textContent=(score*10)+"%";$("best").textContent=best;
+ if(score===10){$("result").textContent="PERFECT SCORE! You built every formula correctly!";$("trophy").textContent="🏆✨📊";confetti(80);tone(523,.18);setTimeout(()=>tone(659,.18),180);setTimeout(()=>tone(784,.3),360)}
+ else if(score>=8){$("result").textContent="Excellent formula thinking!";$("trophy").textContent="🌟📊"}
+ else if(score>=6){$("result").textContent="Good work. Keep connecting the data to the correct operation.";$("trophy").textContent="👏🧠"}
+ else{$("result").textContent="Keep practising. Read what the data is asking you to calculate.";$("trophy").textContent="💪📚"}
+}
+function confetti(n){for(let j=0;j<n;j++){const e=document.createElement("div");e.className="confetti";e.style.left=Math.random()*100+"vw";e.style.animationDelay=Math.random()*1.2+"s";document.body.appendChild(e);setTimeout(()=>e.remove(),3200)}}
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temmy Smart Games — Algebra Shop</title>
+<style>
+:root{--blue:#153b7a;--gold:#c99700;--purple:#6b3fa0;--green:#16834b;--red:#c93636;--ink:#17233c}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef4ff,#fff9e9);color:var(--ink)}
+.app{max-width:1000px;margin:auto;padding:18px}.top{background:linear-gradient(135deg,var(--blue),#315ca8);color:#fff;border-radius:23px;padding:20px;box-shadow:0 10px 28px #153b7a24}.brand{font-size:25px;font-weight:900;letter-spacing:1px}.sub{margin-top:5px;opacity:.9}.bar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:16px}.pill{background:#ffffff20;border:1px solid #ffffff40;border-radius:999px;padding:8px 13px;font-weight:800}.sound{margin-left:auto;border:0;border-radius:12px;padding:9px 14px;font-weight:900;color:var(--blue);background:#fff;cursor:pointer}
+.card{background:#fff;border-radius:22px;padding:25px;margin-top:18px;box-shadow:0 8px 26px #253b5c18}.progress{height:10px;background:#e8edf5;border-radius:20px;overflow:hidden}.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--purple));transition:.35s}.round{color:var(--purple);font-weight:900;font-size:14px;margin:15px 0 7px}.mission{font-size:27px;font-weight:900;text-align:center;margin:10px 0 15px}
+.shop{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:15px}.item{border:2px solid #dce3ee;border-radius:18px;padding:18px;background:#fbfcff}.icon{font-size:42px;text-align:center}.item h3{text-align:center;margin:8px 0;color:var(--blue)}.price{text-align:center;font-weight:1000;color:var(--purple);font-size:20px}.rule{background:#f4f7fc;border:2px dashed #ccd6e7;border-radius:16px;padding:15px;text-align:center;font-size:18px;font-weight:850;line-height:1.45;margin-top:14px}.question{font-size:19px;font-weight:900;text-align:center;margin:18px 0 12px}.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}.choice{border:2px solid #dce3ee;background:#fff;border-radius:15px;padding:15px;cursor:pointer;font-size:18px;font-weight:900;transition:.15s}.choice:hover{border-color:var(--purple);background:#faf7ff;transform:translateY(-2px)}.choice.wrong{background:#ffe9e9;border-color:var(--red);color:#a31f1f;cursor:not-allowed}.choice.correct{background:#e8faef;border-color:var(--green);color:#0d6738}.choice:disabled{opacity:1}.feedback{min-height:58px;margin-top:16px;padding:13px 16px;background:#f5f7fb;border-radius:15px;font-weight:700;line-height:1.45}.hint{margin-top:12px;padding:11px;border-radius:12px;background:#fff7d9;border:1px solid #efd36a;color:#705600;font-weight:700}.actions{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px}.btn{border:0;border-radius:13px;padding:12px 18px;font-weight:900;cursor:pointer}.hintBtn{background:#fff2c5;color:#6d5300}.next{background:var(--blue);color:#fff;min-width:120px}.next:disabled{opacity:.4;cursor:not-allowed}
+.result{text-align:center;display:none;overflow:hidden}.result.show{display:block;animation:pop .6s ease}.trophy{font-size:74px;animation:bounce 1s infinite alternate}.celebrate{font-size:26px;font-weight:1000;color:var(--purple)}.final{font-size:54px;font-weight:1000;color:var(--blue);margin:8px}.stats{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:17px}.stat{background:#f3f6fb;border-radius:14px;padding:12px 18px;font-weight:900}.replay{background:var(--gold);color:#241c00}.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden}.piece{position:absolute;top:-20px;width:9px;height:16px;animation:fall 2.7s linear forwards}.footer{text-align:center;color:#667085;font-size:13px;padding:18px}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@media(max-width:680px){.shop,.choices{grid-template-columns:1fr}.mission{font-size:23px}.sound{margin-left:0}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+<div class="brand">TEMMY SMART GAMES</div>
+<div class="sub">Grade 7 Mathematics • Unit 5: Expressions</div>
+<div class="bar">
+<span class="pill">🛒 ALGEBRA SHOP</span><span class="pill" id="score">⭐ Score: 0/10</span><span class="pill" id="streak">🔥 Streak: 0</span>
+<button class="sound" id="sound">🔊 Sound ON</button>
+</div>
+</header>
+
+<section class="card" id="game">
+<div class="progress"><div id="fill"></div></div>
+<div class="round" id="round"></div>
+<div class="mission">Turn the shopping situation into algebra.</div>
+<div class="shop" id="shop"></div>
+<div class="rule" id="rule"></div>
+<div class="question">Which expression represents the total cost?</div>
+<div class="choices" id="choices"></div>
+<div class="feedback" id="feedback">Read the quantities and prices carefully.</div>
+<div id="hint"></div>
+<div class="actions"><button class="btn hintBtn" id="hintBtn">💡 Hint</button><button class="btn next" id="next" disabled>Next →</button></div>
+</section>
+
+<section class="card result" id="result">
+<div class="trophy" id="trophy">🏆</div><div class="celebrate" id="celebrate"></div>
+<div class="final" id="final"></div>
+<div class="stats"><div class="stat" id="accuracy"></div><div class="stat" id="best"></div></div>
+<p id="resultText"></p><button class="btn replay" id="replay">🔄 Shop Again</button>
+</section>
+<div class="footer">Learn • Play • Think • Achieve</div><div class="confetti" id="confetti"></div>
+</div>
+
+<script>
+const cases=[
+{items:[["📘","Notebook","n + 2"],["✏️","Pen","3"]],rule:"Buy one notebook and 3 pens. A notebook costs n OMR; each pen costs 3 OMR.",a:"n + 9",o:["n+3","3n","n+9","9n"],e:"One notebook costs n and 3 pens cost 3 × 3 = 9, so total = n + 9.",h:"Multiply the price of one pen by 3."},
+{items:[["🎒","Bag","b"],["📓","Notebook","4"]],rule:"Buy 2 notebooks and one bag. The bag costs b OMR; each notebook costs 4 OMR.",a:"b + 8",o:["2b+4","b+8","b+4","8b"],e:"Two notebooks cost 2 × 4 = 8. Add the bag: b + 8.",h:"There are two notebooks at 4 OMR each."},
+{items:[["🍎","Apple","2"],["🥤","Juice","j"]],rule:"Buy 5 apples at 2 OMR each and one juice costing j OMR.",a:"10 + j",o:["5+j","10j","10+j","2j+5"],e:"Five apples cost 5 × 2 = 10. Add j for the juice.",h:"Find the total apple cost first."},
+{items:[["📕","Book","x"],["🖊️","Pen","2"]],rule:"Buy 3 books at x OMR each and 4 pens at 2 OMR each.",a:"3x + 8",o:["3x+6","x+8","3x+8","8x+3"],e:"Three books cost 3x. Four pens cost 4 × 2 = 8. Total = 3x + 8.",h:"There are 3 x-cost books and 4 pens costing 2 each."},
+{items:[["🍪","Cookie","1"],["🎂","Cake","c"]],rule:"Buy 6 cookies at 1 OMR each and 2 cakes at c OMR each.",a:"6 + 2c",o:["6c+2","6+2c","8c","c+6"],e:"Six cookies cost 6. Two cakes cost 2c. Total = 6 + 2c.",h:"Multiply the cake price by 2."},
+{items:[["🧃","Drink","d"],["🥪","Sandwich","5"]],rule:"Buy 2 drinks at d OMR each and 3 sandwiches at 5 OMR each.",a:"2d + 15",o:["2d+8","d+15","2d+15","15d+2"],e:"Two drinks cost 2d. Three sandwiches cost 15. Total = 2d + 15.",h:"Three sandwiches at 5 OMR each cost 15."},
+{items:[["🎨","Paint set","p"],["🖌️","Brush","4"]],rule:"Buy 4 paint sets at p OMR each and 2 brushes at 4 OMR each.",a:"4p + 8",o:["4p+6","p+8","4p+8","8p+4"],e:"Four paint sets cost 4p. Two brushes cost 8. Total = 4p + 8.",h:"There are 4 p-cost sets and 2 brushes at 4 OMR."},
+{items:[["⚽","Ball","q"],["🧦","Socks","3"]],rule:"Buy 2 balls at q OMR each and 5 pairs of socks at 3 OMR each.",a:"2q + 15",o:["2q+8","q+15","2q+15","15q+2"],e:"Two balls cost 2q. Five pairs of socks cost 15. Total = 2q + 15.",h:"Calculate the socks cost first: 5 × 3."},
+{items:[["🍕","Pizza","p"],["🥤","Drink","2"]],rule:"Buy 3 pizzas at p OMR each and 4 drinks at 2 OMR each.",a:"3p + 8",o:["3p+6","p+8","3p+8","8p+3"],e:"Three pizzas cost 3p. Four drinks cost 8. Total = 3p + 8.",h:"There are 4 drinks costing 2 OMR each."},
+{items:[["🎁","Gift box","g"],["🏷️","Card","1"]],rule:"Buy 2 gift boxes at g OMR each and 7 cards at 1 OMR each.",a:"2g + 7",o:["2g+1","g+7","2g+7","7g+2"],e:"Two gift boxes cost 2g. Seven cards cost 7. Total = 2g + 7.",h:"Seven cards at 1 OMR each cost 7."}
+];
+
+let qs=[],i=0,score=0,streak=0,best=0,locked=false,soundOn=true,audioCtx=null;
+const $=id=>document.getElementById(id);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function ensureAudio(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();return audioCtx}catch(e){return null}}
+function beep(f,d=.12,type="sine"){if(!soundOn)return;const c=ensureAudio();if(!c)return;try{const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(f,c.currentTime);g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.16,c.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+d);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d+.03)}catch(e){}}
+function correctSound(){beep(660,.09);setTimeout(()=>beep(880,.12),90)}function wrongSound(){beep(180,.15,"square")}
+function norm(x){return String(x).replace(/\s+/g,"").replace(/−/g,"-")}
+function load(){
+ const q=qs[i];locked=false;$("fill").style.width=(i/qs.length*100)+"%";$("round").textContent=`SHOP ${i+1} OF ${qs.length}`;
+ $("shop").innerHTML=q.items.map(x=>`<div class="item"><div class="icon">${x[0]}</div><h3>${x[1]}</h3><div class="price">${x[2]} OMR</div></div>`).join("");
+ $("rule").textContent=q.rule;$("feedback").textContent="Read the quantities and prices carefully.";$("hint").innerHTML="";$("next").disabled=true;$("hintBtn").disabled=false;$("choices").innerHTML="";
+ shuffle(q.o).forEach(x=>{const b=document.createElement("button");b.className="choice";b.textContent=x;b.addEventListener("click",()=>choose(b,x,q));$("choices").appendChild(b)})
+}
+function choose(btn,x,q){
+ if(locked||btn.disabled)return;
+ if(norm(x)===norm(q.a)){locked=true;score++;streak++;best=Math.max(best,streak);correctSound();btn.classList.add("correct");[...$("choices").children].forEach(b=>b.disabled=true);$("feedback").innerHTML=`✅ <b>Purchase solved!</b><br>${q.e}`;$("next").disabled=false;$("hintBtn").disabled=true}
+ else{streak=0;wrongSound();btn.classList.add("wrong");btn.disabled=true;$("feedback").textContent="❌ That total does not match the quantities and prices. Try another expression."}
+ update()
+}
+function update(){$("score").textContent=`⭐ Score: ${score}/${qs.length}`;$("streak").textContent=`🔥 Streak: ${streak}`}
+$("hintBtn").onclick=()=>{const q=qs[i];$("hint").innerHTML=`<div class="hint">💡 Hint: ${q.h}</div>`;beep(440,.1)};
+$("next").onclick=()=>{i++;if(i<qs.length)load();else finish()};
+$("sound").onclick=()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Sound ON":"🔇 Sound OFF";if(soundOn){ensureAudio();beep(660,.1);setTimeout(()=>beep(880,.12),110)}};
+function confetti(){ $("confetti").innerHTML="";for(let n=0;n<90;n++){let p=document.createElement("i");p.className="piece";p.style.left=Math.random()*100+"%";p.style.background=["#153b7a","#c99700","#6b3fa0","#16834b","#e85d75"][Math.floor(Math.random()*5)];p.style.animationDelay=Math.random()*1.2+"s";$("confetti").appendChild(p)}setTimeout(()=>$("confetti").innerHTML="",3500)}
+function finish(){
+ $("game").style.display="none";$("result").classList.add("show");let pct=Math.round(score/qs.length*100);$("final").textContent=`${score} / ${qs.length} Base Points`;$("accuracy").textContent=`🎯 Accuracy: ${pct}%`;$("best").textContent=`🔥 Best Streak: ${best}`;
+ if(pct===100){$("trophy").textContent="🏆";$("celebrate").textContent="PERFECT SHOPPER!";$("resultText").textContent="Every shopping situation was translated into the correct algebraic expression.";confetti()}
+ else if(pct>=90){$("trophy").textContent="🥇";$("celebrate").textContent="EXCELLENT ALGEBRA WORK!";$("resultText").textContent="You translated quantities and prices into algebra accurately."}
+ else if(pct>=75){$("trophy").textContent="🥈";$("celebrate").textContent="STRONG WORK!";$("resultText").textContent="Good progress. Review any totals you missed and try again."}
+ else{$("trophy").textContent="🛒";$("celebrate").textContent="KEEP SHOPPING WITH ALGEBRA!";$("resultText").textContent="Separate the variable cost from the fixed cost, then build the total."}
+ [523,659,784,1047].forEach((f,n)=>setTimeout(()=>beep(f,.16),n*100))
+}
+$("replay").onclick=()=>{qs=shuffle(cases);i=0;score=0;streak=0;best=0;update();$("result").classList.remove("show");$("result").style.display="none";$("game").style.display="block";load()};
+qs=shuffle(cases);update();load();
+</script>
+</body>
+</html>

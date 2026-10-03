@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games — Order Matters!</title>
+<style>
+:root{--blue:#153b7a;--gold:#c99700;--purple:#6a3fb5;--green:#198754;--red:#c62828}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef3ff,#fff);color:#17233d}
+.container{max-width:940px;margin:auto;padding:18px}
+header{background:linear-gradient(135deg,var(--blue),#315fa9);color:#fff;border-radius:20px;padding:22px;text-align:center;box-shadow:0 8px 24px #0002}
+header h1{margin:0;font-size:clamp(26px,5vw,40px)}header p{margin:8px 0 0}
+.top{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0}.badge{background:#fff;border:2px solid #dce4f5;border-radius:12px;padding:8px 13px;font-weight:800}
+.sound{border:0;background:#17233d;color:#fff;border-radius:10px;padding:9px 13px;font-weight:800;cursor:pointer}
+.card{background:#fff;border-radius:20px;padding:22px;margin-top:15px;box-shadow:0 6px 20px #0001}
+.progress{height:10px;background:#e5e9f2;border-radius:10px;overflow:hidden;margin:8px 0 20px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple));transition:.3s}
+.tag{display:inline-block;background:#eee8ff;color:#56339c;padding:6px 10px;border-radius:20px;font-weight:800;font-size:13px}
+.expression{font-size:clamp(30px,7vw,52px);font-weight:900;text-align:center;margin:25px 0 12px}
+.question{text-align:center;font-size:19px;font-weight:700;margin-bottom:22px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.choice{border:3px solid #d9e0ee;background:#fff;border-radius:16px;padding:16px;font-size:20px;font-weight:800;cursor:pointer;transition:.15s}
+.choice:hover:not(:disabled){transform:translateY(-2px);border-color:var(--blue)}
+.choice.correct{background:#e4f7eb;border-color:var(--green);color:#12633b}.choice.wrong{background:#ffe8e8;border-color:var(--red);color:#a51f1f}
+.choice:disabled{cursor:not-allowed}
+.feedback{min-height:42px;text-align:center;font-weight:800;margin:14px 0 4px}
+.explain{display:none;background:#eef7ff;border-left:5px solid var(--blue);padding:12px;border-radius:10px;margin-top:10px}
+.hint{display:none;background:#fff8dc;border-left:5px solid var(--gold);padding:12px;border-radius:10px;margin-top:10px}
+.actions{text-align:center;margin-top:15px}.action{border:0;border-radius:12px;padding:11px 18px;font-weight:800;cursor:pointer;margin:4px}.hintbtn{background:#f0e9ff;color:#56339c}.next{background:var(--blue);color:#fff;display:none}
+#final{display:none;text-align:center}.trophy{font-size:58px;animation:pulse .8s infinite alternate}@keyframes pulse{to{transform:scale(1.12)}}
+.finalscore{font-size:48px;font-weight:900;color:var(--blue);margin:12px}.result{font-size:20px;font-weight:800}
+.confetti{position:fixed;top:-15px;width:10px;height:18px;animation:fall 2.5s linear forwards;z-index:10}@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+@media(max-width:600px){.choices{grid-template-columns:1fr}.card{padding:16px}}
+</style>
+</head>
+<body>
+<div class="container">
+<header><h1>🔢 Order Matters!</h1><p>Use the correct order to evaluate each algebraic expression.</p></header>
+<div class="top">
+<div class="badge">⭐ Score: <span id="score">0</span>/10</div>
+<div class="badge">🔥 Streak: <span id="streak">0</span></div>
+<div class="badge">🎯 Question: <span id="num">1</span>/10</div>
+<button class="sound" id="sound">🔊 Sound ON</button>
+</div>
+
+<div class="card" id="game">
+<div class="progress"><div class="bar" id="bar"></div></div>
+<span class="tag" id="tag">ORDER OF OPERATIONS</span>
+<div class="expression" id="expression"></div>
+<div class="question" id="question"></div>
+<div class="choices" id="choices"></div>
+<div class="feedback" id="feedback"></div>
+<div class="explain" id="explain"></div>
+<div class="hint" id="hint"></div>
+<div class="actions">
+<button class="action hintbtn" id="hintBtn">💡 Hint</button>
+<button class="action next" id="nextBtn">Next →</button>
+</div>
+</div>
+
+<div class="card" id="final">
+<div class="trophy" id="trophy">🏆</div>
+<h2>Order Matters Complete!</h2>
+<div class="finalscore" id="finalscore">0 / 10</div>
+<div class="result" id="result"></div>
+<p>Accuracy: <b id="accuracy"></b> &nbsp; | &nbsp; Best streak: <b id="best"></b></p>
+<button class="action next" style="display:inline-block" onclick="location.reload()">🔄 Play Again</button>
+</div>
+</div>
+
+<script>
+const qs=[
+{e:"3 + 4 × 2",q:"What is the value?",a:"11",opts:["14","11","10","9"],h:"Multiplication is completed before addition.",x:"4 × 2 = 8, then 3 + 8 = 11."},
+{e:"(3 + 4) × 2",q:"What is the value?",a:"14",opts:["11","14","10","18"],h:"Calculate the brackets first.",x:"3 + 4 = 7, then 7 × 2 = 14."},
+{e:"18 − 6 ÷ 3",q:"What is the value?",a:"16",opts:["4","12","16","6"],h:"Division comes before subtraction.",x:"6 ÷ 3 = 2, then 18 − 2 = 16."},
+{e:"(18 − 6) ÷ 3",q:"What is the value?",a:"4",opts:["4","6","16","12"],h:"Calculate inside the brackets first.",x:"18 − 6 = 12, then 12 ÷ 3 = 4."},
+{e:"5 + 2 × 6",q:"Which answer is correct?",a:"17",opts:["42","17","30","22"],h:"Do the multiplication before the addition.",x:"2 × 6 = 12, then 5 + 12 = 17."},
+{e:"20 − 3 × 4",q:"What is the value?",a:"8",opts:["68","17","8","12"],h:"Multiply before subtracting.",x:"3 × 4 = 12, then 20 − 12 = 8."},
+{e:"(20 − 3) × 4",q:"What is the value?",a:"68",opts:["8","68","23","17"],h:"The brackets change the order.",x:"20 − 3 = 17, then 17 × 4 = 68."},
+{e:"24 ÷ 6 + 5",q:"What is the value?",a:"9",opts:["4","29","9","14"],h:"Divide before adding.",x:"24 ÷ 6 = 4, then 4 + 5 = 9."},
+{e:"2 × (7 + 3)",q:"What is the value?",a:"20",opts:["17","20","13","23"],h:"Work inside the brackets first.",x:"7 + 3 = 10, then 2 × 10 = 20."},
+{e:"30 − 12 ÷ 4 + 2",q:"What is the value?",a:"29",opts:["5","29","20","26"],h:"Do division first, then work from left to right with addition/subtraction.",x:"12 ÷ 4 = 3; 30 − 3 + 2 = 29."}
+];
+let i=0,score=0,streak=0,best=0,soundOn=true,answered=false;
+const $=id=>document.getElementById(id);
+function tone(f,d=.12,type="sine"){if(!soundOn)return;try{let C=AudioContext||webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;g.gain.value=.045;o.connect(g);g.connect(c.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.stop(c.currentTime+d)}catch(e){}}
+function load(){
+ answered=false;$("num").textContent=i+1;$("score").textContent=score;$("streak").textContent=streak;$("bar").style.width=(i/10*100)+"%";
+ $("expression").textContent=qs[i].e;$("question").textContent=qs[i].q;$("feedback").textContent="";$("explain").style.display="none";$("hint").style.display="none";$("nextBtn").style.display="none";$("hintBtn").style.display="inline-block";
+ let data=[...qs[i].opts].sort(()=>Math.random()-.5);$("choices").innerHTML="";
+ data.forEach(v=>{let b=document.createElement("button");b.className="choice";b.textContent=v;b.addEventListener("click",()=>answer(b,v));$("choices").appendChild(b)});
+}
+function answer(btn,v){
+ if(answered)return;
+ if(v===qs[i].a){
+  answered=true;score++;streak++;best=Math.max(best,streak);btn.classList.add("correct");$("feedback").textContent="✅ Correct!";$("explain").textContent="🧠 "+qs[i].x;$("explain").style.display="block";$("nextBtn").style.display="inline-block";$("hintBtn").style.display="none";[...document.querySelectorAll(".choice")].forEach(b=>b.disabled=true);tone(660);
+ }else{
+  streak=0;btn.classList.add("wrong");btn.disabled=true;$("feedback").textContent="❌ Not quite. Try another answer.";tone(180,.16,"square");
+ }
+ $("score").textContent=score;$("streak").textContent=streak;
+}
+$("hintBtn").onclick=()=>{$("hint").textContent=qs[i].h;$("hint").style.display="block";tone(420,.08)};
+$("nextBtn").onclick=()=>{i++;if(i>=qs.length)finish();else load()};
+$("sound").onclick=()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Sound ON":"🔇 Sound OFF";if(soundOn)tone(520,.08)};
+function finish(){
+ $("game").style.display="none";$("final").style.display="block";$("finalscore").textContent=score+" / 10";$("accuracy").textContent=(score*10)+"%";$("best").textContent=best;
+ if(score===10){$("result").textContent="PERFECT SCORE! You mastered the order!";$("trophy").textContent="🏆✨🎉";confetti(80);tone(523,.18);setTimeout(()=>tone(659,.18),180);setTimeout(()=>tone(784,.3),360)}
+ else if(score>=8){$("result").textContent="Excellent! You handled the order carefully.";$("trophy").textContent="🌟🧠"}
+ else if(score>=6){$("result").textContent="Good work. Keep checking the order of operations.";$("trophy").textContent="👏📘"}
+ else{$("result").textContent="Keep practising. Look for brackets and multiplication/division first.";$("trophy").textContent="💪📚"}
+}
+function confetti(n){for(let j=0;j<n;j++){let e=document.createElement("div");e.className="confetti";e.style.left=Math.random()*100+"vw";e.style.animationDelay=Math.random()*1.2+"s";document.body.appendChild(e);setTimeout(()=>e.remove(),3200)}}
+load();
+</script>
+</body>
+</html>

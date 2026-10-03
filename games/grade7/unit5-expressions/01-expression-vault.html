@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games — Expression Vault</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#153b7a,#4b237c);color:#17213a;min-height:100vh}.wrap{max-width:1050px;margin:auto;padding:20px}.top{background:white;border-radius:22px;padding:18px 22px;box-shadow:0 10px 30px #0003;display:flex;justify-content:space-between;align-items:center;gap:15px}.brand{font-weight:900;color:#153b7a;letter-spacing:.8px}.title{font-size:clamp(25px,4vw,40px);font-weight:900;color:#153b7a}.subtitle{color:#586174}.stats{display:flex;gap:10px;flex-wrap:wrap}.soundBtn{border:2px solid #153b7a;background:#fff;color:#153b7a;border-radius:12px;padding:9px 13px;font-weight:900;cursor:pointer}.soundBtn.off{background:#eef1f6;color:#667085;border-color:#98a2b3}.stat{background:#f2f5fb;border-radius:12px;padding:9px 13px;font-weight:800}.game{margin-top:18px;background:#fff;border-radius:24px;padding:28px;box-shadow:0 15px 40px #0004}.progress{height:10px;background:#e6eaf2;border-radius:20px;overflow:hidden}.bar{height:100%;width:0;background:#c99700;transition:.3s}.round{margin:18px 0 8px;color:#153b7a;font-weight:900}.question{font-size:clamp(22px,3vw,32px);font-weight:900;line-height:1.35;margin:12px 0 20px}.prompt{font-size:18px;color:#555f73;margin-bottom:18px}.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.choice{border:3px solid #dbe2ef;background:#f8faff;border-radius:16px;padding:17px;font-size:18px;font-weight:800;cursor:pointer;text-align:left;transition:.15s}.choice:hover:not(:disabled){transform:translateY(-2px);border-color:#153b7a}.choice.correct{background:#dff7e7;border-color:#22a45a;color:#126638}.choice.wrong{background:#ffe1e1;border-color:#d33;color:#8e1f1f}.choice:disabled{cursor:not-allowed}.feedback{margin-top:18px;padding:15px;border-radius:15px;background:#f4f6fa;display:none;line-height:1.5}.feedback.show{display:block}.hint{margin-top:12px;color:#6b5870;font-size:14px}.controls{display:flex;justify-content:space-between;gap:10px;margin-top:20px}.btn{border:0;border-radius:13px;padding:13px 19px;font-weight:900;cursor:pointer}.hintBtn{background:#efe6ff;color:#54277f}.next{background:#153b7a;color:white}.next:disabled{opacity:.4;cursor:not-allowed}.result{display:none;text-align:center;padding:15px}.result h2{font-size:38px;color:#153b7a;margin:8px}.bigscore{font-size:30px;font-weight:900;color:#c99700}.medal{font-size:60px}.restart{background:#c99700;color:#fff;margin-top:15px}.footer{text-align:center;color:#fff;padding:18px;font-size:13px;opacity:.9}.result.showResult{animation:resultIn .65s cubic-bezier(.2,.9,.25,1) both}.result .medal{animation:medalPop .8s cubic-bezier(.2,1.5,.4,1) .15s both}.result .bigscore{animation:scorePulse 1s ease .35s both}.result h2{animation:titleGlow .9s ease .45s both}.celebrate{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}.confetti{position:absolute;top:-20px;width:9px;height:15px;animation:fall 1.8s linear forwards;opacity:0}.spark{position:absolute;font-size:24px;animation:sparkle 1.1s ease-out forwards;opacity:0}.scorePerfect{animation:scoreBurst 1.1s ease both}.scoreStrong{animation:scoreGlow .9s ease both}@keyframes resultIn{from{opacity:0;transform:translateY(25px) scale(.94)}to{opacity:1;transform:none}}@keyframes medalPop{0%{transform:scale(.2) rotate(-18deg);opacity:0}70%{transform:scale(1.18) rotate(5deg);opacity:1}100%{transform:scale(1) rotate(0)}}@keyframes scorePulse{0%{transform:scale(.7);opacity:0}55%{transform:scale(1.16);opacity:1}100%{transform:scale(1)}}@keyframes titleGlow{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:none}}@keyframes scoreBurst{0%{transform:scale(.8);text-shadow:none}45%{transform:scale(1.22);text-shadow:0 0 18px #c99700}100%{transform:scale(1)}}@keyframes scoreGlow{0%{transform:scale(.9)}50%{transform:scale(1.1);text-shadow:0 0 12px #c99700}100%{transform:scale(1)}}@keyframes fall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}@keyframes sparkle{0%{transform:scale(.2) translateY(20px);opacity:0}35%{opacity:1}100%{transform:scale(1.5) translateY(-80px);opacity:0}}
+@media(max-width:700px){.top{flex-direction:column;align-items:flex-start}.choices{grid-template-columns:1fr}.game{padding:20px}.question{font-size:23px}}
+</style></head>
+<body><div class="wrap">
+<div class="top"><div><div class="brand">TEMMY SMART GAMES</div><div class="title">🔐 Expression Vault</div><div class="subtitle">Grade 7 • Unit 5: Expressions</div></div><div class="stats"><button class="soundBtn" id="soundBtn" type="button" aria-pressed="true">🔊 Sound ON</button><div class="stat">⭐ Score: <span id="score">0</span>/<span id="total">10</span></div><div class="stat">🔥 Streak: <span id="streak">0</span></div><div class="stat">🎯 Accuracy: <span id="accuracy">0%</span></div></div></div>
+<div class="game" id="gameBox"><div class="progress"><div class="bar" id="bar"></div></div><div class="round" id="round"></div><div class="question" id="question"></div><div class="prompt" id="prompt"></div><div class="choices" id="choices"></div><div class="feedback" id="feedback"></div><div class="hint" id="hint"></div><div class="controls"><button class="btn hintBtn" id="hintBtn">💡 Hint</button><button class="btn next" id="nextBtn" disabled>Next ➜</button></div></div>
+<div class="game result" id="result"><div class="medal" id="medal">🏆</div><h2 id="resultTitle">VAULT COMPLETE!</h2><div class="bigscore"><span id="finalScore">0</span> / 10 Base Points</div><p id="resultText"></p><button class="btn restart" id="restart">🔄 Play Again</button></div>
+<div class="celebrate" id="celebrate"></div><div class="footer">Interactive Mathematics • Temmy Smart Games</div></div>
+<script>
+const base=[
+{q:'In the expression <b>4t + 7</b>, what is the coefficient of <i>t</i>?',p:'Choose the correct algebraic term.',a:['4','7','t','4t'],correct:'4',e:'The coefficient is the number multiplying the variable. In 4t, the coefficient of t is 4.',h:'Look at the number directly multiplying the letter.'},
+{q:'Which statement describes <b>m + 5</b>?',p:'Translate the expression into words.',a:['A number multiplied by 5','A number plus 5','A number divided by 5','A number minus 5'],correct:'A number plus 5',e:'m represents a number, so m + 5 means a number plus 5.',h:'The + sign tells you what operation happens.'},
+{q:'Which is an <b>equation</b>?',p:'Remember: an equation contains an equals sign.',a:['3x + 4','5p','7 + y','3m + 4 = 19'],correct:'3m + 4 = 19',e:'An equation contains an equals sign linking two expressions or values.',h:'Look for the = sign.'},
+{q:'Which expression means <b>three times a number, then add 7</b>?',p:'Let the unknown number be x.',a:['3x + 7','x + 3 + 7','3(x + 7)','x - 7'],correct:'3x + 7',e:'Three times x is 3x. Then adding 7 gives 3x + 7.',h:'“Three times” means multiply the variable by 3.'},
+{q:'A ribbon is <b>7 cm</b> long, another is <b>n cm</b>, and another is <b>m cm</b>. Which expression gives the total length?',p:'Add all three lengths.',a:['7nm','7 + n + m','7(n + m)','7 - n - m'],correct:'7 + n + m',e:'Joining lengths means adding them: 7 + n + m.',h:'Total length means add the parts.'},
+{q:'Which expression represents <b>5 less than k</b>?',p:'Be careful with the order in subtraction.',a:['5 - k','k - 5','5k','k + 5'],correct:'k - 5',e:'“5 less than k” means start with k and subtract 5: k - 5.',h:'The phrase “less than k” ends with k as the starting amount.'},
+{q:'A pen costs <b>p OMR</b>. What is the cost of 6 pens?',p:'Use p for the cost of one pen.',a:['p + 6','p - 6','6p','p ÷ 6'],correct:'6p',e:'Six pens at p OMR each cost 6 × p = 6p OMR.',h:'Six equal groups of p means multiplication.'},
+{q:'A rectangle has side lengths <b>r cm</b> and <b>s cm</b>. Which expression gives its perimeter?',p:'A rectangle has two sides of each length.',a:['r + s','2r + 2s','rs','2r + s'],correct:'2r + 2s',e:'The perimeter is r + s + r + s = 2r + 2s. An equivalent form is 2(r + s).',h:'Add all four sides.'},
+{q:'Which expression is equivalent in value to <b>3a + 7</b>?',p:'Use the commutative property of addition.',a:['7 + 3a','3(a + 7)','3a - 7','7a + 3'],correct:'7 + 3a',e:'Changing the order of addition does not change the value, so 3a + 7 = 7 + 3a.',h:'Can the two terms be added in the opposite order?'},
+{q:'Which expression means <b>a number divided by 3, then add 8</b>?',p:'Let the number be x.',a:['3x + 8','x ÷ 3 + 8','x ÷ 8 + 3','3(x + 8)'],correct:'x ÷ 3 + 8',e:'First divide x by 3, then add 8: x/3 + 8.',h:'Translate the operations in the same order they are stated.'}
+];
+let qs=[],i=0,score=0,streak=0,answered=0,hinted=false,soundOn=true,audioCtx=null;
+const $=id=>document.getElementById(id);
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function tone(freq,dur=.12,type='sine',gain=.05){if(!soundOn)return;if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.value=freq;g.gain.value=gain;o.connect(g);g.connect(audioCtx.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);o.stop(audioCtx.currentTime+dur)}
+function correctSound(){tone(660,.09);setTimeout(()=>tone(880,.12),80)}
+function wrongSound(){tone(180,.16,'sawtooth',.035)}
+function load(){
+ if(i>=qs.length){finish();return}
+ const x=qs[i];$('round').textContent=`VAULT ${i+1} OF ${qs.length}`;$('question').innerHTML=x.q;$('prompt').textContent=x.p;$('bar').style.width=(i/qs.length*100)+'%';$('feedback').className='feedback';$('feedback').innerHTML='';$('hint').textContent='';$('nextBtn').disabled=true;$('hintBtn').disabled=false;hinted=false;
+ const opts=shuffle(x.a);$('choices').innerHTML='';opts.forEach(v=>{const b=document.createElement('button');b.className='choice';b.innerHTML=v;b.dataset.value=v;b.addEventListener('click',()=>answer(b,v,x));$('choices').appendChild(b)})
+}
+function answer(btn,v,x){
+ if(btn.disabled)return;
+ const ok=v===x.correct;answered++;
+ if(ok){document.querySelectorAll('.choice').forEach(b=>b.disabled=true);btn.classList.add('correct');score++;streak++;$('feedback').innerHTML='✅ <b>Correct!</b> '+x.e;$('feedback').className='feedback show';$('nextBtn').disabled=false;$('hintBtn').disabled=true;correctSound()}
+ else{btn.classList.add('wrong');btn.disabled=true;streak=0;$('feedback').innerHTML='❌ <b>Not quite.</b> That choice is locked. Try another choice.';$('feedback').className='feedback show';wrongSound()}
+ $('score').textContent=score;$('streak').textContent=streak;$('accuracy').textContent=Math.round(score/answered*100)+'%';
+}
+$('hintBtn').addEventListener('click',()=>{if(!hinted){$('hint').textContent='💡 '+qs[i].h;hinted=true;tone(520,.1)}});
+$('nextBtn').addEventListener('click',()=>{i++;load();tone(420,.08)});
+$('soundBtn').addEventListener('click',()=>{soundOn=!soundOn;$('soundBtn').textContent=soundOn?'🔊 Sound ON':'🔇 Sound OFF';$('soundBtn').classList.toggle('off',!soundOn);$('soundBtn').setAttribute('aria-pressed',String(soundOn));if(soundOn)tone(700,.1)});
+$('restart').addEventListener('click',()=>{i=0;score=0;streak=0;answered=0;qs=shuffle(base);$('score').textContent=0;$('streak').textContent=0;$('accuracy').textContent='0%';$('result').style.display='none';$('gameBox').style.display='block';load()});
+function finish(){
+ $('bar').style.width='100%';$('gameBox').style.display='none';$('result').style.display='block';$('result').classList.remove('showResult');void $('result').offsetWidth;$('result').classList.add('showResult');$('finalScore').textContent=score;let pct=score/qs.length*100;
+ let tier='encourage';
+ if(pct===100){$('medal').textContent='🏆🎉';$('resultTitle').textContent='PERFECT SCORE!';$('resultText').textContent='Every vault opened correctly. You are a MATHEMATICS MASTER!';tier='perfect'}
+ else if(pct>=90){$('medal').textContent='🥇';$('resultTitle').textContent='VAULT MASTER!';$('resultText').textContent='Excellent algebraic thinking. Keep building your expression skills!';tier='strong'}
+ else if(pct>=75){$('medal').textContent='🥈';$('resultTitle').textContent='STRONG WORK!';$('resultText').textContent='You are building solid expression skills. Review the tricky vaults and try again.';tier='good'}
+ else{$('medal').textContent='🌟';$('resultTitle').textContent='KEEP EXPLORING!';$('resultText').textContent='Practice the expression rules and try the vault again.'}
+ $('finalScore').classList.remove('scorePerfect','scoreStrong');void $('finalScore').offsetWidth;if(tier==='perfect')$('finalScore').classList.add('scorePerfect');else if(tier==='strong'||tier==='good')$('finalScore').classList.add('scoreStrong');
+ if(soundOn) celebrationSound(tier);
+ if(tier==='perfect')launchCelebration(36,'confetti');else if(tier==='strong')launchCelebration(18,'spark');else if(tier==='good')launchCelebration(10,'spark');
+}
+function celebrationSound(tier){
+ if(!soundOn)return;
+ const notes=tier==='perfect'?[523,659,784,1047,1319]:tier==='strong'?[523,659,784,988]:tier==='good'?[440,554,659]:[330,392,494];
+ notes.forEach((n,k)=>setTimeout(()=>tone(n,k===notes.length-1?.28:.12,'sine',k===notes.length-1?.07:.05),k*110));
+ if(tier==='perfect')setTimeout(()=>tone(1568,.35,'triangle',.06),notes.length*110+80);
+}
+function launchCelebration(count,type){
+ const box=$('celebrate');box.innerHTML='';
+ for(let n=0;n<count;n++){const e=document.createElement('span');e.className=type==='confetti'?'confetti':'spark';e.textContent=type==='confetti'?'★':['✨','✦','⭐','🎉'][n%4];e.style.left=(5+Math.random()*90)+'%';e.style.animationDelay=(Math.random()*.55)+'s';e.style.fontSize=(16+Math.random()*18)+'px';if(type==='confetti'){e.style.transform='rotate('+Math.random()*360+'deg)';}box.appendChild(e)}
+ setTimeout(()=>box.innerHTML='',2600);
+}
+qs=shuffle(base);$('total').textContent=qs.length;load();
+</script></body></html>

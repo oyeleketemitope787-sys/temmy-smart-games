@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Temmy Smart Games — Algebra Detective</title>
+<style>
+:root{--blue:#153b7a;--gold:#c99700;--purple:#6b3fa0;--ink:#18233a;--light:#f5f7fb;--green:#16834b;--red:#c93636}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef3ff,#fff9e8);color:var(--ink)}
+.app{max-width:980px;margin:auto;padding:18px}.top{background:linear-gradient(135deg,var(--blue),#315aa5);color:white;border-radius:22px;padding:20px;box-shadow:0 10px 28px #153b7a25}
+.brand{font-weight:900;letter-spacing:1px;font-size:25px}.subtitle{opacity:.9;margin-top:5px}.bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.pill{background:#ffffff1f;border:1px solid #ffffff40;padding:8px 13px;border-radius:999px;font-weight:700}.sound{margin-left:auto;cursor:pointer;background:white;color:var(--blue);border:0;border-radius:12px;padding:9px 14px;font-weight:800}
+.card{margin-top:18px;background:white;border-radius:22px;padding:25px;box-shadow:0 8px 25px #263b5c18}.progress{height:10px;background:#e8edf5;border-radius:20px;overflow:hidden}.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--purple));transition:.35s}
+.round{font-size:14px;font-weight:800;color:var(--purple);margin:14px 0 7px}.prompt{font-size:28px;font-weight:900;line-height:1.25;margin:8px 0 12px}.expression{font-size:42px;font-weight:900;text-align:center;background:#f2f5fb;border:2px dashed #cbd5e6;border-radius:18px;padding:18px;margin:15px 0;color:var(--blue)}
+.question{font-size:19px;font-weight:800;text-align:center;margin-bottom:16px}.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}.choice{border:2px solid #dce3ee;background:white;border-radius:15px;padding:15px;font-size:17px;font-weight:800;cursor:pointer;transition:.15s}.choice:hover{transform:translateY(-2px);border-color:var(--purple);background:#faf7ff}.choice.wrong{background:#ffe9e9;border-color:var(--red);color:#a31f1f;cursor:not-allowed}.choice.correct{background:#e8faef;border-color:var(--green);color:#0d6738}.choice:disabled{opacity:1}.feedback{min-height:58px;margin-top:16px;border-radius:15px;padding:13px 16px;background:#f5f7fb;font-weight:700;line-height:1.45}.hint{margin-top:12px;color:#725800;background:#fff7d9;border:1px solid #efd36a;border-radius:12px;padding:11px;font-weight:700}.actions{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:10px}.btn{border:0;border-radius:13px;padding:12px 18px;font-weight:900;cursor:pointer}.hintBtn{background:#fff3c7;color:#6b5200}.next{background:var(--blue);color:white;min-width:120px}.next:disabled{opacity:.4;cursor:not-allowed}.retry{background:#fde5e5;color:#a31f1f}
+.result{text-align:center;display:none;position:relative;overflow:hidden}.result.show{display:block;animation:pop .6s ease}.trophy{font-size:74px;animation:bounce 1s infinite alternate}.finalScore{font-size:54px;font-weight:1000;color:var(--blue);margin:8px}.stats{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:18px 0}.stat{background:#f3f6fb;border-radius:14px;padding:12px 18px;font-weight:900}.celebrate{font-size:25px;font-weight:1000;color:var(--purple)}.replay{background:var(--gold);color:#241c00;margin-top:12px}.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden}.piece{position:absolute;top:-20px;width:9px;height:16px;animation:fall 2.7s linear forwards}
+.footer{text-align:center;padding:18px;color:#667085;font-size:13px}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-12px)}}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@media(max-width:680px){.choices{grid-template-columns:1fr}.prompt{font-size:23px}.expression{font-size:34px}.sound{margin-left:0}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="brand">TEMMY SMART GAMES</div>
+  <div class="subtitle">Grade 7 Mathematics • Unit 5: Expressions</div>
+  <div class="bar">
+    <span class="pill">🕵️ ALGEBRA DETECTIVE</span>
+    <span class="pill" id="scorePill">⭐ Score: 0/10</span>
+    <span class="pill" id="streakPill">🔥 Streak: 0</span>
+    <button class="sound" id="soundBtn">🔊 Sound ON</button>
+  </div>
+</header>
+
+<section class="card" id="gameCard">
+  <div class="progress"><div id="progress"></div></div>
+  <div class="round" id="round"></div>
+  <div class="prompt" id="prompt"></div>
+  <div class="expression" id="expression"></div>
+  <div class="question" id="question"></div>
+  <div class="choices" id="choices"></div>
+  <div class="feedback" id="feedback">Choose an answer to reveal the evidence.</div>
+  <div id="hintBox"></div>
+  <div class="actions">
+    <button class="btn hintBtn" id="hintBtn">💡 Hint</button>
+    <button class="btn retry" id="retryBtn" style="display:none">↻ Retry</button>
+    <button class="btn next" id="nextBtn" disabled>Next →</button>
+  </div>
+</section>
+
+<section class="card result" id="result">
+  <div class="trophy" id="trophy">🏆</div>
+  <div class="celebrate" id="celebrate">ALGEBRA DETECTIVE COMPLETE!</div>
+  <div class="finalScore" id="finalScore"></div>
+  <div class="stats">
+    <div class="stat" id="accuracy"></div>
+    <div class="stat" id="bestStreak"></div>
+  </div>
+  <p id="resultText"></p>
+  <button class="btn replay" id="replayBtn">🔄 Play Again</button>
+</section>
+<div class="footer">Learn • Play • Think • Achieve</div>
+<div class="confetti" id="confetti"></div>
+</div>
+
+<script>
+const baseQuestions = [
+ {expr:"m + 3",q:"Which part is the variable?",a:"m",opts:["m","3","m + 3","There is no variable"],e:"m can change, so m is the variable. The 3 is a constant.",h:"Look for the letter whose value can change."},
+ {expr:"m + 3",q:"Which part is the constant term?",a:"3",opts:["m","3","m + 3","m × 3"],e:"The constant term keeps the same value: 3.",h:"A constant does not change."},
+ {expr:"4t",q:"What is the coefficient of t?",a:"4",opts:["t","4","4t","0"],e:"4t means 4 × t, so 4 is the coefficient of t.",h:"The coefficient is the number multiplying the variable."},
+ {expr:"7d + 4",q:"How many terms are in this expression?",a:"2",opts:["1","2","3","7"],e:"The two terms are 7d and 4.",h:"Terms are the parts separated by + or − signs."},
+ {expr:"3m + 4 = 19",q:"What is this called?",a:"An equation",opts:["A variable","An expression","An equation","A coefficient"],e:"An equation contains an equals sign linking two expressions.",h:"Look for the equals sign."},
+ {expr:"2r + 6",q:"Which statement correctly describes the expression?",a:"2r means 2 × r",opts:["2r means r + 2","2r means 2 × r","6 is the variable","There are three terms"],e:"A number next to a letter means multiplication. So 2r = 2 × r.",h:"In algebra, a number beside a letter means multiply."},
+ {expr:"5p + 7",q:"Which is the coefficient of p?",a:"5",opts:["p","7","5","12"],e:"5 is the number multiplying p, so it is the coefficient.",h:"Find the number directly multiplying p."},
+ {expr:"n + 7 + m",q:"How many terms are in this expression?",a:"3",opts:["1","2","3","7"],e:"The terms are n, 7 and m — three terms.",h:"Count the parts separated by + signs."},
+ {expr:"3n + 1 = 19",q:"Which part is the expression?",a:"3n + 1",opts:["19","3n + 1","3n + 1 = 19","n"],e:"The expression is 3n + 1. The equals sign makes the full statement an equation.",h:"An expression does not need an equals sign."},
+ {expr:"5m − 7",q:"Which description matches the expression?",a:"Multiply a number by 5 and subtract 7",opts:["Multiply a number by 7 and subtract 5","Multiply a number by 5 and subtract 7","Divide a number by 5 then subtract 7","Add 5 to a number then subtract 7"],e:"5m means multiply m by 5, then subtract 7.",h:"Read the operations from left to right, respecting multiplication."}
+];
+
+let questions=[], index=0, score=0, streak=0, bestStreak=0, answered=false, soundOn=true;
+
+const $=id=>document.getElementById(id);
+function shuffle(arr){return [...arr].sort(()=>Math.random()-0.5)}
+function beep(freq,dur=0.12,type="sine"){
+ if(!soundOn)return;
+ try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();
+ o.type=type;o.frequency.value=freq;g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.12,c.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+dur);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+dur+.02)}catch(e){}
+}
+function playCorrect(){beep(660,.09);setTimeout(()=>beep(880,.12),90)}
+function playWrong(){beep(180,.16,"square")}
+function playWin(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.16),i*100))}
+function load(){
+ const d=questions[index]; answered=false;
+ $("progress").style.width=((index)/questions.length*100)+"%";
+ $("round").textContent=`CASE ${index+1} OF ${questions.length}`;
+ $("prompt").textContent="🕵️ Investigate the expression";
+ $("expression").textContent=d.expr;
+ $("question").textContent=d.q;
+ $("feedback").textContent="Choose an answer to reveal the evidence.";
+ $("hintBox").innerHTML="";
+ $("nextBtn").disabled=true;$("nextBtn").style.display="inline-block";$("retryBtn").style.display="none";
+ $("hintBtn").disabled=false;
+ const choices=shuffle(d.opts);
+ $("choices").innerHTML="";
+ choices.forEach(opt=>{
+  const b=document.createElement("button");b.className="choice";b.textContent=opt;
+  b.addEventListener("click",()=>select(b,opt,d));$("choices").appendChild(b);
+ });
+}
+function select(btn,opt,d){
+ if(answered || btn.disabled)return;
+ if(opt===d.a){
+  answered=true;score++;streak++;bestStreak=Math.max(bestStreak,streak);playCorrect();
+  btn.classList.add("correct");
+  [...$("choices").children].forEach(b=>b.disabled=true);
+  $("feedback").innerHTML=`✅ <b>Case solved!</b><br>${d.e}`;
+  $("nextBtn").disabled=false;$("hintBtn").disabled=true;
+ }else{
+  streak=0;playWrong();btn.classList.add("wrong");btn.disabled=true;
+  $("feedback").textContent="❌ Not quite. That choice is now ruled out. Investigate the remaining evidence.";
+  $("retryBtn").style.display="inline-block";
+ }
+ updateScore();
+}
+function updateScore(){ $("scorePill").textContent=`⭐ Score: ${score}/${questions.length}`;$("streakPill").textContent=`🔥 Streak: ${streak}` }
+$("retryBtn").addEventListener("click",()=>{$("retryBtn").style.display="none";$("feedback").textContent="Try another remaining choice.";});
+$("hintBtn").addEventListener("click",()=>{
+ const d=questions[index];$("hintBox").innerHTML=`<div class="hint">💡 Hint: ${d.h}</div>`;beep(440,.1);
+});
+$("nextBtn").addEventListener("click",()=>{
+ index++;
+ if(index<questions.length) load(); else finish();
+});
+$("soundBtn").addEventListener("click",()=>{
+ soundOn=!soundOn;$("soundBtn").textContent=soundOn?"🔊 Sound ON":"🔇 Sound OFF";if(soundOn)beep(660,.1);
+});
+function confetti(){
+ $("confetti").innerHTML="";
+ for(let i=0;i<90;i++){const p=document.createElement("i");p.className="piece";p.style.left=Math.random()*100+"%";p.style.background=["#153b7a","#c99700","#6b3fa0","#16834b","#e85d75"][Math.floor(Math.random()*5)];p.style.animationDelay=(Math.random()*1.2)+"s";$("confetti").appendChild(p)}
+ setTimeout(()=>$("confetti").innerHTML="",3500);
+}
+function finish(){
+ $("gameCard").style.display="none";$("result").classList.add("show");
+ const pct=Math.round(score/questions.length*100);$("finalScore").textContent=`${score} / ${questions.length} Base Points`;
+ $("accuracy").textContent=`🎯 Accuracy: ${pct}%`;$("bestStreak").textContent=`🔥 Best Streak: ${bestStreak}`;
+ let msg="";
+ if(pct===100){$("trophy").textContent="🏆";$("celebrate").textContent="PERFECT SCORE! ALGEBRA MASTER!";msg="Every case solved correctly. Outstanding mathematical reasoning!";confetti();}
+ else if(pct>=90){$("trophy").textContent="🥇";$("celebrate").textContent="EXCELLENT DETECTIVE WORK!";msg="You showed very strong understanding of algebraic expressions.";}
+ else if(pct>=75){$("trophy").textContent="🥈";$("celebrate").textContent="STRONG WORK!";msg="Good investigation. Review any cases you missed and try again.";}
+ else {$("trophy").textContent="🔎";$("celebrate").textContent="KEEP INVESTIGATING!";msg="Every mistake is evidence. Replay and strengthen your algebra skills.";}
+ $("resultText").textContent=msg;playWin();
+}
+$("replayBtn").addEventListener("click",()=>{
+ questions=shuffle(baseQuestions);index=0;score=0;streak=0;bestStreak=0;updateScore();
+ $("result").classList.remove("show");$("result").style.display="none";$("gameCard").style.display="block";load();
+});
+questions=shuffle(baseQuestions);updateScore();load();
+</script>
+</body>
+</html>

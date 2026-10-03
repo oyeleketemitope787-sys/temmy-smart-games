@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Temmy Smart Games — Equivalent Expression Hunt</title>
+<style>
+:root{--blue:#153b7a;--gold:#c99700;--purple:#6a3fb5;--green:#198754;--red:#c62828}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(135deg,#eef3ff,#fff);color:#17233d}
+.container{max-width:940px;margin:auto;padding:18px}
+header{background:linear-gradient(135deg,var(--blue),#315fa9);color:#fff;border-radius:20px;padding:22px;text-align:center;box-shadow:0 8px 24px #0002}
+header h1{margin:0;font-size:clamp(25px,5vw,40px)} header p{margin:8px 0 0}
+.top{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.badge{background:#fff;border:2px solid #dce4f5;border-radius:12px;padding:8px 13px;font-weight:800}
+.sound{border:0;background:#17233d;color:#fff;border-radius:10px;padding:9px 13px;font-weight:800;cursor:pointer}
+.card{background:#fff;border-radius:20px;padding:22px;margin-top:15px;box-shadow:0 6px 20px #0001}
+.progress{height:10px;background:#e5e9f2;border-radius:10px;overflow:hidden;margin:8px 0 20px}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple));transition:.3s}
+.tag{display:inline-block;background:#eee8ff;color:#56339c;padding:6px 10px;border-radius:20px;font-weight:800;font-size:13px}
+.target{font-size:clamp(28px,7vw,48px);font-weight:900;text-align:center;margin:25px 0 8px}
+.prompt{text-align:center;font-size:19px;font-weight:800;margin-bottom:22px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.choice{border:3px solid #d9e0ee;background:#fff;border-radius:16px;padding:16px;font-size:20px;font-weight:800;cursor:pointer;transition:.15s}
+.choice:hover:not(:disabled){transform:translateY(-2px);border-color:var(--blue)}
+.choice.correct{background:#e4f7eb;border-color:var(--green);color:#12633b}
+.choice.wrong{background:#ffe8e8;border-color:var(--red);color:#a51f1f}
+.choice:disabled{cursor:not-allowed}
+.feedback{min-height:42px;text-align:center;font-weight:800;margin:14px 0 4px}
+.explain{display:none;background:#eef7ff;border-left:5px solid var(--blue);padding:12px;border-radius:10px;margin-top:10px}
+.hint{display:none;background:#fff8dc;border-left:5px solid var(--gold);padding:12px;border-radius:10px;margin-top:10px}
+.actions{text-align:center;margin-top:15px}
+.action{border:0;border-radius:12px;padding:11px 18px;font-weight:800;cursor:pointer;margin:4px}
+.hintbtn{background:#f0e9ff;color:#56339c}.next{background:var(--blue);color:#fff;display:none}
+#final{display:none;text-align:center}.trophy{font-size:58px;animation:pulse .8s infinite alternate}
+@keyframes pulse{to{transform:scale(1.12)}}
+.finalscore{font-size:48px;font-weight:900;color:var(--blue);margin:12px}.result{font-size:20px;font-weight:800}
+.confetti{position:fixed;top:-15px;width:10px;height:18px;animation:fall 2.5s linear forwards;z-index:10}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+@media(max-width:600px){.choices{grid-template-columns:1fr}.card{padding:16px}}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>🟰 Equivalent Expression Hunt</h1>
+<p>Find expressions that have the same meaning — even when they look different.</p>
+</header>
+
+<div class="top">
+<div class="badge">⭐ Actual Score: <span id="score">0</span>/10</div>
+<div class="badge">🔥 Streak: <span id="streak">0</span></div>
+<div class="badge">🎯 Round: <span id="num">1</span>/10</div>
+<button class="sound" id="sound">🔊 Sound ON</button>
+</div>
+
+<div class="card" id="game">
+<div class="progress"><div class="bar" id="bar"></div></div>
+<span class="tag">EQUIVALENCE HUNT</span><p style="text-align:center;font-weight:700;color:#56339c;margin:10px 0 0">🎯 Actual score = first-attempt correct answers. Retries are for learning, not extra marks.</p>
+<div class="target" id="target"></div>
+<div class="prompt" id="prompt"></div>
+<div class="choices" id="choices"></div>
+<div class="feedback" id="feedback"></div>
+<div class="explain" id="explain"></div>
+<div class="hint" id="hint"></div>
+<div class="actions">
+<button class="action hintbtn" id="hintBtn">💡 Hint</button>
+<button class="action next" id="nextBtn">Next →</button>
+</div>
+</div>
+
+<div class="card" id="final">
+<div class="trophy" id="trophy">🏆</div>
+<h2>Equivalent Expression Hunt Complete!</h2>
+<div class="finalscore" id="finalscore">0 / 10</div>
+<div class="result" id="result"></div>
+<p>Accuracy: <b id="accuracy"></b> &nbsp; | &nbsp; Best streak: <b id="best"></b></p>
+<button class="action next" style="display:inline-block" onclick="location.reload()">🔄 Play Again</button>
+</div>
+</div>
+
+<script>
+const qs=[
+{t:"3x + 4",p:"Which expression is equivalent?",a:"4 + 3x",opts:["4 + 3x","3x + 4x","3 + 4x","7x"],h:"Addition can be written in a different order without changing the total.",x:"3x + 4 and 4 + 3x are equivalent because the order of addition can be changed."},
+{t:"5 + 2n",p:"Which expression means the same thing?",a:"2n + 5",opts:["10n","2 + 5n","2n + 5","7n"],h:"Look only at the order of the two added terms.",x:"5 + 2n = 2n + 5 by changing the order of addition."},
+{t:"4a + 4",p:"Which expression is equivalent?",a:"4 + 4a",opts:["4a + a","4 + 4a","8a","4(a + 4)"],h:"Can the two terms be swapped?",x:"4a + 4 and 4 + 4a contain exactly the same two terms."},
+{t:"2r + 2s",p:"Which expression is equivalent?",a:"2s + 2r",opts:["2r + s","4rs","2s + 2r","2r − 2s"],h:"There is more than one way to write this expression.",x:"2r + 2s and 2s + 2r are equivalent. The terms are simply reversed."},
+{t:"7 + m",p:"Which expression has the same value for every m?",a:"m + 7",opts:["7m","m + 7","m − 7","7 − m"],h:"Addition is commutative: changing the order does not change the sum.",x:"7 + m = m + 7 for every value of m."},
+{t:"3(p + 2)",p:"Which expression is equivalent after expanding?",a:"3p + 6",opts:["3p + 2","3p + 6","p + 6","6p + 2"],h:"Multiply 3 by both terms inside the brackets.",x:"3(p + 2) = 3p + 6."},
+{t:"2(x + 5)",p:"Which expression is equivalent after expanding?",a:"2x + 10",opts:["2x + 5","x + 10","2x + 10","7x"],h:"Multiply 2 by x and also by 5.",x:"2(x + 5) = 2x + 10."},
+{t:"4(y + 3)",p:"Which expression is equivalent?",a:"4y + 12",opts:["4y + 3","4y + 12","y + 12","12y + 4"],h:"Distribute the 4 to both terms.",x:"4(y + 3) = 4y + 12."},
+{t:"6 + 2k",p:"Which expression is NOT equivalent?",a:"6k + 2",opts:["2k + 6","6 + 2k","2(k + 3)","6k + 2"],h:"Compare the coefficient of k and the constant term. Which choice changes their roles?",x:"6 + 2k, 2k + 6, and 2(k + 3) all simplify to 2k + 6. But 6k + 2 has a different coefficient of k, so it is not equivalent."},
+{t:"5q + 10",p:"Which expression is equivalent?",a:"5(q + 2)",opts:["5(q + 2)","5(q + 10)","q + 50","10q + 5"],h:"Factor out the common factor 5.",x:"5q + 10 = 5(q + 2)."}
+];
+
+let i=0,score=0,streak=0,best=0,soundOn=true,answered=false,attempted=false;
+const $=id=>document.getElementById(id);
+
+function tone(f,d=.12,type="sine"){
+ if(!soundOn)return;
+ try{
+  const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();
+  o.type=type;o.frequency.value=f;g.gain.value=.045;o.connect(g);g.connect(c.destination);o.start();
+  g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.stop(c.currentTime+d)
+ }catch(e){}
+}
+function load(){
+ answered=false;attempted=false;
+ $("num").textContent=i+1;$("score").textContent=score;$("streak").textContent=streak;
+ $("bar").style.width=(i/10*100)+"%";
+ $("target").textContent=qs[i].t;$("prompt").textContent=qs[i].p;
+ $("feedback").textContent="";$("explain").style.display="none";$("hint").style.display="none";
+ $("nextBtn").style.display="none";$("hintBtn").style.display="inline-block";
+ let data=[...qs[i].opts].sort(()=>Math.random()-.5);
+ $("choices").innerHTML="";
+ data.forEach(v=>{
+  let b=document.createElement("button");b.className="choice";b.textContent=v;
+  b.addEventListener("click",()=>answer(b,v));$("choices").appendChild(b)
+ });
+}
+function answer(btn,v){
+ if(answered)return;
+ const firstAttempt=!attempted;
+ attempted=true;
+
+ if(v===qs[i].a){
+  answered=true;
+  if(firstAttempt){
+    score++;streak++;best=Math.max(best,streak);
+    $("feedback").textContent="✅ Correct on your first attempt! +1 point";
+  }else{
+    streak=0;
+    $("feedback").textContent="✅ Correct! This is a learning retry, so no point is added.";
+  }
+  btn.classList.add("correct");
+  $("explain").textContent="🧠 "+qs[i].x;$("explain").style.display="block";
+  $("nextBtn").style.display="inline-block";$("hintBtn").style.display="none";
+  [...document.querySelectorAll(".choice")].forEach(b=>b.disabled=true);tone(660);
+ }else{
+  streak=0;
+  btn.classList.add("wrong");btn.disabled=true;
+  $("feedback").textContent="❌ Not equivalent. No point for this round. Try again to learn.";
+  tone(180,.16,"square");
+ }
+ $("score").textContent=score;$("streak").textContent=streak;
+}
+$("hintBtn").onclick=()=>{$("hint").textContent=qs[i].h;$("hint").style.display="block";tone(420,.08)};
+$("nextBtn").onclick=()=>{i++;if(i>=qs.length)finish();else load()};
+$("sound").onclick=()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Sound ON":"🔇 Sound OFF";if(soundOn)tone(520,.08)};
+
+function finish(){
+ $("game").style.display="none";$("final").style.display="block";
+ $("finalscore").textContent=score+" / 10";$("accuracy").textContent=(score*10)+"%";$("best").textContent=best;
+ if(score===10){
+  $("result").textContent="PERFECT SCORE! You found every equivalent expression!";
+  $("trophy").textContent="🏆✨🎉";confetti(80);
+  tone(523,.18);setTimeout(()=>tone(659,.18),180);setTimeout(()=>tone(784,.3),360)
+ }else if(score>=8){
+  $("result").textContent="Excellent! Your algebraic equivalence skills are strong.";
+  $("trophy").textContent="🌟🧠"
+ }else if(score>=6){
+  $("result").textContent="Good work. Keep checking whether expressions truly have the same meaning.";
+  $("trophy").textContent="👏🔎"
+ }else{
+  $("result").textContent="Keep practising. Compare the structure of the expressions carefully.";
+  $("trophy").textContent="💪📚"
+ }
+}
+function confetti(n){
+ for(let j=0;j<n;j++){
+  let e=document.createElement("div");e.className="confetti";
+  e.style.left=Math.random()*100+"vw";e.style.animationDelay=Math.random()*1.2+"s";
+  document.body.appendChild(e);setTimeout(()=>e.remove(),3200)
+ }
+}
+load();
+</script>
+</body>
+</html>
