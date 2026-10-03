@@ -13,7 +13,8 @@
 --gold:#C99700;
 --ink:#172033;
 --muted:#687386;
---soft:#F4F7FB
+--soft:#F4F7FB;
+--green:#08734f
 }
 
 *{box-sizing:border-box}
@@ -53,7 +54,7 @@ font-size:1.08rem
 }
 
 .container{
-max-width:950px;
+max-width:1000px;
 margin:-34px auto 0;
 padding:0 18px 55px;
 position:relative
@@ -138,12 +139,23 @@ font-size:.9rem
 .count{
 display:inline-block;
 background:#e7f8f1;
-color:#08734f;
+color:var(--green);
 padding:7px 11px;
 border-radius:999px;
 font-size:.78rem;
 font-weight:800;
 margin-left:8px
+}
+
+.total{
+text-align:center;
+margin-top:28px;
+padding:18px;
+border-radius:16px;
+background:#f4effb;
+color:var(--purple);
+font-weight:900;
+font-size:1.1rem
 }
 
 footer{
@@ -164,11 +176,13 @@ grid-template-columns:1fr
 <body>
 
 <header class="hero">
+
 <span class="brand">TEMMY SMART GAMES</span>
 
 <h1>Grade 7 Mathematics</h1>
 
-<p>7 Interactive Games Ready!</p>
+<p>27 Interactive Games Ready!</p>
+
 </header>
 
 <main class="container">
@@ -183,7 +197,9 @@ grid-template-columns:1fr
 Choose a topic and challenge yourself with an interactive mathematics game.
 </p>
 
+
 <!-- UNIT 3 -->
+
 <div class="topic">
 
 <h2>
@@ -200,60 +216,190 @@ Develop your understanding of variables, data collection, questionnaires, sampli
 <div class="game">
 <h3>🎮 Data Detective</h3>
 <p>Investigate data and identify useful information.</p>
-<a class="play" href="games/grade7/unit3-collecting-data/01-data_detective.html">
-Play Game
-</a>
+<a class="play" href="games/grade7/unit3-collecting-data/01-data_detective.html">Play Game</a>
 </div>
 
 <div class="game">
 <h3>🎮 Variable Mission</h3>
 <p>Explore variables and classify information correctly.</p>
-<a class="play" href="games/grade7/unit3-collecting-data/02-variable_mission.html">
-Play Game
-</a>
+<a class="play" href="games/grade7/unit3-collecting-data/02-variable_mission.html">Play Game</a>
 </div>
 
 <div class="game">
 <h3>🎮 Data Collection Lab</h3>
 <p>Practise choosing appropriate ways to collect data.</p>
-<a class="play" href="games/grade7/unit3-collecting-data/03-data_collection_lab.html">
-Play Game
-</a>
+<a class="play" href="games/grade7/unit3-collecting-data/03-data_collection_lab.html">Play Game</a>
 </div>
 
 <div class="game">
 <h3>🎮 Questionnaire Inspector</h3>
 <p>Inspect questionnaires and identify good questions.</p>
-<a class="play" href="games/grade7/unit3-collecting-data/04-questionnaire_inspector.html">
-Play Game
-</a>
+<a class="play" href="games/grade7/unit3-collecting-data/04-questionnaire_inspector.html">Play Game</a>
 </div>
 
 <div class="game">
 <h3>🎮 Choice Gap Detective</h3>
 <p>Investigate answer choices and identify gaps in data collection.</p>
-<a class="play" href="games/grade7/unit3-collecting-data/05-choice_gap_detective.html">
-Play Game
-</a>
+<a class="play" href="games/grade7/unit3-collecting-data/05-choice_gap_detective.html">Play Game</a>
 </div>
 
 <div class="game">
 <h3>🎮 Sampling Strategist</h3>
 <p>Choose suitable sampling strategies for different situations.</p>
-<a class="play" href="games/grade7/unit3-collecting-data/06-sampling_strategist.html">
-Play Game
-</a>
+<a class="play" href="games/grade7/unit3-collecting-data/06-sampling_strategist.html">Play Game</a>
 </div>
 
 <div class="game">
 <h3>🎮 Sample Fairness Challenge</h3>
 <p>Test whether samples are fair and representative.</p>
-<a class="play" href="games/grade7/unit3-collecting-data/07-sample_fairness_challenge.html">
-Play Game
-</a>
+<a class="play" href="games/grade7/unit3-collecting-data/07-sample_fairness_challenge.html">Play Game</a>
 </div>
 
 </div>
+</div>
+
+
+<!-- UNIT 5 -->
+
+<div class="topic">
+
+<h2>
+Unit 5 — Expressions
+<span class="count">20 Games</span>
+</h2>
+
+<p>
+Build confidence with algebraic expressions, substitution, equivalent expressions, equations and algebraic problem solving.
+</p>
+
+<div class="games">
+
+<div class="game">
+<h3>🎮 Expression Vault</h3>
+<p>Unlock the vault by identifying and working with expressions.</p>
+<a class="play" href="games/grade7/unit5-expressions/01-expression_vault.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Algebra Detective</h3>
+<p>Investigate algebra clues and solve expression challenges.</p>
+<a class="play" href="games/grade7/unit5-expressions/02-algebra_detective.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Word to Expression</h3>
+<p>Translate mathematical words into algebraic expressions.</p>
+<a class="play" href="games/grade7/unit5-expressions/03-word_to_expression.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Expression to Words</h3>
+<p>Describe algebraic expressions using mathematical language.</p>
+<a class="play" href="games/grade7/unit5-expressions/04-expression_to_words.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Expression Match</h3>
+<p>Match expressions with their correct representations.</p>
+<a class="play" href="games/grade7/unit5-expressions/05-expression_match.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Expression Builder</h3>
+<p>Construct correct algebraic expressions from given information.</p>
+<a class="play" href="games/grade7/unit5-expressions/06-expression_builder.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Perimeter Architect</h3>
+<p>Use expressions to calculate and explore perimeter.</p>
+<a class="play" href="games/grade7/unit5-expressions/07-perimeter_architect.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Algebra Shop</h3>
+<p>Use algebraic expressions in practical shopping situations.</p>
+<a class="play" href="games/grade7/unit5-expressions/08-algebra_shop.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Algebra Story Maker</h3>
+<p>Turn real-life situations into algebraic expressions.</p>
+<a class="play" href="games/grade7/unit5-expressions/09-algebra_story_maker.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Number Mystery</h3>
+<p>Use algebraic clues to discover hidden numbers.</p>
+<a class="play" href="games/grade7/unit5-expressions/10-number_mystery.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 True/False Algebra</h3>
+<p>Test algebraic statements and identify whether they are true or false.</p>
+<a class="play" href="games/grade7/unit5-expressions/11-true_false_algebra.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Order Matters</h3>
+<p>Explore how the order of operations affects algebraic expressions.</p>
+<a class="play" href="games/grade7/unit5-expressions/12-order_matters.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Substitution Lab</h3>
+<p>Substitute values into expressions and calculate accurately.</p>
+<a class="play" href="games/grade7/unit5-expressions/13-substitution_lab.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Equivalent Expression Hunt</h3>
+<p>Find expressions that have the same value.</p>
+<a class="play" href="games/grade7/unit5-expressions/14-equivalent_expression_hunt.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Odd One Out Expressions</h3>
+<p>Identify the expression that does not belong with the others.</p>
+<a class="play" href="games/grade7/unit5-expressions/15-odd_one_out_expressions.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Missing Number Equation Vault</h3>
+<p>Find missing values in equations and algebra challenges.</p>
+<a class="play" href="games/grade7/unit5-expressions/16-missing_number_equation_vault.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Spreadsheet Formula Challenge</h3>
+<p>Use algebraic thinking to complete spreadsheet-style challenges.</p>
+<a class="play" href="games/grade7/unit5-expressions/17-spreadsheet_formula_challenge.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Algebra Puzzle Lab</h3>
+<p>Solve challenging algebra puzzles using expressions and equations.</p>
+<a class="play" href="games/grade7/unit5-expressions/18-algebra_puzzle_lab.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Expression Transformation Lab</h3>
+<p>Transform expressions while keeping their mathematical meaning.</p>
+<a class="play" href="games/grade7/unit5-expressions/19-expression_transformation_lab.html">Play Game</a>
+</div>
+
+<div class="game">
+<h3>🎮 Expressions Master</h3>
+<p>Complete the ultimate Grade 7 expressions challenge.</p>
+<a class="play" href="games/grade7/unit5-expressions/20-expressions_master.html">Play Game</a>
+</div>
+
+</div>
+</div>
+
+
+<div class="total">
+🏆 Grade 7 Mathematics • 27 Interactive Games
 </div>
 
 </section>
