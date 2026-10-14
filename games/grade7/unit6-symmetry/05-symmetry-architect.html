@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Symmetry Architect | Temmy Smart Games</title>
+<style>
+:root{--navy:#173f80;--blue:#2859a5;--purple:#6847a8;--gold:#e6b83f;--ink:#17233d;--muted:#64718a;--pale:#eef3fc;--green:#16844a;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:#f2f5fb;color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-weight:700}
+.shell{max-width:1000px;margin:auto;padding:18px}.hero{background:linear-gradient(115deg,var(--navy),var(--purple));color:#fff;border-radius:20px;padding:18px;text-align:center;box-shadow:0 8px 22px #173f8020}
+.brand{display:inline-block;border:1px solid #ffffff9c;border-radius:30px;padding:7px 13px;font-size:12px;letter-spacing:1px}.hero h1{font-size:clamp(25px,4vw,38px);margin:10px 0 5px}.hero p{margin:0;font-weight:500}
+.stats{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:12px 0}.pill{background:#fff;border:1px solid #dbe3f4;border-radius:25px;padding:10px 13px;font-size:14px}.sound{background:#17233d;color:#fff;border:0;cursor:pointer}
+.card{background:#fff;border-radius:20px;padding:clamp(16px,3vw,28px);box-shadow:0 8px 25px #173f8010}
+.progress{height:9px;background:#e6ebf5;border-radius:20px;overflow:hidden;margin-bottom:18px}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--navy),var(--purple));transition:width .25s}
+.tag{display:inline-block;background:#f0e9ff;color:#5a37a3;border-radius:20px;padding:7px 12px;font-size:12px;margin-bottom:8px}.question{font-size:clamp(20px,3vw,27px);line-height:1.3;margin:4px 0 16px}
+.workarea{min-height:145px;display:flex;align-items:center;justify-content:center;margin:12px 0 18px}.diagram{position:relative;width:min(260px,70vw);height:190px;border:2px solid #d7e1f5;border-radius:14px;background:#f8faff;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.shape{width:92px;height:92px;background:var(--blue);clip-path:polygon(50% 0,100% 100%,0 100%);border:0}
+.mirror{position:absolute;top:0;bottom:0;left:50%;border-left:3px dashed var(--gold)}
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.opt{min-height:50px;text-align:left;background:#fff;border:2px solid #dbe3f4;border-radius:13px;padding:12px;font:inherit;cursor:pointer;color:var(--ink);line-height:1.25}.opt:hover:not(:disabled){border-color:var(--blue);background:#f7f9ff}.opt:disabled{cursor:default;opacity:1}.opt.correct{background:#e9f8ef;border-color:var(--green)}.opt.wrong{background:#fff0ef;border-color:var(--red);color:var(--red)}
+.feedback{margin-top:12px;background:#eef4ff;border-radius:13px;padding:13px;line-height:1.4;display:none}.feedback.show{display:block}.feedback.good{background:#e9f8ef}.feedback.bad{background:#fff0ef}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.btn{border:0;border-radius:12px;padding:13px 16px;background:#e9eef7;color:var(--ink);font:inherit;cursor:pointer}.btn.primary{background:var(--navy);color:#fff}.btn:disabled{opacity:.45;cursor:not-allowed}.spacer{flex:1}
+.finish{text-align:center;padding:28px 10px}.trophy{font-size:64px;animation:bounce 1.2s ease-in-out infinite alternate}.scorebig{font-size:clamp(42px,8vw,64px);color:var(--navy);margin:14px}.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10}.confetti i{position:absolute;top:-15px;width:9px;height:14px;animation:fall 2.5s linear forwards}
+@keyframes bounce{to{transform:translateY(-8px) rotate(-4deg)}}@keyframes fall{to{transform:translateY(110vh) rotate(760deg);opacity:.9}}
+@media(max-width:560px){.shell{padding:9px}.hero{border-radius:15px;padding:15px 10px}.stats{gap:5px}.pill{padding:8px 10px;font-size:12px}.options{grid-template-columns:1fr}.card{padding:15px}.diagram{height:160px}.actions .btn{padding:12px}.spacer{display:none}}
+@media(max-height:650px){.shell{padding-top:8px}.hero{padding:10px}.hero h1{margin:5px 0}.stats{margin:7px 0}.card{padding:14px}.workarea{min-height:90px;margin:6px 0 10px}.diagram{height:120px}.shape{width:65px;height:65px}.question{margin-bottom:9px}.progress{margin-bottom:10px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body><main class="shell">
+<header class="hero"><span class="brand">TEMMY SMART GAMES</span><h1>🏗️ Symmetry Architect</h1><p>Grade 7 Mathematics · Symmetry &amp; Patterns</p></header>
+<div class="stats"><span class="pill">⭐ Score: <b id="score">0/12</b></span><span class="pill">🔥 Streak: <b id="streak">0</b></span><span class="pill">🎯 Case: <b id="case">1/12</b></span><button class="pill sound" id="sound" type="button">🔊 Sound ON</button></div>
+<section class="card" id="game">
+<div class="progress"><div class="bar" id="bar"></div></div><span class="tag" id="tag">DESIGN CASE</span><h2 class="question" id="question"></h2>
+<div class="workarea"><div class="diagram" id="diagram" aria-label="Symmetry diagram"></div></div>
+<div class="options" id="options"></div><div class="feedback" id="feedback" aria-live="polite"></div>
+<div class="actions"><button class="btn" id="prev" type="button">← Previous</button><button class="btn" id="hint" type="button">💡 Hint</button><span class="spacer"></span><button class="btn primary" id="next" type="button" disabled>Next →</button></div>
+</section><footer style="text-align:center;color:#64718a;font-size:12px;padding:14px">Temmy Smart Games · Learn • Play • Think • Achieve</footer>
+</main><div id="confetti" class="confetti"></div>
+<script>
+const qs=[
+{tag:"LINE SYMMETRY",q:"A design has a vertical mirror line. Which statement must be true?",visual:"mirror",opts:["The left and right halves match as mirror images","The design must be a square","The design has rotational order 4","Every side has the same length"],a:0,h:"Imagine folding the design along the vertical line.",e:"A vertical line of symmetry divides a design into matching mirror-image halves."},
+{tag:"LINE SYMMETRY",q:"A rectangle that is not a square has how many lines of symmetry?",visual:"rect",opts:["1","2","3","4"],a:1,h:"Think of one vertical and one horizontal fold.",e:"A non-square rectangle has two lines of symmetry: one vertical and one horizontal through its centre."},
+{tag:"LINE SYMMETRY",q:"Which shape has exactly one line of symmetry?",visual:"isos",opts:["A non-square rectangle","An equilateral triangle","A non-equilateral isosceles triangle","A general parallelogram"],a:2,h:"Consider the line from the apex to the midpoint of the base.",e:"A non-equilateral isosceles triangle has exactly one line of symmetry."},
+{tag:"ROTATIONAL SYMMETRY",q:"A shape has rotational symmetry of order 4. What is its smallest positive angle of rotation?",visual:"rot",opts:["45°","90°","120°","180°"],a:1,h:"Divide 360° by the order of rotational symmetry.",e:"The smallest angle is 360° ÷ 4 = 90°."},
+{tag:"ROTATIONAL SYMMETRY",q:"A regular hexagon has rotational symmetry of what order?",visual:"hex",opts:["2","3","4","6"],a:3,h:"Count the times it matches itself during one full turn.",e:"A regular hexagon matches itself six times in a full turn, so its rotational order is 6."},
+{tag:"ROTATIONAL SYMMETRY",q:"A shape matches itself after a 120° turn. What is its rotational order if 120° is the smallest positive angle?",visual:"rot",opts:["2","3","4","6"],a:1,h:"Calculate 360° ÷ 120°.",e:"360° ÷ 120° = 3, so the rotational order is 3."},
+{tag:"DESIGN CHECK",q:"Which statement about a square is correct?",visual:"square",opts:["It has 1 line of symmetry and order 2","It has 2 lines of symmetry and order 2","It has 4 lines of symmetry and rotational order 4","It has 4 lines of symmetry and rotational order 2"],a:2,h:"A square has vertical, horizontal and two diagonal symmetry lines.",e:"A square has four lines of symmetry and rotational symmetry of order 4."},
+{tag:"REASONING",q:"A shape has rotational order 2. What is its smallest positive angle of rotation?",visual:"rot",opts:["45°","90°","180°","270°"],a:2,h:"Use 360° divided by the order.",e:"360° ÷ 2 = 180°."},
+{tag:"LINE SYMMETRY",q:"How many lines of symmetry does an equilateral triangle have?",visual:"tri",opts:["1","2","3","6"],a:2,h:"Each vertex can connect to the midpoint of the opposite side.",e:"An equilateral triangle has three lines of symmetry."},
+{tag:"REASONING",q:"A regular polygon has a smallest rotation angle of 45°. How many sides does it have?",visual:"hex",opts:["4","6","8","10"],a:2,h:"The order is 360° ÷ 45°. For a regular polygon, this equals its number of sides.",e:"360° ÷ 45° = 8. A regular octagon has 8 sides."},
+{tag:"DESIGN CHECK",q:"Which shape has rotational symmetry but no line symmetry?",visual:"para",opts:["A square","A non-square rectangle","A general parallelogram","An equilateral triangle"],a:2,h:"A general parallelogram turns onto itself after a half-turn, but usually cannot be folded into matching halves.",e:"A general parallelogram has rotational symmetry of order 2 but no line symmetry."},
+{tag:"FINAL BLUEPRINT",q:"A regular pentagon is turned through 72°. What happens?",visual:"pent",opts:["It matches itself","It matches only after 144°","It does not match until 360°","It becomes a reflection"],a:0,h:"For a regular pentagon, the smallest turn is 360° ÷ 5.",e:"360° ÷ 5 = 72°, so it matches itself after a 72° turn."}
+];
+let idx=0,score=0,streak=0,best=0,soundOn=true,states=qs.map(()=>({wrong:new Set(),correct:false,first:false,selected:null,hinted:false}));
+const $=id=>document.getElementById(id);
+function tone(freq=660,dur=.12){if(!soundOn)return;try{const c=new(window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=freq;o.type='sine';g.gain.setValueAtTime(.07,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+dur);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+dur);o.onended=()=>c.close()}catch(e){}}
+function visual(type){let d=$('diagram');d.innerHTML='';let s=document.createElement('div');s.className='shape';s.style.clipPath='none';s.style.background='transparent';
+if(type==='mirror'){d.innerHTML='<div style="display:flex;gap:18px;align-items:center"><div style="width:55px;height:70px;background:#2859a5;clip-path:polygon(50% 0,100% 25%,75% 100%,0 75%)"></div><div style="width:3px;height:115px;border-left:3px dashed #e6b83f"></div><div style="width:55px;height:70px;background:#2859a5;clip-path:polygon(50% 0,100% 75%,25% 100%,0 25%)"></div></div>';return}
+if(type==='rect'){s.style.width='140px';s.style.height='85px';s.style.background='#2859a5';s.style.borderRadius='5px'}
+if(type==='isos'||type==='tri'){s.style.width='0';s.style.height='0';s.style.borderLeft='55px solid transparent';s.style.borderRight='55px solid transparent';s.style.borderBottom='100px solid #2859a5';s.style.clipPath='none';if(type==='isos')s.style.borderBottomWidth='90px'}
+if(type==='rot'){s.innerHTML='↻';s.style.fontSize='110px';s.style.color='#2859a5'}
+if(type==='hex'||type==='pent'){s.style.width='110px';s.style.height='100px';s.style.background='#2859a5';s.style.clipPath=type==='hex'?'polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)':'polygon(50% 0,100% 38%,81% 100%,19% 100%,0 38%)'}
+if(type==='square'){s.style.width='100px';s.style.height='100px';s.style.background='#2859a5';s.style.border='3px solid #e6b83f';s.style.boxShadow='inset 0 0 0 2px white'}
+if(type==='para'){s.style.width='125px';s.style.height='80px';s.style.background='#2859a5';s.style.clipPath='polygon(25% 0,100% 0,75% 100%,0 100%)'}
+d.appendChild(s)}
+function render(){let st=states[idx],q=qs[idx];$('tag').textContent=q.tag;$('question').textContent=q.q;visual(q.visual);$('options').innerHTML='';q.opts.forEach((o,i)=>{let b=document.createElement('button');b.className='opt';b.textContent=String.fromCharCode(65+i)+'. '+o;b.disabled=st.correct||st.wrong.has(i);if(st.correct&&i===q.a)b.classList.add('correct');if(st.wrong.has(i))b.classList.add('wrong');b.onclick=()=>answer(i);$('options').appendChild(b)});$('feedback').className='feedback'+(st.first?' show '+(st.correct?'good':'bad'):'');$('feedback').textContent=st.first?(st.correct?'Correct! '+q.e:'Not quite — no point. Try another option. '+q.e):'';$('prev').disabled=idx===0;$('next').disabled=!st.correct;$('next').textContent=idx===qs.length-1?'Finish →':'Next →';$('bar').style.width=((idx+1)/qs.length*100)+'%';$('score').textContent=score+'/'+qs.length;$('streak').textContent=streak+' (best '+best+')';$('case').textContent=(idx+1)+'/'+qs.length}
+function answer(i){let st=states[idx],q=qs[idx];if(st.correct||st.wrong.has(i))return;if(!st.first){st.first=true;st.selected=i;if(i===q.a){score++;st.correct=true;streak++;best=Math.max(best,streak);tone(880,.16)}else{st.wrong.add(i);streak=0;tone(220,.2)}}else if(i===q.a){st.correct=true;tone(740,.16)}else{st.wrong.add(i);tone(220,.2)}render()}
+$('prev').onclick=()=>{if(idx>0){idx--;render()}};$('next').onclick=()=>{if(!states[idx].correct)return;if(idx===qs.length-1){finish();return}idx++;render()};$('hint').onclick=()=>{let st=states[idx];$('feedback').className='feedback show';$('feedback').textContent='💡 Hint: '+qs[idx].h;st.hinted=true};$('sound').onclick=()=>{soundOn=!soundOn;$('sound').textContent=soundOn?'🔊 Sound ON':'🔇 Sound OFF';if(soundOn)tone(660)};
+function finish(){let pct=Math.round(score/qs.length*100);$('game').innerHTML='<div class="finish"><div class="trophy">🏆 ✨</div><h2>Symmetry Architect complete!</h2><div class="scorebig">'+score+' / '+qs.length+'</div><p>First-attempt score: '+pct+'%. Best streak: '+best+'. Review and retries are for learning and do not add points.</p><button class="btn primary" id="again">↻ Play again</button></div>';celebrate();tone(523,.18);setTimeout(()=>tone(659,.18),180);setTimeout(()=>tone(784,.28),360);$('again').onclick=()=>location.reload()}
+function celebrate(){let root=$('confetti');root.innerHTML='';for(let i=0;i<100;i++){let p=document.createElement('i');p.style.left=Math.random()*100+'%';p.style.background=['#173f80','#6847a8','#e6b83f','#22a06b'][i%4];p.style.animationDelay=Math.random()*.7+'s';p.style.transform='rotate('+Math.random()*360+'deg)';root.appendChild(p)}setTimeout(()=>root.innerHTML='',3500)}
+render();
+</script></body></html>
