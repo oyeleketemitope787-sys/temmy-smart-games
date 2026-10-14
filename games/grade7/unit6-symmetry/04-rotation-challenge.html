@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Temmy Smart Games — Rotation Challenge</title>
+<style>
+:root{--blue:#153B7A;--purple:#6B46A8;--gold:#C99700;--ink:#172033;--muted:#637087;--soft:#F3F6FC;--green:#137547;--red:#B42318}
+*{box-sizing:border-box}html{min-height:100%;}body{margin:0;background:var(--soft);color:var(--ink);font-family:Arial,Helvetica,sans-serif;min-height:100dvh}
+.wrap{width:min(100%,980px);margin:auto;padding:clamp(8px,2vw,18px)}
+header{background:linear-gradient(135deg,var(--blue),#2857a4,var(--purple));color:white;text-align:center;border-radius:20px;padding:clamp(14px,3vw,24px);box-shadow:0 8px 25px #153b7a22}
+.brand{display:inline-block;border:1px solid #ffffff77;border-radius:99px;padding:6px 12px;font-size:.75rem;font-weight:800;letter-spacing:.1em}
+h1{font-size:clamp(1.55rem,4vw,2.5rem);margin:10px 0 5px}header p{margin:0;font-size:clamp(.85rem,2vw,1rem)}
+.stats{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:12px 0}
+.pill,button{font:inherit}.pill{background:white;border:1px solid #dbe3f2;border-radius:99px;padding:8px 11px;font-size:.9rem;font-weight:800}
+button{touch-action:manipulation}.sound{border:0;background:#17233d;color:white;border-radius:99px;padding:8px 12px;font-weight:800;cursor:pointer}
+.card{background:white;border-radius:18px;padding:clamp(12px,3vw,22px);margin-top:12px;box-shadow:0 5px 22px #17203310;min-width:0}
+.meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:.9rem}
+.progress{height:9px;background:#e5eaf3;border-radius:99px;overflow:hidden;margin:12px 0}.bar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple));transition:width .2s}
+.tag{display:inline-block;background:#efe8ff;color:#593796;border-radius:99px;padding:6px 10px;font-size:.78rem;font-weight:800}
+.prompt{font-size:clamp(1.05rem,2.8vw,1.5rem);line-height:1.35;font-weight:800;margin:14px 0}
+.visual{display:flex;justify-content:center;align-items:center;min-height:110px;padding:8px;overflow:hidden}
+.pattern{display:grid;grid-template-columns:repeat(3,minmax(36px,64px));gap:5px;padding:8px;background:#eef2fa;border-radius:12px}
+.cell{aspect-ratio:1;border-radius:8px;border:2px solid #d9e1f0;background:white;display:grid;place-items:center;font-size:clamp(1.2rem,4vw,2rem);font-weight:900}
+.cell.on{background:#153B7A;color:white;border-color:#153B7A}.cell.gold{background:#C99700;color:#172033;border-color:#C99700}.cell.purple{background:#6B46A8;color:white;border-color:#6B46A8}
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.opt{min-width:0;border:2px solid #dce3ef;background:#fff;border-radius:13px;padding:12px;text-align:left;font-weight:700;cursor:pointer;overflow-wrap:anywhere}
+.opt:hover:not(:disabled),.nav button:hover:not(:disabled){border-color:var(--blue)}.opt:focus-visible,button:focus-visible{outline:3px solid #e6b92f;outline-offset:2px}
+.opt.correct{background:#e6f7ed;border-color:var(--green);color:#115e38}.opt.wrong{background:#ffeded;border-color:var(--red);color:#9d2018}.opt:disabled{cursor:default}
+.feedback{display:none;margin-top:12px;padding:12px;border-radius:12px;background:#eef5ff;line-height:1.45}.feedback.show{display:block}.hint{background:#fff8df;border-left:4px solid var(--gold)}
+.nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-top:14px}
+.navgroup{display:flex;gap:8px;flex-wrap:wrap}
+.action{border:0;border-radius:11px;padding:11px 14px;font-weight:800;cursor:pointer;background:var(--blue);color:white}.secondary{background:#eceff6;color:#25314a}.action:disabled{opacity:.45;cursor:not-allowed}
+.final{text-align:center;display:none;position:relative;overflow:hidden}.final.show{display:block;animation:finalPop .65s cubic-bezier(.2,.9,.3,1.2) both}.big{font-size:clamp(2.2rem,8vw,4rem);font-weight:900;color:var(--blue);animation:scorePop .8s .25s both}.trophy{font-size:3rem;display:inline-block;animation:trophyBounce .9s .1s both}.celebration{position:absolute;inset:0;pointer-events:none;overflow:hidden}.confetti{position:absolute;top:-18px;width:9px;height:14px;border-radius:2px;animation:confettiFall var(--dur,2.6s) linear var(--delay,0s) forwards;transform:rotate(var(--rot,0deg))}@keyframes finalPop{0%{opacity:0;transform:translateY(18px) scale(.96)}100%{opacity:1;transform:translateY(0) scale(1)}}@keyframes scorePop{0%{opacity:0;transform:scale(.45)}65%{opacity:1;transform:scale(1.12)}100%{transform:scale(1)}}@keyframes trophyBounce{0%{transform:translateY(-35px) rotate(-12deg);opacity:0}60%{transform:translateY(8px) rotate(8deg);opacity:1}100%{transform:translateY(0) rotate(0)}}@keyframes confettiFall{0%{top:-18px;opacity:1}100%{top:110%;opacity:0;transform:translateX(var(--drift,20px)) rotate(760deg)}}@media(prefers-reduced-motion:reduce){.final.show,.big,.trophy,.confetti{animation:none!important}}footer{text-align:center;color:var(--muted);font-size:.82rem;padding:14px}
+@media(max-width:480px){.options{grid-template-columns:1fr}.pill{font-size:.82rem}.nav{align-items:stretch}.navgroup{width:100%}.navgroup button{flex:1}.nav>.action{width:100%}.visual{min-height:95px}}
+@media(max-height:650px) and (min-width:600px){header{padding:10px 16px}h1{margin:5px 0}.card{padding:12px;margin-top:8px}.visual{min-height:70px}.prompt{margin:8px 0}.stats{margin:7px 0}}
+</style></head>
+<body><div class="wrap">
+<header><span class="brand">TEMMY SMART GAMES</span><h1>🔄 Rotation Challenge</h1><p>Grade 7 Mathematics · Rotational Symmetry</p></header>
+<div class="stats"><div class="pill">⭐ Score: <span id="score">0</span>/12</div><div class="pill">🔥 Streak: <span id="streak">0</span></div><div class="pill">🎯 Case: <span id="num">1</span>/12</div><button id="sound" class="sound" type="button">🔊 Sound ON</button></div>
+<section class="card" id="game">
+<div class="meta"><span id="mode">Rotation investigation</span><span id="status">New case</span></div><div class="progress"><div id="bar" class="bar"></div></div>
+<span class="tag" id="tag">ROTATION CHALLENGE</span><div class="prompt" id="prompt"></div><div class="visual" id="visual"></div><div class="options" id="options"></div>
+<div id="feedback" class="feedback" aria-live="polite"></div><div id="hint" class="feedback hint"></div>
+<div class="nav"><div class="navgroup"><button class="action secondary" id="prev" type="button">← Previous</button><button class="action secondary" id="hintBtn" type="button">💡 Hint</button></div><button class="action" id="next" type="button">Next →</button></div>
+</section>
+<section class="card final" id="final"><div class="celebration" id="celebration" aria-hidden="true"></div><div class="trophy">🏆✨</div><h2>Rotation Challenge complete!</h2><div id="finalScore" class="big"></div><p id="finalText"></p><button id="restart" class="action" type="button">↻ Play again</button></section>
+<footer>Temmy Smart Games · Learn • Play • Think • Achieve</footer></div>
+<script>
+const Q=[
+{tag:"Quarter-turn completion",p:"A pattern has rotational symmetry of order 4. Which smallest positive angle maps it onto itself?",v:[1,0,1,0,1,0,1,0,1],opts:["45°","90°","120°","180°"],a:1,h:"Divide one complete turn, 360°, by the order.",x:"360° ÷ 4 = 90°. A quarter-turn maps the pattern onto itself."},
+{tag:"Complete the pattern",p:"A pattern repeats after a half-turn. What is its rotational order?",v:[1,0,0,0,1,0,0,0,1],opts:["1","2","3","4"],a:1,h:"A half-turn is 180°. How many 180° turns make 360°?",x:"360° ÷ 180° = 2, so the order is 2."},
+{tag:"Find the missing angle",p:"A regular triangle has rotational order 3. What is its smallest positive angle of rotation?",v:null,opts:["60°","90°","120°","180°"],a:2,h:"Use 360° ÷ order.",x:"360° ÷ 3 = 120°."},
+{tag:"Pattern check",p:"Which order of rotational symmetry does a square have?",v:[1,0,1,0,0,1,0,1,0],opts:["1","2","3","4"],a:3,h:"A square matches at 90°, 180°, 270° and 360° during a full turn.",x:"A square has rotational order 4."},
+{tag:"Complete the turn",p:"A pattern matches itself every 60°. What is its rotational order?",v:null,opts:["4","5","6","8"],a:2,h:"Divide 360° by the smallest angle.",x:"360° ÷ 60° = 6, so the order is 6."},
+{tag:"Grid reasoning",p:"Which statement describes a pattern with rotational symmetry of order 2?",v:[1,0,0,0,1,0,0,0,1],opts:["It matches after a 90° turn only","It matches after a 180° turn and has no smaller positive matching turn","It matches after every 60° turn","It never matches after turning"],a:1,h:"Order 2 means 360° ÷ 2.",x:"Order 2 means the smallest positive matching turn is 180°."},
+{tag:"Regular polygon",p:"A regular hexagon has how many matching positions during one complete turn, including the starting position at 360°?",v:null,opts:["3","4","6","8"],a:2,h:"For a regular polygon, the rotational order equals the number of sides.",x:"A regular hexagon has rotational order 6."},
+{tag:"Angle challenge",p:"A shape has rotational order 5. What is its smallest positive angle of rotation?",v:null,opts:["36°","60°","72°","90°"],a:2,h:"Calculate 360° ÷ 5.",x:"360° ÷ 5 = 72°."},
+{tag:"Pattern completion",p:"A pattern has rotational order 3. Through which angle will it first match its starting position?",v:[1,0,1,0,1,0,1,0,1],opts:["90°","120°","180°","270°"],a:1,h:"A complete turn is 360°. Divide it into 3 equal rotations.",x:"360° ÷ 3 = 120°."},
+{tag:"Spot the error",p:"A student says a pattern of order 4 first matches after a 180° turn. What is the correction?",v:null,opts:["It first matches after 45°","It first matches after 90°","It first matches after 120°","The student is correct"],a:1,h:"For order 4, divide 360° into four equal parts.",x:"The smallest matching angle is 360° ÷ 4 = 90°. A 180° turn also matches, but it is not the smallest."},
+{tag:"Compare patterns",p:"Pattern A matches every 90°. Pattern B matches every 180°. Which statement is correct?",v:null,opts:["A has order 2 and B has order 4","Both have order 2","A has order 4 and B has order 2","Both have order 4"],a:2,h:"Order = 360° ÷ smallest matching angle.",x:"Pattern A has order 4 (360° ÷ 90°); Pattern B has order 2 (360° ÷ 180°)."},
+{tag:"Final reasoning",p:"A pattern matches itself after 120°, 240° and 360°. What is its order of rotational symmetry?",v:null,opts:["2","3","4","6"],a:1,h:"Count the matching positions in one full turn, or calculate 360° ÷ 120°.",x:"The order is 3 because 360° ÷ 120° = 3."}
+];
+let i=0,furthest=0,score=0,streak=0,best=0,soundOn=true,locked=false,review=false,wrongThis=false;
+const saved=Q.map(()=>null);let audioCtx=null;
+const $=id=>document.getElementById(id);
+function tone(freq=600,duration=.13){if(!soundOn)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type="sine";o.frequency.setValueAtTime(freq,audioCtx.currentTime);g.gain.setValueAtTime(.12,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch(e){}}
+function visual(q){const box=$("visual");box.innerHTML="";if(!q.v){box.style.display="none";return}box.style.display="flex";const grid=document.createElement("div");grid.className="pattern";q.v.forEach((on,j)=>{const c=document.createElement("div");c.className="cell"+(on?" on":"");c.textContent=on?"◆":"";grid.appendChild(c)});box.appendChild(grid)}
+function save(){const buttons=[...$("options").children];saved[i]={locked,wrongThis,chosenCorrect:buttons.findIndex(b=>b.classList.contains("correct")),wrong:buttons.filter(b=>b.classList.contains("wrong")).map(b=>Number(b.dataset.answer)),feedback:$("feedback").innerHTML,hint:$("hint").textContent,hintShown:$("hint").classList.contains("show")};}
+function render(){review=i<furthest;const q=Q[i];locked=saved[i]?.locked||false;wrongThis=saved[i]?.wrongThis||false;$("num").textContent=i+1;$("status").textContent=review?"Read-only review":saved[i]?"Case revisited":"New case";$("mode").textContent=review?"Review mode — answers are locked":"Rotation investigation";$("bar").style.width=((i+1)/Q.length*100)+"%";$("tag").textContent=q.tag.toUpperCase();$("prompt").textContent=q.p;$("score").textContent=score;$("streak").textContent=streak;$("visual").innerHTML="";visual(q);$("options").innerHTML="";$("feedback").className="feedback";$("hint").className="feedback hint";$("hint").textContent="";$("next").textContent=i===Q.length-1?"Finish →":"Next →";
+const order=q.opts.map((t,j)=>({t,j}));for(let j=order.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[order[j],order[k]]=[order[k],order[j]]}
+order.forEach(o=>{const b=document.createElement("button");b.type="button";b.className="opt";b.textContent=o.t;b.dataset.answer=o.j;if(saved[i]?.locked){if(o.j===q.a)b.classList.add("correct");if(saved[i].wrong?.includes(o.j))b.classList.add("wrong");b.disabled=true}else if(review){b.disabled=true}else if(saved[i]?.wrong?.includes(o.j)){b.classList.add("wrong");b.disabled=true}b.addEventListener("click",()=>choose(b,o.j));$("options").appendChild(b)});
+if(saved[i]?.feedback){$("feedback").innerHTML=saved[i].feedback;$("feedback").classList.add("show")}if(saved[i]?.hintShown){$("hint").textContent=saved[i].hint;$("hint").classList.add("show")}
+$("prev").disabled=i===0;$("prev").style.visibility=i===0?"hidden":"visible";$("hintBtn").disabled=!!saved[i]?.locked||review;$("next").disabled=!review&&!locked&&i<furthest;$("next").disabled=!review&&!locked&&i===furthest;
+}
+function choose(btn,ans){if(locked||review)return;const q=Q[i];if(ans===q.a){locked=true;const first=!wrongThis;if(first){score++;streak++;best=Math.max(best,streak);$("feedback").innerHTML="<strong>Correct! +1 point</strong><br>"+q.x}else{$("feedback").innerHTML="<strong>Correct on retry — no point added.</strong><br>"+q.x;streak=0}btn.classList.add("correct");[...$("options").children].forEach(b=>b.disabled=true);$("feedback").classList.add("show");tone(740);save();$("score").textContent=score;$("streak").textContent=streak;$("next").disabled=false;$("hintBtn").disabled=true}else{wrongThis=true;streak=0;btn.classList.add("wrong");btn.disabled=true;$("feedback").innerHTML="<strong>Not quite — no point. Try again.</strong>";$("feedback").classList.add("show");tone(220,.18);$("streak").textContent=0;save();$("next").disabled=true}}
+$("hintBtn").addEventListener("click",()=>{if(saved[i]||review)return;$("hint").textContent="💡 "+Q[i].h;$("hint").classList.add("show");tone(480,.1)});
+$("prev").addEventListener("click",()=>{if(i>0){if(!review&&(locked||wrongThis))save();i--;render()}});
+$("next").addEventListener("click",()=>{if(review){if(i<furthest){i++;render()}else{ i=furthest;review=false;render()}return}if(!locked){$("feedback").innerHTML="<strong>Answer this case before continuing.</strong>";$("feedback").classList.add("show");return}save();if(i<Q.length-1){i++;furthest=Math.max(furthest,i);render()}else finish()});
+$("sound").addEventListener("click",()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Sound ON":"🔇 Sound OFF";if(soundOn)tone(620,.1)});
+function celebrate(){const host=$("celebration");host.innerHTML="";const colors=["#153B7A","#C99700","#6B46A8","#19A05F","#F97316","#E94B6B"];for(let n=0;n<72;n++){const bit=document.createElement("span");bit.className="confetti";bit.style.left=(Math.random()*100)+"%";bit.style.background=colors[n%colors.length];bit.style.setProperty("--delay",(Math.random()*.9)+"s");bit.style.setProperty("--dur",(2+Math.random()*1.8)+"s");bit.style.setProperty("--rot",(Math.random()*180)+"deg");bit.style.setProperty("--drift",((Math.random()-.5)*180)+"px");host.appendChild(bit)}if(soundOn){tone(523,.16);setTimeout(()=>tone(659,.16),160);setTimeout(()=>tone(784,.2),320);setTimeout(()=>tone(1047,.32),500)}}
+function finish(){$("game").style.display="none";$("final").classList.add("show");$("finalScore").textContent=score+" / "+Q.length;$("finalText").textContent="First-attempt score: "+Math.round(score/Q.length*100)+"%. Best streak: "+best+". Review and retries are for learning and do not add points.";celebrate()}
+$("restart").addEventListener("click",()=>location.reload());render();
+</script></body></html>
