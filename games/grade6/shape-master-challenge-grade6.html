@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shape Master Challenge | Temmy Smart Games</title>
+<style>
+:root{--navy:#183f7c;--purple:#6245a3;--gold:#d4a000;--ink:#17233a;--muted:#5e6c84;--line:#dbe3f0;--pale:#f1f4fc;--green:#18794e;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--pale);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+header{margin:14px auto 10px;width:min(1180px,calc(100% - 24px));padding:16px 18px 18px;text-align:center;color:#fff;background:linear-gradient(110deg,var(--navy),var(--purple));border-radius:22px}
+.brand{display:inline-block;border:1px solid #ffffff90;border-radius:999px;padding:4px 14px;font-size:.78rem;font-weight:900;letter-spacing:.06em}
+h1{font-size:clamp(1.55rem,4vw,2.45rem);margin:7px 0 2px}header p{margin:0;font-size:clamp(.88rem,2vw,1rem)}
+.stats{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:10px auto 14px;padding:0 12px}
+.pill{background:white;border:1px solid var(--line);border-radius:999px;padding:8px 13px;font-size:.88rem;font-weight:800}
+button{font:inherit;font-weight:800;border:0;border-radius:13px;padding:12px 15px;cursor:pointer;transition:transform .12s,filter .12s}
+button:active{transform:scale(.98)}button:disabled{opacity:.45;cursor:not-allowed}
+.sound{background:#17233a;color:#fff}
+main{width:min(1180px,calc(100% - 24px));margin:0 auto 22px}
+.card{background:#fff;border-radius:22px;padding:clamp(16px,3vw,28px);box-shadow:0 8px 26px #1a31500c}
+.progress{height:9px;background:#e5eaf4;border-radius:999px;overflow:hidden;margin-bottom:22px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--navy),var(--purple));transition:width .25s}
+.tag{display:inline-block;background:#efe7ff;color:#5b3995;border-radius:999px;padding:8px 13px;font-size:.82rem;font-weight:900;letter-spacing:.04em}
+h2{font-size:clamp(1.25rem,3vw,2rem);line-height:1.35;margin:16px 0}
+.diagram{min-height:150px;display:flex;justify-content:center;align-items:center;padding:8px 0 16px}
+.shape{width:min(220px,55vw);height:auto;overflow:visible}
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.option{background:white;border:2px solid var(--line);text-align:left;color:var(--ink);min-height:56px}
+.option:hover:not(:disabled){border-color:#7c65b6;background:#faf8ff}
+.option.correct{border-color:var(--green);background:#e7f7ee}.option.wrong{border-color:var(--red);background:#fff0ef}
+.feedback{margin-top:14px;padding:14px 16px;border-radius:14px;background:#edf3ff;font-weight:650;line-height:1.5}.feedback.good{background:#e7f7ee;color:#145c3c}.feedback.bad{background:#fff0ef;color:#912018}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:16px}.secondary{background:#e9edf6;color:var(--ink)}.primary{background:var(--navy);color:#fff}.hint{margin-top:12px;background:#fff8dc;padding:12px 14px;border-radius:12px;display:none}.hint.show{display:block}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:0 12px 24px}
+.result{text-align:center;padding:clamp(24px,5vw,48px) 8px}.trophy{font-size:clamp(3rem,8vw,5rem);animation:bounce 1s infinite alternate}.result h2{margin:14px 0}.scorebig{font-size:clamp(3.3rem,10vw,5.5rem);font-weight:950;color:var(--navy);line-height:1.1;margin:22px 0}.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10}.confetti i{position:absolute;top:-24px;width:10px;height:17px;border-radius:2px;animation:fall 2.2s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.1}}@keyframes bounce{to{transform:translateY(-8px) rotate(-3deg)}}@media(max-width:560px){.options{grid-template-columns:1fr}.pill{font-size:.8rem;padding:7px 10px}.diagram{min-height:125px}header{border-radius:0 0 20px 20px;margin:0 auto 10px;width:100%}main{width:calc(100% - 16px)}.card{padding:15px}}
+@media(max-height:650px) and (min-width:561px){header{padding:9px 14px}h1{font-size:1.6rem}.stats{margin:5px auto 8px}.card{padding:16px}.diagram{min-height:90px}.shape{width:150px}}
+</style>
+</head>
+<body>
+<header><div class="brand">TEMMY SMART GAMES</div><h1>🏆 Shape Master Challenge</h1><p>Grade 6 Mathematics · Unit 5: 2D Shapes</p></header>
+<div class="stats">
+ <div class="pill">⭐ Score: <span id="score">0</span>/<span id="total">12</span></div>
+ <div class="pill">🔥 Streak: <span id="streak">0</span> (best <span id="best">0</span>)</div>
+ <div class="pill">🔎 Challenge: <span id="case">1</span>/<span id="total2">12</span></div>
+ <button class="sound" id="soundBtn" type="button">🔊 Sound ON</button>
+</div>
+<main><section class="card" id="play">
+ <div class="progress"><span id="progress"></span></div>
+ <span class="tag" id="tag">REASONING</span>
+ <h2 id="question">Loading question…</h2>
+ <div class="diagram" id="diagram"></div>
+ <div class="options" id="options"></div>
+ <div class="feedback" id="feedback" aria-live="polite">Choose the best answer, then continue.</div>
+ <div class="hint" id="hint"></div>
+ <div class="actions">
+  <button class="secondary" id="prevBtn" type="button">← Previous</button>
+  <button class="secondary" id="hintBtn" type="button">💡 Hint</button>
+  <button class="primary" id="nextBtn" type="button" disabled>Next →</button>
+ </div>
+</section><section class="card result" id="result" hidden>
+ <div class="trophy">🏆 ✨</div><h2>Shape Master Challenge complete!</h2>
+ <div class="scorebig"><span id="finalScore">0</span>/<span id="finalTotal">12</span></div>
+ <p id="summary"></p><p>Review your explanations and practise the 2D-shape skills again.</p>
+ <button class="primary" id="againBtn" type="button">↻ Play again</button>
+</section></main>
+<footer>Temmy Smart Games · Learn • Play • Think • Achieve</footer>
+<div class="confetti" id="confetti"></div>
+<script>
+const questions=[
+{tag:"QUADRILATERALS",q:"Which property is true for every rectangle?",opts:["All four sides are equal","It has four right angles","Its diagonals meet at 90°","It has exactly one pair of parallel sides"],a:1,h:"Think about the angles at the four corners.",e:"Every rectangle has four right angles. Its sides do not all have to be equal."},
+{tag:"RHOMBUS",q:"A rhombus has four equal sides. Which statement is also always true?",opts:["All angles are 90°","Its opposite sides are parallel","Its diagonals are equal","It has exactly one line of symmetry"],a:1,h:"Compare the directions of the opposite sides.",e:"A rhombus has two pairs of parallel opposite sides. It does not always have right angles or equal diagonals."},
+{tag:"DIAGONALS",q:"What is a diagonal in a polygon?",opts:["A line joining adjacent vertices","A line joining two non-adjacent vertices","The outside boundary of a shape","A line that must divide the shape equally"],a:1,h:"A diagonal connects corners that are not next to each other.",e:"A diagonal joins two non-adjacent vertices of a polygon."},
+{tag:"LINES OF SYMMETRY",q:"How many lines of symmetry does a square have?",opts:["1","2","3","4"],a:3,h:"Consider vertical, horizontal and both diagonal folds.",e:"A square has four lines of symmetry: one vertical, one horizontal and two diagonal."},
+{tag:"CIRCLE",q:"What is the name of a line segment that passes through the centre of a circle and has both endpoints on the circumference?",opts:["Radius","Chord","Diameter","Tangent"],a:2,h:"It is twice the length of a radius.",e:"The diameter passes through the centre and joins two points on the circumference."},
+{tag:"ROTATIONAL SYMMETRY",q:"A shape has rotational symmetry of order 4. What is its smallest positive angle of rotation?",opts:["45°","90°","120°","180°"],a:1,h:"Divide one complete turn, 360°, by the order.",e:"360° ÷ 4 = 90°."},
+{tag:"TESSELLATION",q:"Which statement best describes a tessellation?",opts:["Shapes overlap to make a pattern","Shapes fit together with no gaps or overlaps","Only circles are repeated","Every tile must be a regular hexagon"],a:1,h:"Think about covering a surface completely.",e:"A tessellation covers a surface using shapes that fit together without gaps or overlaps."},
+{tag:"TRIANGLES",q:"A triangle has three equal sides. What type of triangle is it?",opts:["Scalene","Isosceles only","Equilateral","Right-angled only"],a:2,h:"The name describes all three side lengths being equal.",e:"An equilateral triangle has three equal sides and three equal angles of 60°."},
+{tag:"QUADRILATERAL REASONING",q:"A student says, “Every square is a rectangle.” Which response is correct?",opts:["True, because a square has four right angles","False, because a square has equal sides","False, because a square has no parallel sides","True only when the square is rotated"],a:0,h:"Use the defining property of a rectangle.",e:"A square has four right angles, so it meets the definition of a rectangle. It also has the extra property of four equal sides."},
+{tag:"CIRCLE",q:"The radius of a circle is 6 cm. What is its diameter?",opts:["3 cm","6 cm","12 cm","18 cm"],a:2,h:"The diameter is twice the radius.",e:"Diameter = 2 × radius = 2 × 6 = 12 cm."},
+{tag:"ROTATION",q:"A shape is rotated through 180°. Which statement describes the turn?",opts:["A quarter turn","A half turn","A three-quarter turn","A complete turn"],a:1,h:"A complete turn is 360°.",e:"180° is half of 360°, so it is a half turn."},
+{tag:"MIXED CHALLENGE",q:"Which shape can tessellate by itself without gaps or overlaps?",opts:["A circle","A regular pentagon","A square","A non-square circle"],a:2,h:"Think of a familiar tile that fits edge-to-edge in rows.",e:"Squares tessellate because they fit together with no gaps or overlaps. Circles leave gaps, and regular pentagons do not tessellate by themselves."}
+];
+const $=id=>document.getElementById(id);
+let idx=0,score=0,streak=0,best=0,sound=true,audioCtx=null;
+let answers=Array(questions.length).fill(null),firstCorrect=Array(questions.length).fill(null),hints=Array(questions.length).fill(false);
+$("total").textContent=questions.length;$("total2").textContent=questions.length;$("finalTotal").textContent=questions.length;
+function tone(freq,duration=.12){if(!sound)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(.0001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.14,audioCtx.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch(e){}}
+function svgFor(n){
+const diagrams=[
+'<rect x="35" y="45" width="130" height="70" rx="2"/>',
+'<polygon points="100,20 165,80 100,140 35,80"/>',
+'<rect x="35" y="25" width="130" height="110"/><line x1="35" y1="25" x2="165" y2="135" stroke="#d4a000" stroke-width="4"/><line x1="165" y1="25" x2="35" y2="135" stroke="#d4a000" stroke-width="4"/>',
+'<rect x="45" y="25" width="110" height="110"/><line x1="100" y1="25" x2="100" y2="135" stroke="#6245a3" stroke-width="3" stroke-dasharray="6 5"/><line x1="45" y1="80" x2="155" y2="80" stroke="#6245a3" stroke-width="3" stroke-dasharray="6 5"/><line x1="45" y1="25" x2="155" y2="135" stroke="#6245a3" stroke-width="3" stroke-dasharray="6 5"/><line x1="155" y1="25" x2="45" y2="135" stroke="#6245a3" stroke-width="3" stroke-dasharray="6 5"/>',
+'<circle cx="100" cy="80" r="58"/><line x1="42" y1="80" x2="158" y2="80" stroke="#d4a000" stroke-width="4"/><circle cx="100" cy="80" r="4" fill="#d4a000" stroke="none"/>',
+'<polygon points="100,20 155,60 135,125 65,125 45,60"/>',
+'<polygon points="45,35 95,35 95,85 45,85"/><polygon points="95,85 145,85 145,135 95,135"/>',
+'<polygon points="100,22 160,130 40,130"/>',
+'<rect x="35" y="35" width="130" height="90"/><line x1="35" y1="35" x2="165" y2="125" stroke="#d4a000" stroke-width="4"/><line x1="165" y1="35" x2="35" y2="125" stroke="#d4a000" stroke-width="4"/>',
+'<circle cx="100" cy="80" r="58"/><line x1="100" y1="80" x2="158" y2="80" stroke="#d4a000" stroke-width="4"/><circle cx="100" cy="80" r="4" fill="#d4a000" stroke="none"/>',
+'<path d="M55 35 L145 35 L145 125 L55 125 Z" transform="rotate(45 100 80)"/>',
+'<rect x="30" y="30" width="45" height="45"/><rect x="75" y="30" width="45" height="45"/><rect x="120" y="30" width="45" height="45"/><rect x="30" y="75" width="45" height="45"/><rect x="75" y="75" width="45" height="45"/><rect x="120" y="75" width="45" height="45"/>'
+];
+return `<svg class="shape" viewBox="0 0 200 160" role="img" aria-label="Geometry illustration"><g fill="#e8efff" stroke="#183f7c" stroke-width="4" stroke-linejoin="round">${diagrams[n]}</g></svg>`
+}
+function render(){
+const q=questions[idx];$("case").textContent=idx+1;$("progress").style.width=((idx+1)/questions.length*100)+"%";$("tag").textContent=q.tag;$("question").textContent=q.q;$("diagram").innerHTML=svgFor(idx);$("options").innerHTML="";
+q.opts.forEach((opt,i)=>{const b=document.createElement("button");b.type="button";b.className="option";b.textContent=String.fromCharCode(65+i)+". "+opt;b.disabled=answers[idx]!==null;b.onclick=()=>choose(i);if(answers[idx]!==null){if(i===q.a)b.classList.add("correct");if(i===answers[idx]&&i!==q.a)b.classList.add("wrong")} $("options").appendChild(b)});
+$("feedback").className="feedback";$("feedback").textContent=answers[idx]===null?"Choose the best answer, then continue.":(answers[idx]===q.a?"Correct! ":"Not quite. ")+q.e;
+$("nextBtn").disabled=answers[idx]===null;$("nextBtn").textContent=idx===questions.length-1?"Finish →":"Next →";$("prevBtn").disabled=idx===0;
+$("hint").textContent=q.h;$("hint").classList.toggle("show",hints[idx]);$("hintBtn").textContent=hints[idx]?"💡 Hint shown":"💡 Hint";
+$("score").textContent=score;$("streak").textContent=streak;$("best").textContent=best}
+function choose(i){if(answers[idx]!==null)return;answers[idx]=i;const q=questions[idx];firstCorrect[idx]=i===q.a;if(firstCorrect[idx]){score++;streak++;best=Math.max(best,streak);tone(720,.12);setTimeout(()=>tone(960,.13),90)}else{streak=0;tone(240,.2)}render();$("feedback").className="feedback "+(firstCorrect[idx]?"good":"bad");$("feedback").textContent=(firstCorrect[idx]?"Correct! ":"Not quite — no point. ")+q.e}
+function showResult(){ $("play").hidden=true;$("result").hidden=false;$("finalScore").textContent=score;$("summary").textContent=`First-attempt score: ${Math.round(score/questions.length*100)}%. Best streak: ${best}. Retries and review are for learning and do not add points.`;tone(660,.16);setTimeout(()=>tone(830,.18),140);confetti()}
+function confetti(){const box=$("confetti");box.innerHTML="";for(let i=0;i<75;i++){const el=document.createElement("i");el.style.left=Math.random()*100+"%";el.style.background=["#d4a000","#6245a3","#183f7c","#20a36b","#ef7196"][i%5];el.style.animationDelay=Math.random()*.8+"s";el.style.transform=`rotate(${Math.random()*180}deg)`;box.appendChild(el)}setTimeout(()=>box.innerHTML="",3200)}
+$("nextBtn").onclick=()=>{if(answers[idx]===null)return;if(idx===questions.length-1){showResult();return}idx++;render()};
+$("prevBtn").onclick=()=>{if(idx>0){idx--;render()}};
+$("hintBtn").onclick=()=>{hints[idx]=!hints[idx];render()};
+$("soundBtn").onclick=()=>{sound=!sound;$("soundBtn").textContent=sound?"🔊 Sound ON":"🔇 Sound OFF";if(sound)tone(650,.1)};
+$("againBtn").onclick=()=>{idx=0;score=0;streak=0;best=0;answers=Array(questions.length).fill(null);firstCorrect=Array(questions.length).fill(null);hints=Array(questions.length).fill(false);$("play").hidden=false;$("result").hidden=true;render()};
+render();
+</script>
+</body></html>

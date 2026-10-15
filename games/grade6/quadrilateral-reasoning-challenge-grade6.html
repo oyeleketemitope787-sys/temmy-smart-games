@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quadrilateral Reasoning Challenge | Temmy Smart Games</title>
+<style>
+:root{--navy:#183f7c;--purple:#6245a3;--gold:#d4a000;--ink:#17233a;--muted:#5e6c84;--line:#dbe3f0;--pale:#f1f4fc;--green:#18794e;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--pale);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+header{margin:14px auto 10px;width:min(1180px,calc(100% - 24px));padding:16px 18px 18px;text-align:center;color:#fff;background:linear-gradient(110deg,var(--navy),var(--purple));border-radius:22px}
+.brand{display:inline-block;border:1px solid #ffffff90;border-radius:999px;padding:4px 14px;font-size:.78rem;font-weight:900;letter-spacing:.06em}
+h1{font-size:clamp(1.55rem,4vw,2.45rem);margin:7px 0 2px}header p{margin:0;font-size:clamp(.88rem,2vw,1rem)}
+.stats{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:10px auto 14px;padding:0 12px}
+.pill{background:white;border:1px solid var(--line);border-radius:999px;padding:8px 13px;font-size:.88rem;font-weight:800}
+button{font:inherit;font-weight:800;border:0;border-radius:13px;padding:12px 15px;cursor:pointer;transition:transform .12s,filter .12s}
+button:active{transform:scale(.98)}button:disabled{opacity:.45;cursor:not-allowed}
+.sound{background:#17233a;color:#fff}
+main{width:min(1180px,calc(100% - 24px));margin:0 auto 22px}
+.card{background:#fff;border-radius:22px;padding:clamp(16px,3vw,28px);box-shadow:0 8px 26px #1a31500c}
+.progress{height:9px;background:#e5eaf4;border-radius:999px;overflow:hidden;margin-bottom:22px}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--navy),var(--purple));transition:width .25s}
+.tag{display:inline-block;background:#efe7ff;color:#5b3995;border-radius:999px;padding:8px 13px;font-size:.82rem;font-weight:900;letter-spacing:.04em}
+h2{font-size:clamp(1.25rem,3vw,2rem);line-height:1.35;margin:16px 0}
+.diagram{min-height:150px;display:flex;justify-content:center;align-items:center;padding:8px 0 16px}
+.shape{width:min(220px,55vw);height:auto;overflow:visible}
+.options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.option{background:white;border:2px solid var(--line);text-align:left;color:var(--ink);min-height:56px}
+.option:hover:not(:disabled){border-color:#7c65b6;background:#faf8ff}
+.option.correct{border-color:var(--green);background:#e7f7ee}.option.wrong{border-color:var(--red);background:#fff0ef}
+.feedback{margin-top:14px;padding:14px 16px;border-radius:14px;background:#edf3ff;font-weight:650;line-height:1.5}.feedback.good{background:#e7f7ee;color:#145c3c}.feedback.bad{background:#fff0ef;color:#912018}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:16px}.secondary{background:#e9edf6;color:var(--ink)}.primary{background:var(--navy);color:#fff}.hint{margin-top:12px;background:#fff8dc;padding:12px 14px;border-radius:12px;display:none}.hint.show{display:block}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:0 12px 24px}
+.result{text-align:center;padding:clamp(24px,5vw,48px) 8px}.trophy{font-size:clamp(3rem,8vw,5rem);animation:bounce 1s infinite alternate}.result h2{margin:14px 0}.scorebig{font-size:clamp(3.3rem,10vw,5.5rem);font-weight:950;color:var(--navy);line-height:1.1;margin:22px 0}.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10}.confetti i{position:absolute;top:-24px;width:10px;height:17px;border-radius:2px;animation:fall 2.2s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg);opacity:.1}}@keyframes bounce{to{transform:translateY(-8px) rotate(-3deg)}}@media(max-width:560px){.options{grid-template-columns:1fr}.pill{font-size:.8rem;padding:7px 10px}.diagram{min-height:125px}header{border-radius:0 0 20px 20px;margin:0 auto 10px;width:100%}main{width:calc(100% - 16px)}.card{padding:15px}}
+@media(max-height:650px) and (min-width:561px){header{padding:9px 14px}h1{font-size:1.6rem}.stats{margin:5px auto 8px}.card{padding:16px}.diagram{min-height:90px}.shape{width:150px}}
+</style>
+</head>
+<body>
+<header><div class="brand">TEMMY SMART GAMES</div><h1>🧠 Quadrilateral Reasoning Challenge</h1><p>Grade 6 Mathematics · Unit 5: 2D Shapes</p></header>
+<div class="stats">
+ <div class="pill">⭐ Score: <span id="score">0</span>/<span id="total">12</span></div>
+ <div class="pill">🔥 Streak: <span id="streak">0</span> (best <span id="best">0</span>)</div>
+ <div class="pill">🔎 Challenge: <span id="case">1</span>/<span id="total2">12</span></div>
+ <button class="sound" id="soundBtn" type="button">🔊 Sound ON</button>
+</div>
+<main><section class="card" id="play">
+ <div class="progress"><span id="progress"></span></div>
+ <span class="tag" id="tag">REASONING</span>
+ <h2 id="question">Loading question…</h2>
+ <div class="diagram" id="diagram"></div>
+ <div class="options" id="options"></div>
+ <div class="feedback" id="feedback" aria-live="polite">Choose the best answer, then continue.</div>
+ <div class="hint" id="hint"></div>
+ <div class="actions">
+  <button class="secondary" id="prevBtn" type="button">← Previous</button>
+  <button class="secondary" id="hintBtn" type="button">💡 Hint</button>
+  <button class="primary" id="nextBtn" type="button" disabled>Next →</button>
+ </div>
+</section><section class="card result" id="result" hidden>
+ <div class="trophy">🏆 ✨</div><h2>Quadrilateral Reasoning Challenge complete!</h2>
+ <div class="scorebig"><span id="finalScore">0</span>/<span id="finalTotal">12</span></div>
+ <p id="summary"></p><p>Review the explanations and practise the properties again.</p>
+ <button class="primary" id="againBtn" type="button">↻ Play again</button>
+</section></main>
+<footer>Temmy Smart Games · Learn • Play • Think • Achieve</footer>
+<div class="confetti" id="confetti"></div>
+<script>
+const questions=[
+{tag:"PARALLEL SIDES",q:"A quadrilateral has two pairs of parallel sides. Which conclusion is always true?",opts:["It is a parallelogram","It must be a square","It has exactly one right angle","Its diagonals are always perpendicular"],a:0,h:"Look for the definition based on both pairs of opposite sides.",e:"A parallelogram has two pairs of parallel opposite sides. It does not have to be a square."},
+{tag:"SIDE PROPERTIES",q:"A shape has four equal sides, but its angles are not all 90°. Which shape best describes it?",opts:["Rectangle","Rhombus","Trapezium","Kite"],a:1,h:"Think of a quadrilateral with four equal sides that need not have right angles.",e:"A rhombus has four equal sides. A square is a special rhombus with four right angles."},
+{tag:"RIGHT ANGLES",q:"A quadrilateral has four right angles and opposite sides equal. Which name is always correct?",opts:["Kite","Trapezium","Rectangle","Rhombus only"],a:2,h:"Four right angles are the key clue.",e:"A rectangle has four right angles. A square also fits the description, so rectangle is the general name that is always correct."},
+{tag:"CLASSIFICATION",q:"Which statement about a square is true?",opts:["It has only one pair of parallel sides","It has four equal sides and four right angles","Its diagonals are never equal","It has no lines of symmetry"],a:1,h:"A square combines equal sides with right angles.",e:"A square has four equal sides, four right angles, two pairs of parallel sides and four lines of symmetry."},
+{tag:"TRAPEZIUM",q:"A trapezium has exactly one pair of parallel sides. What is the pair called?",opts:["Adjacent sides","Opposite sides","Equal sides","Diagonal sides"],a:1,h:"Parallel sides do not meet and are opposite each other.",e:"The parallel sides of a trapezium are opposite sides."},
+{tag:"DIAGONALS",q:"The diagonals of a rectangle join opposite vertices. Which statement is always true?",opts:["They meet at 90°","They are equal and bisect each other","They are always perpendicular","They never cross"],a:1,h:"Compare the lengths of the diagonals and the way they divide one another.",e:"A rectangle’s diagonals are equal in length and bisect each other. They do not have to meet at 90°."},
+{tag:"REASONING",q:"A quadrilateral is a rhombus. Which statement about its sides must be true?",opts:["All four sides are equal","All four angles are 90°","Only one pair of opposite sides is parallel","Its diagonals are parallel"],a:0,h:"Think about the defining side property of a rhombus, not its angles.",e:"A rhombus has four equal sides. Its angles do not all have to be 90°, and its diagonals cross rather than run parallel."},
+{tag:"REASONING",q:"Mina says, “Every rectangle is a square.” Which response is best?",opts:["Correct, because both have four right angles","Incorrect, because a rectangle need not have four equal sides","Correct, because every quadrilateral is a square","Incorrect, because rectangles have no parallel sides"],a:1,h:"Compare the side lengths required for a square with those required for a rectangle.",e:"A rectangle has four right angles, but its adjacent sides need not be equal. Therefore, not every rectangle is a square."},
+{tag:"REASONING",q:"A quadrilateral has two pairs of equal adjacent sides. Which shape is the best match?",opts:["Kite","Rectangle","Parallelogram","Trapezium"],a:0,h:"A kite is identified by two pairs of equal adjacent sides.",e:"A kite has two pairs of equal adjacent sides."},
+{tag:"PARALLEL SIDES",q:"Which shape always has two pairs of parallel sides and four equal sides?",opts:["Rectangle","Kite","Rhombus","Trapezium"],a:2,h:"Choose the shape with all sides equal and opposite sides parallel.",e:"A rhombus has four equal sides and two pairs of parallel opposite sides."},
+{tag:"REASONING",q:"A student says, “If a quadrilateral has four equal sides, it must have four right angles.” Is the student correct?",opts:["Yes, every rhombus is a square","No, a rhombus can have angles that are not 90°","Yes, because all quadrilaterals have right angles","No, because equal sides cannot be parallel"],a:1,h:"Compare a square with a slanted rhombus.",e:"The student is incorrect. A rhombus has four equal sides, but its angles do not all have to be 90°."},
+{tag:"MIXED CHALLENGE",q:"Which statement is true about a parallelogram?",opts:["Both pairs of opposite sides are parallel","All four sides must be equal","All four angles must be 90°","It must have exactly one line of symmetry"],a:0,h:"Use the defining property of a parallelogram.",e:"A parallelogram has two pairs of parallel opposite sides. Extra properties, such as all sides equal, apply to special cases."}
+];
+const $=id=>document.getElementById(id);
+let idx=0,score=0,streak=0,best=0,sound=true,audioCtx=null;
+let answers=Array(questions.length).fill(null),firstCorrect=Array(questions.length).fill(null),hints=Array(questions.length).fill(false);
+$("total").textContent=questions.length;$("total2").textContent=questions.length;$("finalTotal").textContent=questions.length;
+function tone(freq,duration=.12){if(!sound)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type="sine";o.frequency.value=freq;g.gain.setValueAtTime(.0001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.14,audioCtx.currentTime+.015);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch(e){}}
+function svgFor(n){
+let type=["parallelogram","rhombus","rectangle","square","trapezium","rectangle","rhombus","square","kite","rhombus","rhombus","parallelogram"][n];
+let shapes={
+square:'<rect x="45" y="25" width="110" height="110" rx="2"/>',
+rectangle:'<rect x="25" y="42" width="150" height="76" rx="2"/>',
+rhombus:'<polygon points="100,20 165,80 100,140 35,80"/>',
+parallelogram:'<polygon points="55,30 170,30 145,130 30,130"/>',
+trapezium:'<polygon points="55,30 145,30 175,130 25,130"/>',
+kite:'<polygon points="100,20 155,75 100,140 45,75"/>'
+};
+let diagonal="";
+if(n===5){diagonal='<line x1="25" y1="42" x2="175" y2="118" stroke="#d4a000" stroke-width="4"/><line x1="175" y1="42" x2="25" y2="118" stroke="#d4a000" stroke-width="4"/>'}
+if(n===6){diagonal='<line x1="100" y1="20" x2="100" y2="140" stroke="#d4a000" stroke-width="4"/><line x1="35" y1="80" x2="165" y2="80" stroke="#d4a000" stroke-width="4"/>'}
+return `<svg class="shape" viewBox="0 0 200 160" role="img" aria-label="${type} with diagonals where relevant"><g fill="#e8efff" stroke="#183f7c" stroke-width="4" stroke-linejoin="round">${shapes[type]}</g>${diagonal}</svg>`
+}
+function render(){
+const q=questions[idx];$("case").textContent=idx+1;$("progress").style.width=((idx+1)/questions.length*100)+"%";$("tag").textContent=q.tag;$("question").textContent=q.q;$("diagram").innerHTML=svgFor(idx);$("options").innerHTML="";
+q.opts.forEach((opt,i)=>{const b=document.createElement("button");b.type="button";b.className="option";b.textContent=String.fromCharCode(65+i)+". "+opt;b.disabled=answers[idx]!==null;b.onclick=()=>choose(i);if(answers[idx]!==null){if(i===q.a)b.classList.add("correct");if(i===answers[idx]&&i!==q.a)b.classList.add("wrong")} $("options").appendChild(b)});
+$("feedback").className="feedback";$("feedback").textContent=answers[idx]===null?"Choose the best answer, then continue.":(answers[idx]===q.a?"Correct! ":"Not quite. ")+q.e;
+$("nextBtn").disabled=answers[idx]===null;$("nextBtn").textContent=idx===questions.length-1?"Finish →":"Next →";$("prevBtn").disabled=idx===0;
+$("hint").textContent=q.h;$("hint").classList.toggle("show",hints[idx]);$("hintBtn").textContent=hints[idx]?"💡 Hint shown":"💡 Hint";
+$("score").textContent=score;$("streak").textContent=streak;$("best").textContent=best}
+function choose(i){if(answers[idx]!==null)return;answers[idx]=i;const q=questions[idx];firstCorrect[idx]=i===q.a;if(firstCorrect[idx]){score++;streak++;best=Math.max(best,streak);tone(720,.12);setTimeout(()=>tone(960,.13),90)}else{streak=0;tone(240,.2)}render();$("feedback").className="feedback "+(firstCorrect[idx]?"good":"bad");$("feedback").textContent=(firstCorrect[idx]?"Correct! ":"Not quite — no point. ")+q.e}
+function showResult(){ $("play").hidden=true;$("result").hidden=false;$("finalScore").textContent=score;$("summary").textContent=`First-attempt score: ${Math.round(score/questions.length*100)}%. Best streak: ${best}. Retries and review are for learning and do not add points.`;tone(660,.16);setTimeout(()=>tone(830,.18),140);confetti()}
+function confetti(){const box=$("confetti");box.innerHTML="";for(let i=0;i<75;i++){const el=document.createElement("i");el.style.left=Math.random()*100+"%";el.style.background=["#d4a000","#6245a3","#183f7c","#20a36b","#ef7196"][i%5];el.style.animationDelay=Math.random()*.8+"s";el.style.transform=`rotate(${Math.random()*180}deg)`;box.appendChild(el)}setTimeout(()=>box.innerHTML="",3200)}
+$("nextBtn").onclick=()=>{if(answers[idx]===null)return;if(idx===questions.length-1){showResult();return}idx++;render()};
+$("prevBtn").onclick=()=>{if(idx>0){idx--;render()}};
+$("hintBtn").onclick=()=>{hints[idx]=!hints[idx];render()};
+$("soundBtn").onclick=()=>{sound=!sound;$("soundBtn").textContent=sound?"🔊 Sound ON":"🔇 Sound OFF";if(sound)tone(650,.1)};
+$("againBtn").onclick=()=>{idx=0;score=0;streak=0;best=0;answers=Array(questions.length).fill(null);firstCorrect=Array(questions.length).fill(null);hints=Array(questions.length).fill(false);$("play").hidden=false;$("result").hidden=true;render()};
+render();
+</script>
+</body></html>
