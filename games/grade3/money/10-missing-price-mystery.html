@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Missing Price Mystery | Temmy Smart Games</title>
+<style>
+:root{--navy:#173b7a;--gold:#e8b83e;--purple:#7045a5;--mint:#e9f8ef;--ink:#20304a}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,sans-serif;background:linear-gradient(135deg,#edf4ff,#fff8e8);color:var(--ink);min-height:100vh;padding:18px}
+.app{max-width:850px;margin:auto;background:#fff;border-radius:24px;box-shadow:0 12px 35px #20304a20;overflow:hidden}.top{background:linear-gradient(120deg,var(--navy),#3159a0);color:white;padding:22px}.top h1{margin:0;font-size:clamp(1.4rem,4vw,2rem)}.top p{margin:6px 0 0;opacity:.9}.progress{height:7px;background:#ffffff44;border-radius:9px;margin-top:16px;overflow:hidden}.bar{height:100%;width:0;background:var(--gold);transition:width .3s}.content{padding:clamp(18px,4vw,32px)}.pill{display:inline-block;background:#fff0c8;color:#654500;border-radius:30px;padding:6px 12px;font-weight:700;font-size:.84rem}.story{background:#f2f6ff;border-radius:18px;padding:20px;text-align:center;margin:18px 0}.emoji{font-size:3rem}.prompt{font-size:1.2rem;font-weight:750;line-height:1.45;margin:14px auto;max-width:620px}.equation{font-size:clamp(1.7rem,5vw,2.5rem);font-weight:850;color:var(--navy);margin:12px 0}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}.choice{border:2px solid #dbe4f4;background:white;border-radius:14px;padding:16px;font-size:1.08rem;font-weight:750;cursor:pointer;color:var(--ink);min-height:58px}.choice:hover:not(:disabled){border-color:var(--navy);background:#f3f7ff}.choice:disabled{cursor:default;opacity:.94}.choice.correct{border-color:#26985c;background:#e5f8ed;color:#12663a}.choice.wrong{border-color:#d84c4c;background:#fff0f0;color:#9e2222}.feedback{min-height:54px;margin-top:15px;padding:12px;border-radius:12px;background:#f6f8fc;font-weight:650}.controls{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:18px}.btn{border:0;border-radius:12px;padding:12px 18px;font-size:1rem;font-weight:750;cursor:pointer}.primary{background:var(--navy);color:white}.secondary{background:#e9eef7;color:var(--navy)}.gold{background:var(--gold);color:#352600}.scoreline{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-weight:750}.hide{display:none!important}.finish{text-align:center;padding:24px 8px}.trophy{font-size:4rem}.ribbon{display:inline-block;background:linear-gradient(90deg,#f4c84c,#fff0a7,#f4c84c);color:#563c00;padding:10px 24px;font-weight:900;letter-spacing:1px;transform:rotate(-2deg);box-shadow:0 5px 0 #d9a92d;margin:10px 0 20px}.confetti{position:fixed;top:-20px;width:9px;height:15px;animation:fall 3.5s linear forwards;pointer-events:none;z-index:5}@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}@media(max-width:520px){body{padding:8px}.choices{grid-template-columns:1fr}.top{padding:18px}.choice{padding:13px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition:none!important}}
+</style></head>
+<body><main class="app">
+<header class="top"><h1>🕵️ Missing Price Mystery</h1><p>Grade 3 Money · Solve the clue, discover the missing value!</p><div class="progress"><div class="bar" id="bar"></div></div></header>
+<section class="content" id="game">
+<div class="scoreline"><span id="qcount">Question 1 of 12</span><span>⭐ Score: <b id="score">0</b></span><span>🔥 Streak: <b id="streak">0</b></span></div>
+<div class="story"><div class="emoji" id="emoji">🧸</div><span class="pill" id="type">MISSING PRICE</span><div class="prompt" id="prompt"></div><div class="equation" id="equation"></div></div>
+<div class="choices" id="choices"></div><div class="feedback" id="feedback" aria-live="polite">Choose the answer that solves the mystery.</div>
+<div class="controls"><button class="btn secondary" id="prev">← Previous</button><button class="btn secondary" id="sound">🔊 Sound on</button><button class="btn primary" id="next">Next →</button></div>
+</section>
+<section class="content finish hide" id="finish"><div class="trophy">🏆</div><div class="ribbon">MONEY MYSTERY SOLVED!</div><h2 id="finishTitle">Brilliant detective work!</h2><p id="finishScore"></p><p id="finishMsg">You used your money-maths skills to solve the clues.</p><button class="btn gold" id="replay">🔄 Play Again</button></section>
+</main>
+<script>
+const bank=[
+{e:"🧸",t:"FIND THE PRICE",p:"A teddy bear and a ball cost 2.500 OMR altogether. The ball costs 0.900 OMR. What is the teddy bear's price?",eq:"? + 0.900 = 2.500",a:1.6,o:[1.4,1.6,1.7,1.8],u:"OMR"},
+{e:"🚗",t:"MISSING TOTAL",p:"A toy car costs 1.250 OMR. A puzzle costs 0.750 OMR. What is the total?",eq:"1.250 + 0.750 = ?",a:2,o:[1.9,2,2.1,2.25],u:"OMR"},
+{e:"⚽",t:"FIND THE DIFFERENCE",p:"A football costs 1.800 OMR. A ball costs 1.200 OMR. How much more does the football cost?",eq:"1.800 − 1.200 = ?",a:.6,o:[.4,.5,.6,.8],u:"OMR"},
+{e:"🪁",t:"MISSING PRICE",p:"A kite and a yo-yo cost 1.700 OMR. The kite costs 1.100 OMR. What is the yo-yo's price?",eq:"1.100 + ? = 1.700",a:.6,o:[.4,.6,.7,.8],u:"OMR"},
+{e:"🧩",t:"BAISA CLUE",p:"A puzzle costs 1.250 OMR. How many baisa is that?",eq:"1.250 OMR = ?",a:1250,o:[125,1050,1250,2500],u:"baisa"},
+{e:"🎲",t:"CHECK THE TOTAL",p:"Two board games cost 1.400 OMR each. What is the cost of both games?",eq:"1.400 + 1.400 = ?",a:2.8,o:[2.4,2.6,2.8,3.0],u:"OMR"},
+{e:"🛍️",t:"SHOPPING CLUE",p:"You have 3.000 OMR. A doll costs 1.650 OMR. How much money remains after buying it?",eq:"3.000 − 1.650 = ?",a:1.35,o:[1.25,1.35,1.45,1.55],u:"OMR"},
+{e:"🦕",t:"MYSTERY TOTAL",p:"A dinosaur toy costs 0.850 OMR and a small car costs 0.650 OMR. Find the total.",eq:"0.850 + 0.650 = ?",a:1.5,o:[1.4,1.45,1.5,1.6],u:"OMR"},
+{e:"🧱",t:"MISSING AMOUNT",p:"A set of blocks costs 2.400 OMR. You have paid 1.500 OMR so far. How much more do you need?",eq:"1.500 + ? = 2.400",a:.9,o:[.7,.8,.9,1.0],u:"OMR"},
+{e:"🎯",t:"SPOT THE VALUE",p:"Which amount is equal to 2 OMR and 75 baisa?",eq:"2 OMR + 75 baisa = ?",a:2.075,o:[2.75,2.075,2.750,2.0075],u:"OMR"},
+{e:"🛴",t:"PRICE MYSTERY",p:"A scooter costs 4.000 OMR. A helmet costs 1.250 OMR less than the scooter. What is the helmet's price?",eq:"4.000 − 1.250 = ?",a:2.75,o:[2.25,2.5,2.75,3.25],u:"OMR"},
+{e:"🏆",t:"FINAL REASONING",p:"A toy costs 1.350 OMR. Which two amounts make exactly that price?",eq:"Choose the matching pair",a:"1.000 + 0.350",o:["1.000 + 0.250","1.000 + 0.350","0.500 + 0.750","1.200 + 0.250"],u:""}
+];
+let questions=[],idx=0,score=0,streak=0,best=0,soundOn=true,ctx;
+const $=id=>document.getElementById(id);
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function fmt(v,u){if(typeof v==="string")return v;return u==="baisa"?`${v} baisa`:`${v.toFixed(3)} OMR`}
+function start(){questions=shuffle(bank.map(q=>({...q,o:shuffle([...q.o]),tried:[],done:false,first:false})));idx=0;score=0;streak=0;best=0;$("game").classList.remove("hide");$("finish").classList.add("hide");render()}
+function render(){let q=questions[idx];$("qcount").textContent=`Question ${idx+1} of ${questions.length}`;$("score").textContent=score;$("streak").textContent=streak;$("bar").style.width=`${idx/questions.length*100}%`;$("emoji").textContent=q.e;$("type").textContent=q.t;$("prompt").textContent=q.p;$("equation").textContent=q.eq;$("feedback").textContent=q.done?(q.first?"Correct on your first try! +1 point.":"Question completed. No point awarded because the first try was incorrect."):"Choose the answer that solves the mystery.";$("choices").innerHTML="";
+q.o.forEach((v,i)=>{let b=document.createElement("button");b.className="choice";b.textContent=fmt(v,q.u);b.disabled=q.done||q.tried.includes(i);if(q.done&&String(v)===String(q.a))b.classList.add("correct");if(q.tried.includes(i)&&String(v)!==String(q.a))b.classList.add("wrong");b.onclick=()=>choose(i);$("choices").appendChild(b)});
+$("prev").disabled=idx===0;$("next").textContent=idx===questions.length-1?"Finish →":"Next →"}
+function choose(i){let q=questions[idx];if(q.done||q.tried.includes(i))return;q.tried.push(i);let correct=String(q.o[i])===String(q.a);if(correct){q.done=true;q.first=q.tried.length===1;if(q.first){score++;streak++;best=Math.max(best,streak)}else streak=0;$("feedback").textContent=q.first?"Correct! +1 point.":"Correct answer, but no point: the first attempt was incorrect.";tone(true)}else{$("feedback").textContent="Not quite. Try another option. Your first attempt determines the point.";streak=0;tone(false);if(q.tried.length>=q.o.length){q.done=true;$("feedback").textContent="No attempts left. The correct answer is "+fmt(q.a,q.u)+".";}}
+renderPreserveFeedback()}
+function renderPreserveFeedback(){let msg=$("feedback").textContent;render();$("feedback").textContent=msg}
+function tone(ok){if(!soundOn)return;try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();let o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=ok?660:220;g.gain.value=.06;o.start();o.stop(ctx.currentTime+.12)}catch(e){}}
+function next(){if(idx<questions.length-1){idx++;render()}else finish()}
+function finish(){ $("game").classList.add("hide");$("finish").classList.remove("hide");$("bar").style.width="100%";$("finishScore").textContent=`You scored ${score} out of ${questions.length} points.`;$("finishTitle").textContent=score>=10?"Amazing detective work!":score>=7?"Great effort, money detective!":"Keep practising—you can solve more mysteries!";for(let i=0;i<55;i++){let c=document.createElement("i");c.className="confetti";c.style.left=Math.random()*100+"vw";c.style.background=["#e8b83e","#3159a0","#e56a8a","#39a96b","#9b72cf"][i%5];c.style.animationDelay=Math.random()*1.4+"s";document.body.appendChild(c);setTimeout(()=>c.remove(),5000)}}
+$("prev").onclick=()=>{if(idx>0){idx--;render()}};$("next").onclick=next;$("replay").onclick=start;$("sound").onclick=()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Sound on":"🔇 Sound off"};start();
+</script></body></html>
